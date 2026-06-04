@@ -107,6 +107,11 @@
   .empty { text-align: center; padding: 50px 20px; color: var(--text-faint); font-style: italic; font-size: 15px; }
 
 
+
+  /* INVENTORY OVERLAY */
+  .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+  .inv-overlay.open { display: flex; }
+
   /* TRACKER MODE TOGGLE */
   .toggle-wrap { cursor: pointer; }
   .toggle-track { width: 44px; height: 24px; background: var(--border-strong); border-radius: 12px; position: relative; transition: background 0.2s; }
@@ -274,7 +279,7 @@
 </div>
 
 <!-- MODAL INVENTARIO VINO -->
-<div class="modal-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
+<div class="inv-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
   <div class="modal" id="invModal">
     <div class="modal-handle"></div>
     <div class="modal-header">
