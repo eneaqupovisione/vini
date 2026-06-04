@@ -109,6 +109,10 @@
 
 
   /* INVENTORY OVERLAY */
+  .inv-modal { background: var(--surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 560px; padding: 0 0 24px; max-height: 90vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
+  .inv-overlay.open .inv-modal { animation: slideUp 0.25s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+  @keyframes slideUp { from { transform: translateY(40px); opacity:0.5; } to { transform: translateY(0); opacity:1; } }
+
   .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
   .inv-overlay.open { display: flex; }
 
@@ -280,7 +284,7 @@
 
 <!-- MODAL INVENTARIO VINO -->
 <div class="inv-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
-  <div class="modal" id="invModal">
+  <div class="inv-modal" id="invModal">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-wine-producer" id="invProducer"></div>
