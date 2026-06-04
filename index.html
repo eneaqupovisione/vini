@@ -109,12 +109,44 @@
 
 
   /* INVENTORY OVERLAY */
-  .inv-modal { background: var(--surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 560px; padding: 0 0 24px; max-height: 90vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
-  .inv-overlay.open .inv-modal { animation: slideUp 0.25s cubic-bezier(0.34,1.2,0.64,1) forwards; }
-  @keyframes slideUp { from { transform: translateY(40px); opacity:0.5; } to { transform: translateY(0); opacity:1; } }
 
-  .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+  /* INVENTORY OVERLAY — centered dialog */
+  .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .inv-overlay.open { display: flex; }
+  .inv-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); overflow: hidden; animation: popIn 0.2s cubic-bezier(0.34,1.2,0.64,1); }
+  @keyframes popIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .inv-modal-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .inv-modal-titles { flex: 1; min-width: 0; }
+  .inv-modal-producer { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 3px; }
+  .inv-modal-name { font-size: 16px; font-weight: bold; color: var(--text); line-height: 1.3; }
+  .inv-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-faint); padding: 2px 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; }
+  .inv-modal-close:hover { color: var(--text); background: var(--bg); }
+  .inv-modal-body { padding: 20px 22px 22px; }
+  .inv-section-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; margin-bottom: 8px; margin-top: 18px; }
+  .inv-section-label:first-child { margin-top: 0; }
+  /* Chip selectors */
+  .inv-chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .inv-chip { padding: 6px 14px; border: 1.5px solid var(--border-strong); border-radius: 20px; background: var(--surface); cursor: pointer; font-size: 13px; font-family: Arial, sans-serif; color: var(--text-muted); transition: all 0.12s; font-weight: bold; }
+  .inv-chip:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+  .inv-chip.sel { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .inv-chip.sel-blue { border-color: var(--blue); background: var(--blue); color: #fff; }
+  .inv-chip.sel-green { border-color: var(--green); background: var(--green); color: #fff; }
+  /* Qty stepper */
+  .inv-stepper-row { display: flex; align-items: center; gap: 10px; }
+  .inv-stepper-label { font-size: 13px; font-family: Arial, sans-serif; color: var(--text-muted); min-width: 90px; }
+  .inv-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .inv-stepper button { width: 34px; height: 34px; border: none; background: none; cursor: pointer; font-size: 18px; color: var(--text-muted); transition: background 0.1s; font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; }
+  .inv-stepper button:hover { background: var(--bg); color: var(--accent); }
+  .inv-stepper-val { font-size: 15px; font-weight: bold; min-width: 32px; text-align: center; font-family: Arial, sans-serif; color: var(--text); }
+  /* Price input */
+  .inv-price-wrap { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border-strong); border-radius: 8px; padding: 0 12px; background: var(--bg); max-width: 160px; }
+  .inv-price-wrap:focus-within { border-color: var(--accent-mid); background: #fff; }
+  .inv-price-sym { font-size: 15px; color: var(--text-faint); font-family: Arial, sans-serif; }
+  .inv-price-input { flex: 1; border: none; background: none; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 8px 0; width: 80px; }
+  .inv-price-hint { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; }
+  /* Save btn */
+  .inv-save-btn { width: 100%; padding: 13px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-family: inherit; cursor: pointer; font-weight: bold; margin-top: 22px; transition: background 0.15s; }
+  .inv-save-btn:hover { background: #a0442f; }
 
   /* TRACKER MODE TOGGLE */
   .toggle-wrap { cursor: pointer; }
@@ -123,15 +155,6 @@
   .toggle-thumb { width: 20px; height: 20px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
   .toggle-track.on .toggle-thumb { left: 22px; }
 
-  /* INVENTORY MODAL */
-  .inv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-  .inv-field { display: flex; flex-direction: column; gap: 6px; }
-  .inv-field-full { grid-column: 1 / -1; }
-  .inv-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; }
-  .inv-input { padding: 9px 12px; border: 1.5px solid var(--border-strong); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); outline: none; width: 100%; }
-  .inv-input:focus { border-color: var(--accent-mid); background: #fff; }
-  .inv-qty { text-align: center; width: 60px; flex-shrink: 0; }
-  .inv-qty-row { display: flex; align-items: center; gap: 6px; }
 
   /* TRACKER BADGES on wine rows */
   .wine-inv-badges { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
@@ -285,43 +308,65 @@
 <!-- MODAL INVENTARIO VINO -->
 <div class="inv-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
   <div class="inv-modal" id="invModal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div class="modal-wine-producer" id="invProducer"></div>
-      <div class="modal-wine-name" id="invName"></div>
+    <div class="inv-modal-header">
+      <div class="inv-modal-titles">
+        <div class="inv-modal-producer" id="invProducer"></div>
+        <div class="inv-modal-name" id="invName"></div>
+      </div>
+      <button class="inv-modal-close" onclick="closeInvModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="inv-grid">
-        <div class="inv-field">
-          <label class="inv-label">Scaffale</label>
-          <input class="inv-input" id="invScaffale" placeholder="es. A" maxlength="5">
-        </div>
-        <div class="inv-field">
-          <label class="inv-label">Piano</label>
-          <input class="inv-input" id="invPiano" placeholder="es. 2" maxlength="5">
-        </div>
-        <div class="inv-field">
-          <label class="inv-label">Qty Frigo</label>
-          <div class="inv-qty-row">
-            <button class="qty-btn" onclick="adjustInvQty('frigo',-1)">−</button>
-            <input class="inv-input inv-qty" id="invFrigo" type="number" min="0" value="0">
-            <button class="qty-btn" onclick="adjustInvQty('frigo',1)">+</button>
+    <div class="inv-modal-body">
+
+      <div class="inv-section-label">Posizione — Scaffale</div>
+      <div class="inv-chip-row" id="invScaffaleChips">
+        <button class="inv-chip" data-val="A" onclick="selectInvChip('scaffale','A')">A</button>
+        <button class="inv-chip" data-val="B" onclick="selectInvChip('scaffale','B')">B</button>
+        <button class="inv-chip" data-val="C" onclick="selectInvChip('scaffale','C')">C</button>
+        <button class="inv-chip" data-val="D" onclick="selectInvChip('scaffale','D')">D</button>
+        <button class="inv-chip" data-val="E" onclick="selectInvChip('scaffale','E')">E</button>
+        <button class="inv-chip" data-val="F" onclick="selectInvChip('scaffale','F')">F</button>
+        <button class="inv-chip" data-val="G" onclick="selectInvChip('scaffale','G')">G</button>
+      </div>
+
+      <div class="inv-section-label" style="margin-top:14px">Posizione — Piano</div>
+      <div class="inv-chip-row" id="invPianoChips">
+        <button class="inv-chip" data-val="1" onclick="selectInvChip('piano','1')">1</button>
+        <button class="inv-chip" data-val="2" onclick="selectInvChip('piano','2')">2</button>
+        <button class="inv-chip" data-val="3" onclick="selectInvChip('piano','3')">3</button>
+        <button class="inv-chip" data-val="4" onclick="selectInvChip('piano','4')">4</button>
+        <button class="inv-chip" data-val="5" onclick="selectInvChip('piano','5')">5</button>
+      </div>
+
+      <div class="inv-section-label" style="margin-top:18px">Quantità</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="inv-stepper-row">
+          <span class="inv-stepper-label">❄️ Frigo</span>
+          <div class="inv-stepper">
+            <button onclick="adjustInvQty('frigo',-1)">−</button>
+            <span class="inv-stepper-val" id="invFrigoVal">0</span>
+            <button onclick="adjustInvQty('frigo',1)">+</button>
           </div>
         </div>
-        <div class="inv-field">
-          <label class="inv-label">Qty Magazzino</label>
-          <div class="inv-qty-row">
-            <button class="qty-btn" onclick="adjustInvQty('mag',-1)">−</button>
-            <input class="inv-input inv-qty" id="invMag" type="number" min="0" value="0">
-            <button class="qty-btn" onclick="adjustInvQty('mag',1)">+</button>
+        <div class="inv-stepper-row">
+          <span class="inv-stepper-label">▦ Magazzino</span>
+          <div class="inv-stepper">
+            <button onclick="adjustInvQty('mag',-1)">−</button>
+            <span class="inv-stepper-val" id="invMagVal">0</span>
+            <button onclick="adjustInvQty('mag',1)">+</button>
           </div>
-        </div>
-        <div class="inv-field inv-field-full">
-          <label class="inv-label">Prezzo Vendita (€)</label>
-          <input class="inv-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="sovrascrive il prezzo di default">
         </div>
       </div>
-      <button class="modal-confirm" onclick="saveInvModal()">Salva</button>
+
+      <div class="inv-section-label" style="margin-top:18px">Prezzo Vendita</div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="inv-price-wrap">
+          <span class="inv-price-sym">€</span>
+          <input class="inv-price-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="—">
+        </div>
+        <span class="inv-price-hint">lascia vuoto per usare il prezzo di default</span>
+      </div>
+
+      <button class="inv-save-btn" onclick="saveInvModal()">Salva</button>
     </div>
   </div>
 </div>
@@ -983,13 +1028,22 @@ function openInvModal(producer, name) {
   const inLista = magazzino.filter(m => m.producer === producer && m.name === name).reduce((s, m) => s + (m.qty || 0), 0);
   document.getElementById('invProducer').textContent = producer;
   document.getElementById('invName').textContent = name;
-  document.getElementById('invScaffale').value = inv ? (inv.scaffale || '') : '';
-  document.getElementById('invPiano').value = inv ? (inv.piano || '') : '';
+  // Reset chips
+  document.querySelectorAll('#invScaffaleChips .inv-chip').forEach(c => c.classList.remove('sel','sel-blue','sel-green'));
+  document.querySelectorAll('#invPianoChips .inv-chip').forEach(c => c.classList.remove('sel','sel-blue','sel-green'));
+  if (inv && inv.scaffale) {
+    const sc = document.querySelector(`#invScaffaleChips [data-val="${inv.scaffale}"]`);
+    if (sc) sc.classList.add('sel');
+  }
+  if (inv && inv.piano) {
+    const pi = document.querySelector(`#invPianoChips [data-val="${inv.piano}"]`);
+    if (pi) pi.classList.add('sel-blue');
+  }
   const qtyFrigo = inv ? Math.max(0, (inv.qty_frigo || 0) - inLista) : 0;
   const qtyMag = inv ? Math.max(0, (inv.qty_magazzino || 0) - inLista) : 0;
-  document.getElementById('invFrigo').value = qtyFrigo;
-  document.getElementById('invMag').value = qtyMag;
-  document.getElementById('invPrezzo').value = inv ? (inv.prezzo_vendita || '') : '';
+  document.getElementById('invFrigoVal').textContent = qtyFrigo;
+  document.getElementById('invMagVal').textContent = qtyMag;
+  document.getElementById('invPrezzo').value = inv && inv.prezzo_vendita != null ? inv.prezzo_vendita : '';
   document.getElementById('invOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1001,9 +1055,17 @@ function closeInvModal() {
 }
 
 function adjustInvQty(field, delta) {
-  const id = field === 'frigo' ? 'invFrigo' : 'invMag';
+  const id = field === 'frigo' ? 'invFrigoVal' : 'invMagVal';
   const el = document.getElementById(id);
-  el.value = Math.max(0, parseInt(el.value || 0) + delta);
+  el.textContent = Math.max(0, parseInt(el.textContent || 0) + delta);
+}
+
+function selectInvChip(type, val) {
+  const containerId = type === 'scaffale' ? 'invScaffaleChips' : 'invPianoChips';
+  const selClass = type === 'scaffale' ? 'sel' : 'sel-blue';
+  document.querySelectorAll(`#${containerId} .inv-chip`).forEach(c => c.classList.remove('sel','sel-blue','sel-green'));
+  const btn = document.querySelector(`#${containerId} [data-val="${val}"]`);
+  if (btn) btn.classList.add(selClass);
 }
 
 async function saveInvModal() {
@@ -1011,13 +1073,15 @@ async function saveInvModal() {
   const wine = invModalWine;
   const inLista = magazzino.filter(m => m.producer === wine.p && m.name === wine.n).reduce((s, m) => s + (m.qty || 0), 0);
   // I valori mostrati sono post-lista, quindi per salvare aggiungiamo inLista
-  const displayFrigo = parseInt(document.getElementById('invFrigo').value) || 0;
-  const displayMag = parseInt(document.getElementById('invMag').value) || 0;
+  const displayFrigo = parseInt(document.getElementById('invFrigoVal').textContent) || 0;
+  const displayMag = parseInt(document.getElementById('invMagVal').textContent) || 0;
+  const selScaffale = document.querySelector('#invScaffaleChips .inv-chip.sel');
+  const selPiano = document.querySelector('#invPianoChips .inv-chip.sel-blue');
   const row = {
     producer: wine.p,
     name: wine.n,
-    scaffale: document.getElementById('invScaffale').value.trim(),
-    piano: document.getElementById('invPiano').value.trim(),
+    scaffale: selScaffale ? selScaffale.dataset.val : '',
+    piano: selPiano ? selPiano.dataset.val : '',
     qty_frigo: displayFrigo + inLista,
     qty_magazzino: displayMag + inLista,
     prezzo_vendita: document.getElementById('invPrezzo').value !== '' ? parseFloat(document.getElementById('invPrezzo').value) : null,
