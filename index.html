@@ -106,33 +106,6 @@
   .wine-row.maybe { opacity: 0.75; }
   .empty { text-align: center; padding: 50px 20px; color: var(--text-faint); font-style: italic; font-size: 15px; }
 
-  /* ===================== MODAL ===================== */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 560px; padding: 0 0 24px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); max-height: 90vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-handle { width: 40px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 12px auto 0; }
-  .modal-header { padding: 16px 22px 14px; border-bottom: 1px solid var(--border); }
-  .modal-wine-producer { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 3px; }
-  .modal-wine-name { font-size: 17px; font-weight: bold; color: var(--text); line-height: 1.3; }
-  .modal-wine-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-  .modal-price { font-size: 20px; font-weight: bold; color: var(--accent); font-family: Arial, sans-serif; }
-  .modal-price::after { content: '€'; font-size: 13px; margin-left: 2px; color: var(--accent-mid); }
-  .modal-body { padding: 18px 22px 0; }
-  .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-  .qty-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; white-space: nowrap; }
-  .qty-ctrl { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--border-strong); border-radius: 8px; padding: 4px; background: var(--surface); }
-  .qty-btn { width: 28px; height: 28px; border: none; background: none; cursor: pointer; font-size: 18px; color: var(--text-muted); border-radius: 6px; transition: all 0.1s; display: flex; align-items: center; justify-content: center; font-family: Arial, sans-serif; }
-  .qty-btn:hover { background: var(--accent-light); color: var(--accent); }
-  .qty-val { font-size: 16px; font-weight: bold; min-width: 24px; text-align: center; font-family: Arial, sans-serif; }
-  .note-input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--border-strong); border-radius: 8px; font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text); outline: none; }
-  .note-input:focus { border-color: var(--accent-mid); background: #fff; }
-  .note-input::placeholder { color: var(--text-faint); }
-  .modal-confirm { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-family: inherit; cursor: pointer; font-weight: bold; letter-spacing: 0.04em; transition: background 0.15s, transform 0.1s; }
-  .modal-confirm:hover { background: #a0442f; }
-  .modal-confirm:active { transform: scale(0.98); }
-  .modal-confirm:disabled { background: var(--border-strong); cursor: not-allowed; }
-
   /* ===================== PANEL (magazzino / impostazioni) ===================== */
   .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .panel-overlay.open { opacity: 1; pointer-events: all; }
@@ -183,14 +156,6 @@
   .pdf-status-icon { font-size: 18px; }
   .pdf-remove-btn { margin-left: auto; background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 14px; }
   .pdf-remove-btn:hover { color: var(--accent); }
-  .ask-btn { width: 100%; padding: 12px; background: var(--blue); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-family: Arial, sans-serif; cursor: pointer; font-weight: bold; transition: background 0.15s; margin-top: 8px; }
-  .ask-btn:hover { background: #163a6b; }
-  .ask-btn:disabled { background: var(--border-strong); cursor: not-allowed; }
-  .ai-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-strong); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); outline: none; margin-bottom: 8px; resize: vertical; min-height: 70px; }
-  .ai-input:focus { border-color: var(--accent-mid); background: #fff; }
-  .ai-response { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: var(--text); line-height: 1.6; font-family: Arial, sans-serif; white-space: pre-wrap; display: none; margin-top: 10px; max-height: 300px; overflow-y: auto; }
-  .ai-response.visible { display: block; }
-  .ai-thinking { color: var(--text-faint); font-style: italic; font-size: 13px; }
 
   /* TOAST */
   .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1714; color: #fff; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: Arial, sans-serif; z-index: 3000; opacity: 0; transition: all 0.25s; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
@@ -239,10 +204,6 @@
   <div id="results"></div>
 </div>
 
-<!-- MODAL AGGIUNGI VINO AL MAGAZZINO -->
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-  <div class="modal" id="modal">
-    <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-wine-producer" id="modalProducer"></div>
       <div class="modal-wine-name" id="modalName"></div>
@@ -309,14 +270,6 @@
           <span class="pdf-status-icon">📭</span>
           <span id="pdfStatusText">Nessun PDF caricato</span>
         </div>
-      </div>
-
-      <div class="setting-section">
-        <div class="setting-label">Assistente AI</div>
-        <div class="setting-desc">Fai domande sulla carta dei vini. Funziona solo se hai caricato il PDF sopra.</div>
-        <textarea class="ai-input" id="aiQuestion" placeholder="Es: Quali sono i Franciacorta in carta? Hai un rosso naturale siciliano?"></textarea>
-        <button class="ask-btn" id="askBtn" onclick="askAI()" disabled>Chiedi all'AI</button>
-        <div class="ai-response" id="aiResponse"></div>
       </div>
 
       <div class="setting-section">
@@ -548,7 +501,7 @@ const WINES = [
 // ===================== STATE =====================
 let currentCat = 'all';
 let currentQ = '';
-let modalWine = null, modalQty = 1;
+
 let pdfBase64 = null;
 let pdfFileName = null;
 let magazzino = []; // cache locale
@@ -576,25 +529,38 @@ async function loadMagazzino() {
 async function addToMagazzinoSupa(wine, qty, note) {
   startLoad();
   try {
-    const row = {
-      producer: wine.p,
-      name: wine.n,
-      category: wine.cat,
-      region: wine.region,
-      tags: wine.tags,
-      price: wine.price,
-      format: wine.fmt || '750ml',
-      qty: qty,
-      note: note,
-      in_selezione: true
-    };
-    const result = await sbFetch('magazzino', {
-      method: 'POST',
-      body: JSON.stringify(row)
-    });
-    magazzino.unshift(result[0]);
-    updateMagBadge();
-    showToast(`✓ Aggiunto: ${wine.p}`, 'success');
+    const existing = magazzino.find(m => m.producer === wine.p && m.name === wine.n);
+    if (existing) {
+      const newQty = existing.qty + qty;
+      await sbFetch(`magazzino?id=eq.${existing.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ qty: newQty, added_at: new Date().toISOString() })
+      });
+      existing.qty = newQty;
+      existing.added_at = new Date().toISOString();
+      updateMagBadge();
+      showToast(`✓ ${wine.p} — ora ×${newQty}`, 'success');
+    } else {
+      const row = {
+        producer: wine.p,
+        name: wine.n,
+        category: wine.cat,
+        region: wine.region,
+        tags: wine.tags,
+        price: wine.price,
+        format: wine.fmt || '750ml',
+        qty: qty,
+        note: note,
+        in_selezione: true
+      };
+      const result = await sbFetch('magazzino', {
+        method: 'POST',
+        body: JSON.stringify(row)
+      });
+      magazzino.unshift(result[0]);
+      updateMagBadge();
+      showToast(`✓ Aggiunto: ${wine.p}`, 'success');
+    }
   } catch(e) {
     showToast('Errore salvataggio', 'error');
     console.error(e);
@@ -763,43 +729,6 @@ async function processPdf(file) {
   reader.readAsDataURL(file);
 }
 
-// ===================== AI ASSISTANT =====================
-async function askAI() {
-  const question = document.getElementById('aiQuestion').value.trim();
-  if (!question || !pdfBase64) return;
-  const btn = document.getElementById('askBtn');
-  const responseEl = document.getElementById('aiResponse');
-  btn.disabled = true;
-  btn.textContent = 'Sto pensando...';
-  responseEl.className = 'ai-response visible';
-  responseEl.innerHTML = '<span class="ai-thinking">⏳ Analisi della carta dei vini...</span>';
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'Sei un sommelier esperto. Rispondi in italiano in modo conciso e utile basandoti esclusivamente sulla carta dei vini fornita.',
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfBase64 } },
-            { type: 'text', text: question }
-          ]
-        }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.map(c => c.text || '').join('') || 'Nessuna risposta.';
-    responseEl.textContent = text;
-  } catch(e) {
-    responseEl.textContent = 'Errore nella chiamata AI. Riprova.';
-  }
-  btn.disabled = false;
-  btn.textContent = 'Chiedi all\'AI';
-}
 
 // ===================== CONNECTION CHECK =====================
 async function checkConnection() {
@@ -861,38 +790,12 @@ function renderMagazzinoList() {
   }).join('');
 }
 
-// ===================== MODAL =====================
-function openModal(idx) {
-  modalWine = WINES[idx];
-  modalQty = 1;
-  document.getElementById('modalProducer').textContent = modalWine.p;
-  document.getElementById('modalName').textContent = modalWine.n;
-  const priceEl = document.getElementById('modalPrice');
-  if (modalWine.price != null) { priceEl.textContent = modalWine.price; priceEl.style.display = ''; }
-  else { priceEl.textContent = ''; priceEl.style.display = 'none'; }
-  document.getElementById('modalTags').innerHTML = modalWine.tags.slice(0,4).map(t=>`<span class="wine-tag">${escHtml(t)}</span>`).join('');
-  document.getElementById('qtyVal').textContent = '1';
-  document.getElementById('noteInput').value = '';
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-  modalWine = null;
-}
-function handleOverlayClick(e) { if(e.target === document.getElementById('modalOverlay')) closeModal(); }
 
-function changeQty(delta) {
-  modalQty = Math.max(1, Math.min(10, modalQty + delta));
-  document.getElementById('qtyVal').textContent = modalQty;
-}
 
-function confirmAdd() {
-  if (!modalWine) return;
-  const note = document.getElementById('noteInput').value.trim();
-  addToMagazzinoSupa(modalWine, modalQty, note);
-  closeModal();
+// ===================== DIRECT ADD =====================
+async function addDirectly(idx) {
+  const wine = WINES[idx];
+  await addToMagazzinoSupa(wine, 1, '');
 }
 
 // ===================== SEARCH & RENDER =====================
@@ -978,7 +881,7 @@ function wineRow(w, q, isMaybe=false){
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
   const idx=WINES.indexOf(w);
-  return `<div class="wine-row${maybeClass}" onclick="openModal(${idx})">
+  return `<div class="wine-row${maybeClass}" onclick="addDirectly(${idx})">
     <div class="wine-left">
       <div class="wine-producer">${producer}</div>
       <div class="wine-name">${name}</div>
@@ -986,7 +889,7 @@ function wineRow(w, q, isMaybe=false){
     </div>
     <div class="wine-right">
       <div class="wine-price" style="${w.price==null?'font-size:14px;color:var(--text-faint)':''}${isMaybe?';font-size:16px;':''}">${price}</div>
-      <button class="wine-add-btn" onclick="event.stopPropagation();openModal(${idx})" title="Aggiungi">+</button>
+      <button class="wine-add-btn" onclick="event.stopPropagation();addDirectly(${idx})" title="Aggiungi">+</button>
     </div>
   </div>`;
 }
@@ -1002,7 +905,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closePanel('magPanel'); closePanel('settingsPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closePanel('magPanel'); closePanel('settingsPanel'); } });
 
 init();
 </script>
