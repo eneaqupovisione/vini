@@ -900,7 +900,7 @@ function renderMagazzinoList() {
     }
 
     const idAttr = `data-mag-id="${item.id}"`;
-    const rowClick = trackerMode ? `onclick="openInvModalById('${item.id}')"` : '';
+    const rowClick = trackerMode ? `data-inv-mag-id="${item.id}"` : '';
     const cursor = trackerMode ? 'style="cursor:pointer"' : '';
 
     return `<div class="mag-item" ${idAttr} ${rowClick} ${cursor}>
@@ -1141,7 +1141,7 @@ function wineRow(w, q, isMaybe=false){
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
   const idx=WINES.indexOf(w);
   const menuBtn = trackerMode
-    ? `<button class="wine-menu-btn" onclick="event.stopPropagation();openInvModal('${escJs(w.p)}','${escJs(w.n)}')" title="Modifica scheda">⋯</button>`
+    ? `<button class="wine-menu-btn" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
     : '';
   return `<div class="wine-row${maybeClass}" onclick="addDirectly(${idx})">
     <div class="wine-left">
@@ -1170,6 +1170,25 @@ function showToast(msg, type='') {
 }
 
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeInvModal(); closePanel('magPanel'); closePanel('settingsPanel'); } });
+
+// Event delegation for dynamic buttons
+document.addEventListener('click', function(e) {
+  // ⋯ menu button on wine list
+  const menuBtn = e.target.closest('.wine-menu-btn');
+  if (menuBtn) {
+    e.stopPropagation();
+    const idx = parseInt(menuBtn.dataset.invIdx);
+    if (!isNaN(idx) && WINES[idx]) openInvModal(WINES[idx].p, WINES[idx].n);
+    return;
+  }
+  // Click on mag item row (tracker mode)
+  const magItem = e.target.closest('[data-inv-mag-id]');
+  if (magItem && !e.target.closest('.mag-item-right')) {
+    const id = magItem.dataset.invMagId;
+    openInvModalById(id);
+    return;
+  }
+});
 
 init();
 </script>
