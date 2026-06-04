@@ -1143,7 +1143,7 @@ function wineRow(w, q, isMaybe=false){
   const menuBtn = trackerMode
     ? `<button class="wine-menu-btn" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
     : '';
-  return `<div class="wine-row${maybeClass}" onclick="addDirectly(${idx})">
+  return `<div class="wine-row${maybeClass}" data-add-idx="${idx}">
     <div class="wine-left">
       <div class="wine-producer">${producer}</div>
       <div class="wine-name">${name}</div>
@@ -1153,7 +1153,7 @@ function wineRow(w, q, isMaybe=false){
     <div class="wine-right">
       <div class="wine-price" style="${w.price==null?'font-size:14px;color:var(--text-faint)':''}${isMaybe?';font-size:16px;':''}">${price}</div>
       ${menuBtn}
-      <button class="wine-add-btn" onclick="event.stopPropagation();addDirectly(${idx})" title="Aggiungi">+</button>
+      <button class="wine-add-btn" title="Aggiungi">+</button>
     </div>
   </div>`;
 }
@@ -1173,12 +1173,30 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeInvModal();
 
 // Event delegation for dynamic buttons
 document.addEventListener('click', function(e) {
-  // ⋯ menu button on wine list
+  // ⋯ menu button — must be checked FIRST, before wine-row
   const menuBtn = e.target.closest('.wine-menu-btn');
   if (menuBtn) {
-    e.stopPropagation();
+    e.preventDefault();
+    e.stopImmediatePropagation();
     const idx = parseInt(menuBtn.dataset.invIdx);
     if (!isNaN(idx) && WINES[idx]) openInvModal(WINES[idx].p, WINES[idx].n);
+    return;
+  }
+  // + add button
+  const addBtn = e.target.closest('.wine-add-btn');
+  if (addBtn) {
+    const row = addBtn.closest('[data-add-idx]');
+    if (row) {
+      const idx = parseInt(row.dataset.addIdx);
+      if (!isNaN(idx)) addDirectly(idx);
+    }
+    return;
+  }
+  // wine-row click (not on a button)
+  const wineRow = e.target.closest('[data-add-idx]');
+  if (wineRow && !e.target.closest('button')) {
+    const idx = parseInt(wineRow.dataset.addIdx);
+    if (!isNaN(idx)) addDirectly(idx);
     return;
   }
   // Click on mag item row (tracker mode)
