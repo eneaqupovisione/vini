@@ -179,6 +179,7 @@
   .mag-tbadge.magaz { background: var(--green-light); color: var(--green); border-color: #a7d9be; }
   .mag-tbadge.magaz.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
   .mag-tbadge.magaz.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
+  .mag-tbadge.piccolo { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; margin-left: 6px; vertical-align: middle; }
 
   /* ⋯ MENU BTN */
   .wine-menu-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px; }
@@ -957,9 +958,13 @@ function renderMagazzinoList() {
     const rowClick = trackerMode ? `data-inv-mag-id="${item.id}"` : '';
     const cursor = trackerMode ? 'style="cursor:pointer"' : '';
 
+    const wineRef = WINES.find(w => w.p === item.producer && w.n === item.name);
+    const isPiccolo = wineRef && (wineRef.cat === 'piccoli' || wineRef.fmt === '375ml');
+    const formatBadge = isPiccolo ? `<span class="mag-tbadge piccolo" title="Formato 375ml">375ml</span>` : '';
+
     return `<div class="mag-item" ${idAttr} ${rowClick} ${cursor}>
       <div class="mag-item-left">
-        <div class="mag-item-producer">${escHtml(item.producer)}</div>
+        <div class="mag-item-producer">${escHtml(item.producer)}${formatBadge}</div>
         <div class="mag-item-name">${escHtml(item.name)}</div>
         ${trackerBadges}
         <div class="mag-item-meta">${escHtml(item.region||'')} · ${dateStr}${item.note ? ' · '+escHtml(item.note) : ''}</div>
