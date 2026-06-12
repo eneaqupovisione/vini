@@ -967,7 +967,7 @@ function renderMagazzinoList() {
         <div class="mag-item-producer">${escHtml(item.producer)}${formatBadge}</div>
         <div class="mag-item-name">${escHtml(item.name)}</div>
         ${trackerBadges}
-        <div class="mag-item-meta">${escHtml(item.region||'')} · ${dateStr}${item.note ? ' · '+escHtml(item.note) : ''}</div>
+        <div class="mag-item-meta">${escHtml(wineRef ? catLabel(wineRef.cat) : (item.region||''))} · ${dateStr}${item.note ? ' · '+escHtml(item.note) : ''}</div>
       </div>
       <div class="mag-item-right" onclick="event.stopPropagation()">
         <span class="mag-qty-badge">×${item.qty}</span>
