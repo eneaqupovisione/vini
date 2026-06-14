@@ -220,6 +220,32 @@
   .mag-del-btn { background: none; border: none; color: var(--text-faint); font-size: 16px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
   .mag-del-btn:hover { color: var(--accent); background: var(--accent-light); }
 
+  /* NON DISPONIBILI SECTION */
+  .mag-nd-section { margin-top: 20px; }
+  .mag-nd-header {
+    display: flex; align-items: center; gap: 10px; padding: 9px 0;
+    cursor: pointer; border-top: 1px dashed var(--border-strong);
+    user-select: none;
+  }
+  .mag-nd-header:hover .mag-nd-title { color: var(--text); }
+  .mag-nd-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; flex: 1; }
+  .mag-nd-count-badge { font-size: 10px; background: #f0e9d6; color: #9a7a50; padding: 2px 8px; border-radius: 10px; font-family: Arial, sans-serif; border: 1px solid #d9c89e; font-weight: bold; }
+  .mag-nd-arrow { font-size: 12px; color: var(--text-faint); transition: transform 0.2s; }
+  .mag-nd-arrow.open { transform: rotate(90deg); }
+  .mag-nd-list { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+  .mag-nd-list.open { max-height: 9999px; }
+  /* non disponibile item style */
+  .mag-item.nd { opacity: 0.6; }
+  .mag-item.nd .mag-item-producer { text-decoration: line-through; text-decoration-color: var(--text-faint); }
+  /* ND toggle button in mag item */
+  .mag-nd-btn {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: Arial, sans-serif;
+    cursor: pointer; border: 1.5px solid; transition: all 0.15s; font-weight: bold; white-space: nowrap;
+    border-color: var(--text-faint); color: var(--text-faint); background: var(--bg);
+  }
+  .mag-nd-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+  .mag-nd-btn:hover { opacity: 0.75; }
+
   /* IMPOSTAZIONI */
   .setting-section { margin-bottom: 28px; }
   .setting-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 10px; }
@@ -730,6 +756,22 @@ async function addToMagazzinoSupa(wine, qty, note) {
   endLoad();
 }
 
+async function toggleNonDisponibile(id, currentVal) {
+  try {
+    await sbFetch(`magazzino?id=eq.${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ non_disponibile: !currentVal })
+    });
+    const item = magazzino.find(m => m.id === id);
+    if (item) item.non_disponibile = !currentVal;
+    updateMagBadge();
+    renderMagazzinoList();
+    showToast(!currentVal ? '⚠️ Segnato come non disponibile' : '✓ Di nuovo disponibile', !currentVal ? '' : 'success');
+  } catch(e) {
+    showToast('Errore aggiornamento disponibilità', 'error');
+  }
+}
+
 async function toggleSelezione(id, currentVal) {
   try {
     await sbFetch(`magazzino?id=eq.${id}`, {
@@ -799,7 +841,7 @@ async function loadReloadTimestamp() {
 }
 
 function updateMagBadge() {
-  const n = magazzino.length;
+  const n = magazzino.filter(m => !m.non_disponibile).length;
   const badge = document.getElementById('magBadge');
   badge.textContent = n;
   badge.style.display = n > 0 ? '' : 'none';
@@ -925,18 +967,22 @@ function handlePanelClick(e, id) {
 function renderMagazzinoList() {
   const listEl = document.getElementById('magList');
   const countEl = document.getElementById('magCount');
-  const n = magazzino.length;
-  countEl.innerHTML = `<span>${n}</span> vin${n===1?'o':'i'} in lista`;
 
-  if (n === 0) {
+  const disponibili = magazzino.filter(m => !m.non_disponibile);
+  const nonDisponibili = magazzino.filter(m => !!m.non_disponibile);
+  const n = disponibili.length;
+  countEl.innerHTML = `<span>${n}</span> vin${n===1?'o':'i'} disponibili`;
+
+  if (magazzino.length === 0) {
     listEl.innerHTML = '<div class="mag-empty">Lista vuota. Aggiungi vini dalla schermata principale.</div>';
     return;
   }
 
-  listEl.innerHTML = magazzino.map(item => {
+  function buildMagItem(item) {
     const date = new Date(item.added_at);
     const dateStr = `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
     const inSel = item.in_selezione !== false;
+    const isND = !!item.non_disponibile;
 
     // Tracker badges
     let trackerBadges = '';
@@ -962,7 +1008,12 @@ function renderMagazzinoList() {
     const isPiccolo = wineRef && (wineRef.cat === 'piccoli' || wineRef.fmt === '375ml');
     const formatBadge = isPiccolo ? `<span class="mag-tbadge piccolo" title="Formato 375ml">375ml</span>` : '';
 
-    return `<div class="mag-item" ${idAttr} ${rowClick} ${cursor}>
+    // ND button only in non-tracker mode
+    const ndBtn = !trackerMode
+      ? `<button class="mag-nd-btn${isND?' active':''}" onclick="toggleNonDisponibile('${item.id}',${isND})" title="${isND?'Segna disponibile':'Segna non disponibile'}">${isND?'⊘ ND':'⊘'}</button>`
+      : '';
+
+    return `<div class="mag-item${isND?' nd':''}" ${idAttr} ${rowClick} ${cursor}>
       <div class="mag-item-left">
         <div class="mag-item-producer">${escHtml(item.producer)}${formatBadge}</div>
         <div class="mag-item-name">${escHtml(item.name)}</div>
@@ -971,11 +1022,47 @@ function renderMagazzinoList() {
       </div>
       <div class="mag-item-right" onclick="event.stopPropagation()">
         <span class="mag-qty-badge">×${item.qty}</span>
+        ${ndBtn}
         <button class="sel-chip ${inSel?'in':'out'}" onclick="toggleSelezione('${item.id}',${inSel})">${inSel?'✓ Sel':'— Fuori'}</button>
         <button class="mag-del-btn" onclick="deleteFromMagazzino('${item.id}')" title="Rimuovi">✕</button>
       </div>
     </div>`;
-  }).join('');
+  }
+
+  let html = '';
+
+  // — Lista disponibili
+  if (disponibili.length === 0) {
+    html += '<div class="mag-empty" style="padding:20px 0">Nessun vino disponibile in lista.</div>';
+  } else {
+    html += disponibili.map(buildMagItem).join('');
+  }
+
+  // — Sezione non disponibili (collassabile)
+  if (nonDisponibili.length > 0) {
+    const ndOpen = listEl._ndOpen || false; // preserve state across re-renders
+    html += `<div class="mag-nd-section">
+      <div class="mag-nd-header" onclick="toggleNdSection(this)">
+        <span class="mag-nd-title">Non disponibili</span>
+        <span class="mag-nd-count-badge">${nonDisponibili.length}</span>
+        <span class="mag-nd-arrow${ndOpen?' open':''}">▶</span>
+      </div>
+      <div class="mag-nd-list${ndOpen?' open':''}">
+        ${nonDisponibili.map(buildMagItem).join('')}
+      </div>
+    </div>`;
+  }
+
+  listEl.innerHTML = html;
+}
+
+function toggleNdSection(headerEl) {
+  const listEl = document.getElementById('magList');
+  const ndList = headerEl.nextElementSibling;
+  const arrow = headerEl.querySelector('.mag-nd-arrow');
+  const isOpen = ndList.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+  listEl._ndOpen = isOpen;
 }
 
 function openInvModalById(magId) {
