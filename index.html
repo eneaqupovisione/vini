@@ -39,10 +39,9 @@
     z-index: 100;
     box-shadow: var(--shadow);
   }
-  .header-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .logo { font-size: 13px; font-weight: normal; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-  .logo span { color: var(--accent); font-weight: bold; }
+  .header-top { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-bottom: 12px; }
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .search-row { margin-bottom: 12px; }
   .icon-btn {
     width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(--border-strong);
     background: var(--surface); color: var(--text-muted); font-size: 16px; cursor: pointer;
@@ -262,6 +261,89 @@
   .pdf-remove-btn { margin-left: auto; background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 14px; }
   .pdf-remove-btn:hover { color: var(--accent); }
 
+  /* ===================== VIEW MODE BTN (singolo, mostra lo stato attivo) ===================== */
+  .viewmode-single { font-size: 18px; }
+  .viewmode-single span { display: block; line-height: 1; }
+
+  /* ===================== GALLERY (iPad / touch) MODE ===================== */
+  .results-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  @media (max-width: 680px) { .results-gallery { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; } }
+
+  /* In gallery mode the region heads span the whole grid row */
+  .results-gallery .section-head,
+  .results-gallery .maybe-head { grid-column: 1 / -1; }
+
+  .wine-card {
+    position: relative; background: var(--surface);
+    border: 1px solid var(--cat-border, var(--border));
+    border-left: 5px solid var(--cat-strong, var(--border-strong));
+    border-radius: 12px; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 7px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05); transition: box-shadow 0.15s, transform 0.1s;
+    min-height: 132px;
+  }
+  .wine-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.10); }
+  .wine-card.maybe { opacity: 0.78; }
+  .wine-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .wine-card-titles { min-width: 0; flex: 1; }
+  /* nome cantina ben leggibile, nome vino chiaro */
+  .wine-card-producer { font-size: 16px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.15; }
+  .wine-card-name { font-size: 13.5px; color: var(--text); opacity: 0.72; margin-top: 3px; line-height: 1.3; font-family: Arial, sans-serif; }
+  .wine-card-price { font-size: 21px; font-weight: 800; color: var(--cat-strong, var(--accent)); white-space: nowrap; font-family: Arial, sans-serif; line-height: 1; flex-shrink: 0; }
+  .wine-card-price::after { content: '€'; font-size: 12px; margin-left: 1px; opacity: 0.7; }
+  /* tag più visibili in galleria */
+  .wine-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .wine-card-tags .wine-tag { font-size: 11px; padding: 2px 8px; font-weight: 600; background: var(--cat-tag-bg, var(--tag-bg)); color: var(--cat-strong, var(--text-muted)); }
+  .wine-card-tags .wine-format { font-size: 11px; padding: 2px 8px; font-weight: 700; background: var(--cat-strong, var(--accent)); color: #fff; }
+  .wine-card-spacer { flex: 1; }
+  .wine-card-bottom { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 2px; }
+  /* pulsante aggiungi compatto: rotondo col + */
+  .wine-card-add {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--cat-strong, var(--accent)); color: #fff; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, filter 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .wine-card-add:hover { filter: brightness(1.08); }
+  .wine-card-add:active { transform: scale(0.92); }
+  .wine-card-add .add-plus { font-size: 24px; line-height: 1; font-family: Arial, sans-serif; font-weight: 400; }
+  .wine-card-menu {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-muted); font-size: 17px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px;
+  }
+  .wine-card-menu:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .wine-card .wine-inv-badges { margin-top: 0; }
+
+  /* ===================== COLORI PER CATEGORIA ===================== */
+  .cat-bollicine  { --cat-strong:#b08900; --cat-border:#ecdfae; --cat-tag-bg:#fbf3d6; }
+  .cat-champagne  { --cat-strong:#a6791f; --cat-border:#e8dcc0; --cat-tag-bg:#f7efdd; }
+  .cat-bianco     { --cat-strong:#2d8a4f; --cat-border:#c4e6d2; --cat-tag-bg:#e6f5ec; }
+  .cat-rosso      { --cat-strong:#b23a3a; --cat-border:#ecc9c9; --cat-tag-bg:#fbe7e7; }
+  .cat-rose       { --cat-strong:#c45b86; --cat-border:#f0d2df; --cat-tag-bg:#fceaf1; }
+  .cat-stranieri  { --cat-strong:#5b54c4; --cat-border:#d4d1f0; --cat-tag-bg:#ecebfb; }
+  .cat-piccoli    { --cat-strong:#1e6fb0; --cat-border:#c2dbef; --cat-tag-bg:#e6f1fa; }
+  /* in modalità lista coloriamo solo il bordo sinistro, in modo discreto */
+  .wine-row { border-left: 4px solid transparent; padding-left: 10px; }
+  .wine-row.cat-bollicine  { border-left-color:#e3c54d; }
+  .wine-row.cat-champagne  { border-left-color:#cBa85a; }
+  .wine-row.cat-bianco     { border-left-color:#6cc28a; }
+  .wine-row.cat-rosso      { border-left-color:#d96f6f; }
+  .wine-row.cat-rose       { border-left-color:#e29ab9; }
+  .wine-row.cat-stranieri  { border-left-color:#928bdf; }
+  .wine-row.cat-piccoli    { border-left-color:#62a8de; }
+
+  /* ===================== ALERT SCORTE (frigo) ===================== */
+  .stock-alert { font-size: 11.5px; font-family: Arial, sans-serif; font-weight: 700; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-top: 2px; width: fit-content; }
+  .stock-alert.low  { background: #fff3cd; color: #856404; border: 1px solid #ffe08a; }
+  .stock-alert.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
+  .stock-alert.out  { background: #f3d6d6; color: #8a1010; border: 1px solid #e09a9a; }
+  /* badge frigo livello critico (oltre warn/empty già esistenti) */
+  .inv-badge.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+
+  /* ALERT SCORTE (frigo) — fine blocco galleria */
+  .pop-head .section-title { color: var(--accent); font-weight: bold; }
+
   /* TOAST */
   .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1714; color: #fff; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: Arial, sans-serif; z-index: 3000; opacity: 0; transition: all 0.25s; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -281,15 +363,17 @@
 
 <div class="header">
   <div class="header-top">
-    <div class="logo"><span>Sol y Mar</span> — Cantina</div>
+    <div class="header-actions">
+      <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
+      <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
+      <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni">⚙️</button>
+    </div>
+  </div>
+  <div class="search-row">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input type="text" id="search" placeholder="Cerca vino, produttore, uvaggio..." autocomplete="off" autocorrect="off" spellcheck="false">
       <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
-      <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni">⚙️</button>
     </div>
   </div>
   <div class="tabs" id="tabs">
@@ -692,12 +776,16 @@ let magazzino = []; // cache locale
 let inventory = {}; // producer+name -> record
 let trackerMode = false;
 let invModalWine = null;
+let viewMode = 'list'; // 'list' (computer) | 'gallery' (ipad/touch)
+let popularity = {}; // "producer|||name" -> { clicks, last_click }
+let popularityAvailable = true; // diventa false se la tabella non esiste
 
 // ===================== INIT =====================
 async function init() {
   startLoad();
+  initViewMode();
   initTrackerMode();
-  await Promise.all([loadMagazzino(), loadInventory(), checkConnection(), loadPdfMeta()]);
+  await Promise.all([loadMagazzino(), loadInventory(), loadPopularity(), checkConnection(), loadPdfMeta()]);
   endLoad();
   render();
 }
@@ -1077,6 +1165,7 @@ function openInvModalById(magId) {
 async function addDirectly(idx) {
   const wine = WINES[idx];
   await addToMagazzinoSupa(wine, 1, '');
+  bumpPopularity(wine); // ordinamento smart: conteggio condiviso (non blocca la vendita)
 }
 
 // ===================== TRACKER MODE =====================
@@ -1094,6 +1183,42 @@ function initTrackerMode() {
   document.getElementById('trackerLabel').textContent = trackerMode ? 'On' : 'Off';
 }
 
+// ===================== VIEW MODE (Computer / iPad) =====================
+function setViewMode(mode) {
+  viewMode = (mode === 'gallery') ? 'gallery' : 'list';
+  localStorage.setItem('viewMode', viewMode);
+  syncViewModeUI();
+  render();
+}
+
+function toggleViewMode() {
+  setViewMode(viewMode === 'gallery' ? 'list' : 'gallery');
+}
+
+function syncViewModeUI() {
+  const icon = document.getElementById('viewModeIcon');
+  const btn = document.getElementById('viewModeBtn');
+  // mostra l'icona della modalità ATTIVA
+  if (icon) icon.textContent = (viewMode === 'gallery') ? '📱' : '🖥️';
+  if (btn) btn.title = (viewMode === 'gallery')
+    ? 'Modalità iPad attiva — tocca per passare a Computer'
+    : 'Modalità Computer attiva — tocca per passare a iPad';
+}
+
+function initViewMode() {
+  const saved = localStorage.getItem('viewMode');
+  if (saved === 'gallery' || saved === 'list') {
+    viewMode = saved;
+  } else {
+    // primo avvio: se è un dispositivo touch (iPad/telefono) parti in galleria.
+    // maxTouchPoints è il segnale più affidabile; 'coarse' pointer conferma il tocco.
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const isTouch = (navigator.maxTouchPoints > 0) || coarse;
+    viewMode = isTouch ? 'gallery' : 'list';
+  }
+  syncViewModeUI();
+}
+
 // ===================== WINE INVENTORY =====================
 async function loadInventory() {
   try {
@@ -1109,6 +1234,58 @@ async function loadInventory() {
 
 function getInv(wine) {
   return inventory[wine.p + '|||' + wine.n] || null;
+}
+
+// ===================== POPOLARITÀ (ordinamento smart, condiviso su Supabase) =====================
+const POP_KEY = w => w.p + '|||' + w.n;
+
+async function loadPopularity() {
+  try {
+    const data = await sbFetch('wine_popularity?select=*');
+    popularity = {};
+    for (const row of (data || [])) {
+      popularity[row.producer + '|||' + row.name] = { clicks: row.clicks || 0, last_click: row.last_click || null };
+    }
+    popularityAvailable = true;
+  } catch(e) {
+    // tabella assente o non raggiungibile: l'ordinamento smart si disattiva silenziosamente
+    popularityAvailable = false;
+    console.warn('wine_popularity non disponibile, ordinamento smart disattivato:', e.message);
+  }
+}
+
+// Incrementa il contatore quando un vino viene aggiunto/venduto. Aggiorna subito la
+// cache locale (per reattività) e poi prova a persistere su Supabase via upsert.
+async function bumpPopularity(wine) {
+  const key = POP_KEY(wine);
+  const now = new Date().toISOString();
+  const cur = popularity[key] || { clicks: 0, last_click: null };
+  cur.clicks += 1; cur.last_click = now;
+  popularity[key] = cur;
+  if (!popularityAvailable) return;
+  try {
+    // upsert: se la riga esiste viene aggiornata (on_conflict su producer,name)
+    await sbFetch('wine_popularity?on_conflict=producer,name', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ producer: wine.p, name: wine.n, clicks: cur.clicks, last_click: now })
+    });
+  } catch(e) {
+    console.warn('bumpPopularity fallito:', e.message);
+  }
+}
+
+// Punteggio smart = frequenza + bonus di recenza con decadimento (mezza vita ~7 giorni).
+// Così i vini cliccati spesso restano in alto, ma quelli cliccati di recente risalgono.
+function popularityScore(wine) {
+  const p = popularity[POP_KEY(wine)];
+  if (!p || !p.clicks) return 0;
+  let recency = 0;
+  if (p.last_click) {
+    const days = (Date.now() - new Date(p.last_click).getTime()) / 86400000;
+    recency = Math.pow(0.5, days / 7); // 1 oggi → 0.5 dopo 7 giorni → ~0.25 dopo 14
+  }
+  return p.clicks + recency * 3;
 }
 
 function openInvModal(producer, name) {
@@ -1268,19 +1445,73 @@ function render(){
   if(q){ countBar.innerHTML=`<span>${primary.length}</span> risultat${primary.length===1?'o':'i'} in <em>${tabLabel(cat)}</em>${maybe.length?` + <span>${maybe.length}</span> in altre sezioni`:''}`; }
   else { countBar.innerHTML=`<span>${primary.length}</span> vin${primary.length===1?'o':'i'} in <em>${tabLabel(cat)}</em>`; }
   const container = document.getElementById('results');
+  const gallery = (viewMode === 'gallery');
+  container.classList.toggle('results-gallery', gallery);
   if(primary.length===0&&maybe.length===0){ container.innerHTML=`<div class="empty">Nessun vino trovato per "<em>${q}</em>"</div>`; return; }
+  const renderItem = gallery ? wineCard : wineRow;
   let html='';
   if(!q){
-    const groups=groupByRegion(primary);
-    for(const [region,wines] of groups){ html+=`<div class="section-head"><span class="section-title">${escHtml(region)}</span></div>`; for(const w of wines) html+=wineRow(w,''); }
+    // In "Tutti": mostra in cima i vini più richiesti (più cliccati / di recente)
+    let rest = primary;
+    if (cat === 'all') {
+      const popular = primary
+        .map(w => ({ w, s: popularityScore(w) }))
+        .filter(x => x.s > 0)
+        .sort((a,b) => b.s - a.s)
+        .slice(0, 12)
+        .map(x => x.w);
+      if (popular.length) {
+        const popSet = new Set(popular.map(w => w.p + '|||' + w.n));
+        rest = primary.filter(w => !popSet.has(w.p + '|||' + w.n));
+        html += `<div class="section-head pop-head"><span class="section-title">⭐ Più richiesti</span></div>`;
+        for (const w of popular) html += renderItem(w, '');
+      }
+    }
+    const groups=groupByRegion(rest);
+    for(const [region,wines] of groups){ html+=`<div class="section-head"><span class="section-title">${escHtml(region)}</span></div>`; for(const w of wines) html+=renderItem(w,''); }
   } else {
-    for(const w of primary) html+=wineRow(w,q);
-    if(maybe.length){ html+=`<div class="maybe-head"><span class="maybe-label">Forse cercavi anche...</span><span class="maybe-badge">altre sezioni</span></div>`; for(const w of maybe) html+=wineRow(w,q,true); }
+    for(const w of primary) html+=renderItem(w,q);
+    if(maybe.length){ html+=`<div class="maybe-head"><span class="maybe-label">Forse cercavi anche...</span><span class="maybe-badge">altre sezioni</span></div>`; for(const w of maybe) html+=renderItem(w,q,true); }
   }
   container.innerHTML=html;
 }
 
 function groupByRegion(wines){ const map=new Map(); for(const w of wines){ if(!map.has(w.region))map.set(w.region,[]); map.get(w.region).push(w); } return map; }
+
+// ===================== HELPER CELLA (condivisi lista + card) =====================
+// Tag visibili: escludo "375ml" perché il formato è già mostrato dal badge .wine-format
+function visibleTags(w){
+  return w.tags.filter(t => !/^375\s*ml$/i.test(t.trim()));
+}
+function tagsHtml(w){
+  return visibleTags(w).slice(0,3).map(t=>`<span class="wine-tag">${escHtml(t)}</span>`).join('');
+}
+// Quantità nette disponibili (frigo/magazzino) togliendo quanto già in lista vendita
+function netStock(w, inv){
+  const inLista = magazzino.filter(m => m.producer === w.p && m.name === w.n).reduce((s,m)=>s+(m.qty||0),0);
+  return {
+    fr: Math.max(0,(inv.qty_frigo||0)-inLista),
+    mg: Math.max(0,(inv.qty_magazzino||0)-inLista)
+  };
+}
+// soglie scorte: 0 esaurito · <=1 critico · <=2 basso
+function stockLevel(n){ return n===0 ? 'empty' : n<=1 ? 'crit' : n<=2 ? 'warn' : ''; }
+function invBadges(w, inv){
+  const {fr,mg} = netStock(w, inv);
+  const loc = (inv.scaffale||inv.piano) ? `${inv.scaffale||'?'}·${inv.piano||'?'}` : null;
+  const frLvl = stockLevel(fr), mgLvl = stockLevel(mg);
+  return `<div class="wine-inv-badges">${loc?`<span class="inv-badge scaffale">📍${escHtml(loc)}</span>`:''}` +
+    `<span class="inv-badge frigo ${frLvl}">❄️ ${fr}</span>` +
+    `<span class="inv-badge mag ${mgLvl}">📦 ${mg}</span></div>`;
+}
+// Avviso testuale scorte frigo basse/critiche/esaurite (solo tracker)
+function lowStockAlert(w, inv){
+  const {fr} = netStock(w, inv);
+  if (fr === 0) return `<div class="stock-alert out">⚠️ Frigo esaurito</div>`;
+  if (fr <= 1) return `<div class="stock-alert crit">⚠️ Scorte critiche · ${fr} in frigo</div>`;
+  if (fr <= 2) return `<div class="stock-alert low">Scorte basse · ${fr} in frigo</div>`;
+  return '';
+}
 
 function wineRow(w, q, isMaybe=false){
   const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
@@ -1288,19 +1519,9 @@ function wineRow(w, q, isMaybe=false){
   const inv = trackerMode ? getInv(w) : null;
   const displayPrice = (inv && inv.prezzo_vendita != null) ? inv.prezzo_vendita : w.price;
   const price = displayPrice != null ? displayPrice : '—';
-  const tags=w.tags.slice(0,3).map(t=>`<span class="wine-tag">${escHtml(t)}</span>`).join('');
-  let invBadgesHtml = '';
-  if (trackerMode && inv) {
-    const inLista = magazzino.filter(m => m.producer === w.p && m.name === w.n).reduce((s,m)=>s+(m.qty||0),0);
-    const fr = Math.max(0,(inv.qty_frigo||0)-inLista);
-    const mg = Math.max(0,(inv.qty_magazzino||0)-inLista);
-    const loc = (inv.scaffale||inv.piano) ? `${inv.scaffale||'?'}·${inv.piano||'?'}` : null;
-    const frClass = fr===0?'empty':fr<=2?'warn':'';
-    const mgClass = mg===0?'empty':mg<=2?'warn':'';
-    invBadgesHtml = `<div class="wine-inv-badges">${loc?`<span class="inv-badge scaffale">📍${escHtml(loc)}</span>`:''}` +
-      `<span class="inv-badge frigo ${frClass}">❄️ ${fr}</span>` +
-      `<span class="inv-badge mag ${mgClass}">📦 ${mg}</span></div>`;
-  }
+  const tags=tagsHtml(w);
+  const invBadgesHtml = (trackerMode && inv) ? invBadges(w, inv) : '';
+  const alertHtml = (trackerMode && inv) ? lowStockAlert(w, inv) : '';
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
@@ -1308,17 +1529,57 @@ function wineRow(w, q, isMaybe=false){
   const menuBtn = trackerMode
     ? `<button class="wine-menu-btn" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
     : '';
-  return `<div class="wine-row${maybeClass}" data-add-idx="${idx}">
+  return `<div class="wine-row cat-${w.cat}${maybeClass}" data-add-idx="${idx}">
     <div class="wine-left">
       <div class="wine-producer">${producer}</div>
       <div class="wine-name">${name}</div>
       <div class="wine-tags">${tags}${fmt}${maybeCat}</div>
-      ${invBadgesHtml}
+      ${invBadgesHtml}${alertHtml}
     </div>
     <div class="wine-right">
       <div class="wine-price" style="${w.price==null?'font-size:14px;color:var(--text-faint)':''}${isMaybe?';font-size:16px;':''}">${price}</div>
       ${menuBtn}
       <button class="wine-add-btn" title="Aggiungi">+</button>
+    </div>
+  </div>`;
+}
+
+// ===================== WINE CARD (gallery / touch mode) =====================
+// In questa modalità la cella NON è cliccabile per vendere: l'azione di vendita
+// avviene SOLO tramite il pulsante "Aggiungi". Così lo scorrimento è sicuro.
+function wineCard(w, q, isMaybe=false){
+  const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
+  const name=q?highlight(escHtml(w.n),q):escHtml(w.n);
+  const inv = trackerMode ? getInv(w) : null;
+  const displayPrice = (inv && inv.prezzo_vendita != null) ? inv.prezzo_vendita : w.price;
+  const hasPrice = displayPrice != null;
+  const price = hasPrice ? displayPrice : '—';
+  const tags=tagsHtml(w);
+  const invBadgesHtml = (trackerMode && inv) ? invBadges(w, inv) : '';
+  const alertHtml = (trackerMode && inv) ? lowStockAlert(w, inv) : '';
+  const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
+  const maybeClass=isMaybe?' maybe':'';
+  const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
+  const idx=WINES.indexOf(w);
+  const menuBtn = trackerMode
+    ? `<button class="wine-card-menu" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
+    : '';
+  const priceStyle = !hasPrice ? 'font-size:16px;color:var(--text-faint);' : '';
+  // data-card-idx (NON data-add-idx): il clic sulla card non vende nulla
+  return `<div class="wine-card cat-${w.cat}${maybeClass}" data-card-idx="${idx}">
+    <div class="wine-card-top">
+      <div class="wine-card-titles">
+        <div class="wine-card-producer">${producer}</div>
+        <div class="wine-card-name">${name}</div>
+      </div>
+      <div class="wine-card-price" style="${priceStyle}">${price}</div>
+    </div>
+    <div class="wine-card-tags">${tags}${fmt}${maybeCat}</div>
+    ${invBadgesHtml}${alertHtml}
+    <div class="wine-card-spacer"></div>
+    <div class="wine-card-bottom">
+      <button class="wine-card-add" data-add-idx="${idx}" title="Aggiungi al magazzino"><span class="add-plus">+</span></button>
+      ${menuBtn}
     </div>
   </div>`;
 }
@@ -1338,8 +1599,8 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeInvModal();
 
 // Event delegation for dynamic buttons
 document.addEventListener('click', function(e) {
-  // ⋯ menu button — must be checked FIRST, before wine-row
-  const menuBtn = e.target.closest('.wine-menu-btn');
+  // ⋯ menu button (lista o card) — controllato PER PRIMO
+  const menuBtn = e.target.closest('.wine-menu-btn, .wine-card-menu');
   if (menuBtn) {
     e.preventDefault();
     e.stopImmediatePropagation();
@@ -1347,18 +1608,23 @@ document.addEventListener('click', function(e) {
     if (!isNaN(idx) && WINES[idx]) openInvModal(WINES[idx].p, WINES[idx].n);
     return;
   }
-  // + add button
-  const addBtn = e.target.closest('.wine-add-btn');
+  // Pulsante "+ Aggiungi" (lista: .wine-add-btn, card: .wine-card-add)
+  const addBtn = e.target.closest('.wine-add-btn, .wine-card-add');
   if (addBtn) {
-    const row = addBtn.closest('[data-add-idx]');
-    if (row) {
-      const idx = parseInt(row.dataset.addIdx);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    // il bottone card porta direttamente data-add-idx; la riga lista lo ha sul contenitore
+    const holder = addBtn.dataset.addIdx != null ? addBtn : addBtn.closest('[data-add-idx]');
+    if (holder) {
+      const idx = parseInt(holder.dataset.addIdx);
       if (!isNaN(idx)) addDirectly(idx);
     }
     return;
   }
-  // wine-row click (not on a button)
-  const wineRow = e.target.closest('[data-add-idx]');
+  // Clic generico sulla RIGA (solo modalità lista/computer): vende il vino.
+  // Le card (data-card-idx) NON sono incluse: in modalità touch il clic sulla
+  // cella non deve mai vendere, solo il pulsante "Aggiungi".
+  const wineRow = e.target.closest('.wine-row[data-add-idx]');
   if (wineRow && !e.target.closest('button')) {
     const idx = parseInt(wineRow.dataset.addIdx);
     if (!isNaN(idx)) addDirectly(idx);
