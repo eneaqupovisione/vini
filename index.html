@@ -98,6 +98,10 @@
   .wine-price::after { content: '€'; font-size: 12px; margin-left: 1px; color: var(--accent-mid); }
   .wine-add-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text-muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; line-height: 1; font-family: Arial, sans-serif; }
   .wine-add-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .wine-info-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--cat-strong, var(--accent)); color: #fff; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-weight: 700; font-style: italic; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
+  .wine-info-btn:hover { filter: brightness(1.1); }
+  .wine-edit-btn { padding: 7px 14px; border-radius: 8px; border: none; background: var(--cat-strong, var(--accent)); color: #fff; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
+  .wine-edit-btn:hover { filter: brightness(1.1); }
   .hl { background: #fde68a; border-radius: 2px; padding: 0 1px; }
   .maybe-head { display: flex; align-items: center; gap: 8px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-strong); }
   .maybe-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; }
@@ -112,40 +116,72 @@
   /* INVENTORY OVERLAY — centered dialog */
   .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .inv-overlay.open { display: flex; }
-  .inv-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); overflow: hidden; animation: popIn 0.2s cubic-bezier(0.34,1.2,0.64,1); }
+  .inv-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); overflow: hidden; animation: popIn 0.2s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; }
   @keyframes popIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .inv-modal-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .inv-modal-titles { flex: 1; min-width: 0; }
-  .inv-modal-producer { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 3px; }
-  .inv-modal-name { font-size: 16px; font-weight: bold; color: var(--text); line-height: 1.3; }
-  .inv-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-faint); padding: 2px 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; }
-  .inv-modal-close:hover { color: var(--text); background: var(--bg); }
-  .inv-modal-body { padding: 20px 22px 22px; }
-  .inv-section-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; margin-bottom: 8px; margin-top: 18px; }
+  /* header colorato per categoria (stile nuovo, come la scheda dettaglio) */
+  .inv-modal-header { padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--cat-strong, var(--accent)); }
+  .inv-modal-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
+  .inv-titles { margin-bottom: 6px; }
+  .inv-modal-producer { font-size: 22px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.15; }
+  .inv-modal-name { font-size: 15px; color: var(--text); opacity: 0.8; margin-top: 4px; line-height: 1.3; font-family: Arial, sans-serif; }
+  .inv-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 6px; flex-shrink: 0; line-height: 1; }
+  .inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  .inv-modal-body { padding: 18px 22px 22px; }
+  .inv-section-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cat-strong, var(--accent)); font-family: Arial, sans-serif; margin-bottom: 9px; margin-top: 18px; }
   .inv-section-label:first-child { margin-top: 0; }
   /* Chip selectors */
   .inv-chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .inv-chip { padding: 6px 14px; border: 1.5px solid var(--border-strong); border-radius: 20px; background: var(--surface); cursor: pointer; font-size: 13px; font-family: Arial, sans-serif; color: var(--text-muted); transition: all 0.12s; font-weight: bold; }
-  .inv-chip:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
-  .inv-chip.sel { border-color: var(--accent); background: var(--accent); color: #fff; }
-  .inv-chip.sel-blue { border-color: var(--blue); background: var(--blue); color: #fff; }
+  .inv-chip { padding: 7px 15px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 20px; background: var(--surface); cursor: pointer; font-size: 14px; font-family: Arial, sans-serif; color: var(--text-muted); transition: all 0.12s; font-weight: bold; }
+  .inv-chip:hover { border-color: var(--cat-strong, var(--accent-mid)); color: var(--cat-strong, var(--accent)); background: var(--cat-tag-bg, var(--accent-light)); }
+  .inv-chip.sel { border-color: var(--cat-strong, var(--accent)); background: var(--cat-strong, var(--accent)); color: #fff; }
+  .inv-chip.sel-blue { border-color: var(--cat-strong, var(--blue)); background: var(--cat-strong, var(--blue)); color: #fff; }
   .inv-chip.sel-green { border-color: var(--green); background: var(--green); color: #fff; }
   /* Qty stepper */
-  .inv-stepper-row { display: flex; align-items: center; gap: 10px; }
-  .inv-stepper-label { font-size: 13px; font-family: Arial, sans-serif; color: var(--text-muted); min-width: 90px; }
-  .inv-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; background: var(--surface); }
-  .inv-stepper button { width: 34px; height: 34px; border: none; background: none; cursor: pointer; font-size: 18px; color: var(--text-muted); transition: background 0.1s; font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; }
-  .inv-stepper button:hover { background: var(--bg); color: var(--accent); }
-  .inv-stepper-val { font-size: 15px; font-weight: bold; min-width: 32px; text-align: center; font-family: Arial, sans-serif; color: var(--text); }
-  /* Price input */
-  .inv-price-wrap { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border-strong); border-radius: 8px; padding: 0 12px; background: var(--bg); max-width: 160px; }
-  .inv-price-wrap:focus-within { border-color: var(--accent-mid); background: #fff; }
-  .inv-price-sym { font-size: 15px; color: var(--text-faint); font-family: Arial, sans-serif; }
-  .inv-price-input { flex: 1; border: none; background: none; font-size: 15px; font-family: inherit; color: var(--text); outline: none; padding: 8px 0; width: 80px; }
-  .inv-price-hint { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; }
+  .inv-stepper-row { display: flex; align-items: center; gap: 12px; }
+  .inv-stepper-label { font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; color: var(--text); min-width: 110px; }
+  .inv-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .inv-stepper button { width: 40px; height: 40px; border: none; background: none; cursor: pointer; font-size: 22px; color: var(--cat-strong, var(--text-muted)); transition: background 0.1s; font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .inv-stepper button:hover { background: var(--cat-tag-bg, var(--bg)); }
+  .inv-stepper-val { font-size: 18px; font-weight: 800; min-width: 40px; text-align: center; font-family: Arial, sans-serif; color: var(--text); }
+  /* Price + Costo grid */
+  .inv-money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .inv-select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 9px; background: var(--bg); font-size: 15px; font-family: Arial, sans-serif; color: var(--text); outline: none; cursor: pointer; }
+  .inv-select:focus { border-color: var(--cat-strong, var(--accent-mid)); background: #fff; }
+  /* Rubrica fornitori */
+  .sup-form { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+  .sup-form-title { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-family: Arial, sans-serif; margin-bottom: 10px; }
+  .sup-input { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border-strong); border-radius: 9px; background: #fff; font-size: 15px; font-family: Arial, sans-serif; color: var(--text); outline: none; margin-bottom: 9px; box-sizing: border-box; }
+  .sup-input:focus { border-color: var(--accent-mid); }
+  .sup-save-btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; cursor: pointer; transition: filter 0.15s; }
+  .sup-save-btn:hover { filter: brightness(1.08); }
+  .sup-list { display: flex; flex-direction: column; gap: 10px; }
+  .sup-empty { text-align: center; color: var(--text-faint); font-family: Arial, sans-serif; font-size: 14px; padding: 24px 12px; line-height: 1.6; }
+  .sup-row { border: 1px solid var(--border-strong); border-radius: 12px; overflow: hidden; background: #fff; }
+  .sup-row.open { border-color: var(--accent-mid); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .sup-row-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 14px; cursor: pointer; }
+  .sup-row-main { min-width: 0; flex: 1; }
+  .sup-name { font-size: 16px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; }
+  .sup-tel { display: inline-block; margin-top: 3px; font-size: 14px; color: var(--accent); text-decoration: none; font-family: Arial, sans-serif; }
+  .sup-tel:hover { text-decoration: underline; }
+  .sup-tel-empty { display: inline-block; margin-top: 3px; font-size: 13px; color: var(--text-faint); font-style: italic; font-family: Arial, sans-serif; }
+  .sup-row-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .sup-mini-btn { width: 32px; height: 32px; border: 1.5px solid var(--border-strong); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+  .sup-mini-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); }
+  .sup-mini-btn.del:hover { background: #fde2e2; border-color: #f5b5b5; }
+  .sup-chevron { font-size: 13px; color: var(--text-faint); width: 18px; text-align: center; }
+  .sup-wines { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--border); margin-top: 2px; padding-top: 12px; }
+  .sup-wine { font-size: 14px; font-family: Arial, sans-serif; color: var(--text); }
+  .sup-wine-prod { font-weight: 700; }
+  .sup-wine-name { color: var(--text-muted); }
+  .sup-wine-empty { font-size: 13px; color: var(--text-faint); font-style: italic; font-family: Arial, sans-serif; }
+  .inv-price-wrap { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 9px; padding: 0 12px; background: var(--bg); }
+  .inv-price-wrap:focus-within { border-color: var(--cat-strong, var(--accent-mid)); background: #fff; }
+  .inv-price-sym { font-size: 16px; color: var(--cat-strong, var(--text-faint)); font-family: Arial, sans-serif; font-weight: 700; }
+  .inv-price-input { flex: 1; border: none; background: none; font-size: 17px; font-weight: 700; font-family: inherit; color: var(--text); outline: none; padding: 9px 0; width: 60px; min-width: 0; }
+  .inv-price-hint { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; display: block; margin-top: 5px; }
   /* Save btn */
-  .inv-save-btn { width: 100%; padding: 13px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-family: inherit; cursor: pointer; font-weight: bold; margin-top: 22px; transition: background 0.15s; }
-  .inv-save-btn:hover { background: #a0442f; }
+  .inv-save-btn { width: 100%; padding: 15px; background: var(--cat-strong, var(--accent)); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-family: Arial, sans-serif; cursor: pointer; font-weight: 700; margin-top: 24px; transition: filter 0.15s; }
+  .inv-save-btn:hover { filter: brightness(1.08); }
 
   /* TRACKER MODE TOGGLE */
   .toggle-wrap { cursor: pointer; }
@@ -274,55 +310,70 @@
   .results-gallery .maybe-head { grid-column: 1 / -1; }
 
   .wine-card {
-    position: relative; background: var(--surface);
+    position: relative; background: var(--cat-bg, var(--surface));
     border: 1px solid var(--cat-border, var(--border));
-    border-left: 5px solid var(--cat-strong, var(--border-strong));
-    border-radius: 12px; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 7px;
+    border-radius: 14px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 8px;
     box-shadow: 0 1px 5px rgba(0,0,0,0.05); transition: box-shadow 0.15s, transform 0.1s;
-    min-height: 132px;
+    min-height: 130px;
   }
-  .wine-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.10); }
+  .wine-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.12); }
   .wine-card.maybe { opacity: 0.78; }
-  .wine-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .wine-card-titles { min-width: 0; flex: 1; }
-  /* nome cantina ben leggibile, nome vino chiaro */
-  .wine-card-producer { font-size: 16px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.15; }
-  .wine-card-name { font-size: 13.5px; color: var(--text); opacity: 0.72; margin-top: 3px; line-height: 1.3; font-family: Arial, sans-serif; }
-  .wine-card-price { font-size: 21px; font-weight: 800; color: var(--cat-strong, var(--accent)); white-space: nowrap; font-family: Arial, sans-serif; line-height: 1; flex-shrink: 0; }
-  .wine-card-price::after { content: '€'; font-size: 12px; margin-left: 1px; opacity: 0.7; }
-  /* tag più visibili in galleria */
+  .wine-card-titles { min-width: 0; }
+  /* cella minimale: nome cantina ben grande, nome etichetta leggibile */
+  .wine-card-producer { font-size: 21px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.12; }
+  .wine-card-name { font-size: 17px; color: var(--text); opacity: 0.82; margin-top: 5px; line-height: 1.3; font-family: Arial, sans-serif; }
   .wine-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-  .wine-card-tags .wine-tag { font-size: 11px; padding: 2px 8px; font-weight: 600; background: var(--cat-tag-bg, var(--tag-bg)); color: var(--cat-strong, var(--text-muted)); }
-  .wine-card-tags .wine-format { font-size: 11px; padding: 2px 8px; font-weight: 700; background: var(--cat-strong, var(--accent)); color: #fff; }
+  .wine-card-tags .wine-tag { font-size: 12px; padding: 2px 9px; font-weight: 600; background: #fff; color: var(--cat-strong, var(--text-muted)); border: 1px solid var(--cat-border, var(--border)); }
+  .wine-card-tags .wine-format { font-size: 12px; padding: 2px 9px; font-weight: 700; background: var(--cat-strong, var(--accent)); color: #fff; }
   .wine-card-spacer { flex: 1; }
-  .wine-card-bottom { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 2px; }
+  .wine-card-bottom { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
   /* pulsante aggiungi compatto: rotondo col + */
   .wine-card-add {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--cat-strong, var(--accent)); color: #fff; border: none;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--cat-strong, var(--accent)); color: #fff; border: none;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: transform 0.1s, filter 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18); margin-left: auto;
   }
   .wine-card-add:hover { filter: brightness(1.08); }
   .wine-card-add:active { transform: scale(0.92); }
-  .wine-card-add .add-plus { font-size: 24px; line-height: 1; font-family: Arial, sans-serif; font-weight: 400; }
+  .wine-card-add .add-plus { font-size: 26px; line-height: 1; font-family: Arial, sans-serif; font-weight: 400; }
   .wine-card-menu {
-    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border-strong);
-    background: var(--surface); color: var(--text-muted); font-size: 17px; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border-strong);
+    background: #fff; color: var(--text-muted); font-size: 18px; cursor: pointer;
     display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px;
   }
   .wine-card-menu:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .wine-card-info {
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: var(--cat-strong, var(--accent)); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18); font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px; font-weight: 700; font-style: italic; line-height: 1; -webkit-tap-highlight-color: transparent;
+  }
+  .wine-card-info:hover { filter: brightness(1.08); }
+  .wine-card-info:active { transform: scale(0.92); }
+  /* Manager: pulsante "✏️ Scorte" a larghezza piena, colore categoria */
+  .wine-card-edit {
+    width: 100%; padding: 11px; border: none; border-radius: 11px;
+    background: var(--cat-strong, var(--accent)); color: #fff; cursor: pointer;
+    font-size: 15px; font-weight: 700; font-family: Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .wine-card-edit:hover { filter: brightness(1.08); }
+  .wine-card-edit:active { transform: scale(0.98); }
   .wine-card .wine-inv-badges { margin-top: 0; }
 
   /* ===================== COLORI PER CATEGORIA ===================== */
-  .cat-bollicine  { --cat-strong:#b08900; --cat-border:#ecdfae; --cat-tag-bg:#fbf3d6; }
-  .cat-champagne  { --cat-strong:#a6791f; --cat-border:#e8dcc0; --cat-tag-bg:#f7efdd; }
-  .cat-bianco     { --cat-strong:#2d8a4f; --cat-border:#c4e6d2; --cat-tag-bg:#e6f5ec; }
-  .cat-rosso      { --cat-strong:#b23a3a; --cat-border:#ecc9c9; --cat-tag-bg:#fbe7e7; }
-  .cat-rose       { --cat-strong:#c45b86; --cat-border:#f0d2df; --cat-tag-bg:#fceaf1; }
-  .cat-stranieri  { --cat-strong:#5b54c4; --cat-border:#d4d1f0; --cat-tag-bg:#ecebfb; }
-  .cat-piccoli    { --cat-strong:#1e6fb0; --cat-border:#c2dbef; --cat-tag-bg:#e6f1fa; }
+  .cat-bollicine  { --cat-strong:#a07d00; --cat-border:#e8d795; --cat-tag-bg:#fbf3d6; --cat-bg:#fdf8e6; }
+  .cat-champagne  { --cat-strong:#9a6f1c; --cat-border:#e0cfa6; --cat-tag-bg:#f7efdd; --cat-bg:#faf4e4; }
+  .cat-bianco     { --cat-strong:#2a8049; --cat-border:#b6e0c6; --cat-tag-bg:#e6f5ec; --cat-bg:#edf8f1; }
+  .cat-rosso      { --cat-strong:#a83636; --cat-border:#e6bcbc; --cat-tag-bg:#fbe7e7; --cat-bg:#fcefef; }
+  .cat-rose       { --cat-strong:#bd5680; --cat-border:#eec6d6; --cat-tag-bg:#fceaf1; --cat-bg:#fdf0f5; }
+  .cat-stranieri  { --cat-strong:#544dbd; --cat-border:#cbc8ec; --cat-tag-bg:#ecebfb; --cat-bg:#f3f2fc; }
+  .cat-piccoli    { --cat-strong:#1b68a8; --cat-border:#b3d3eb; --cat-tag-bg:#e6f1fa; --cat-bg:#eef6fc; }
   /* in modalità lista coloriamo solo il bordo sinistro, in modo discreto */
   .wine-row { border-left: 4px solid transparent; padding-left: 10px; }
   .wine-row.cat-bollicine  { border-left-color:#e3c54d; }
@@ -332,6 +383,107 @@
   .wine-row.cat-rose       { border-left-color:#e29ab9; }
   .wine-row.cat-stranieri  { border-left-color:#928bdf; }
   .wine-row.cat-piccoli    { border-left-color:#62a8de; }
+
+  /* ===================== MANAGER MODE (3 chip: magazzino | matita | frigo) ===================== */
+  .wine-card.manager { min-height: 150px; }
+  /* layout trio: i due stepper ai lati, matita al centro */
+  .mgr-trio { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .wine-card.manager .mgr-trio { width: 100%; }
+  .mgr-stepper {
+    display: flex; align-items: center; gap: 2px; background: #fff;
+    border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 10px; padding: 3px 4px;
+  }
+  .mgr-emoji { font-size: 14px; line-height: 1; padding: 0 2px; }
+  .mgr-btn {
+    width: 26px; height: 26px; border-radius: 7px; border: none; cursor: pointer;
+    font-size: 17px; font-weight: 700; font-family: Arial, sans-serif; line-height: 1;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.12s, transform 0.08s;
+    -webkit-tap-highlight-color: transparent; color: #fff;
+  }
+  .mgr-btn:active { transform: scale(0.9); }
+  .mgr-minus { background: #b0683a; }
+  .mgr-plus  { background: var(--cat-strong, var(--accent)); }
+  .mgr-btn:hover { filter: brightness(1.08); }
+  .mgr-val { font-size: 16px; font-weight: 800; font-family: Arial, sans-serif; color: var(--text); min-width: 20px; text-align: center; }
+  /* matita centrale */
+  .wine-card-edit-mid, .wine-edit-btn {
+    width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; border: none;
+    background: var(--cat-strong, var(--accent)); color: #fff; font-size: 17px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); -webkit-tap-highlight-color: transparent;
+  }
+  .wine-card-edit-mid:hover, .wine-edit-btn:hover { filter: brightness(1.08); }
+  .wine-card-edit-mid:active { transform: scale(0.92); }
+  /* lista manager: chip un filo più grandi */
+  .wine-row .mgr-btn { width: 30px; height: 30px; }
+  .wine-row .mgr-val { font-size: 17px; }
+
+  /* ===================== TRACKER: cella esaurita (frigo = 0) ===================== */
+  .wine-card.sold-out { opacity: 0.5; pointer-events: none; filter: grayscale(0.3); }
+  .wine-card.sold-out .wine-card-info, .wine-card.sold-out .wine-card-menu { pointer-events: auto; }
+  .sold-out-banner { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; background: #fde2e2; border: 1px solid #f5b5b5; border-radius: 6px; padding: 4px 9px; width: fit-content; }
+  .wine-row.sold-out { opacity: 0.55; pointer-events: none; }
+  .wine-row.sold-out .wine-info-btn, .wine-row.sold-out .wine-menu-btn { pointer-events: auto; }
+  .row-soldout { font-size: 12px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; }
+
+  /* ===================== TRACKER: segnale scorte magazzino critiche ===================== */
+  .wine-card.low-stock { border-color: var(--cat-border); }
+  .stock-flag { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; font-family: Arial, sans-serif; padding: 3px 8px; border-radius: 20px; }
+  .stock-flag.warn { background: #fff3cd; color: #856404; border: 1px solid #ffd766; }
+  .stock-flag.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
+  /* lista: pallino laterale */
+  .wine-row .stock-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .wine-row .stock-dot.warn { background: #e0a800; }
+  .wine-row .stock-dot.crit { background: #d6342a; }
+
+  /* ===================== SCHEDA VINO (dettaglio) ===================== */
+  .detail-modal { max-width: 460px; width: 100%; }
+  /* header = nome categoria, colorato */
+  .detail-header {
+    padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--cat-strong, var(--accent));
+  }
+  .detail-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
+  .detail-header .inv-modal-close { color: rgba(255,255,255,0.85); }
+  .detail-header .inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  .detail-body { padding: 22px 24px 26px; }
+  .detail-titles { margin-bottom: 4px; }
+  .detail-producer { font-size: 26px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.12; }
+  .detail-name-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 7px; }
+  .detail-name { font-size: 18px; color: var(--text); opacity: 0.82; line-height: 1.3; font-family: Arial, sans-serif; }
+  .detail-format { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; background: var(--cat-strong, var(--accent)); color: #fff; padding: 3px 11px; border-radius: 20px; letter-spacing: 0.03em; }
+  .detail-section { margin-top: 22px; }
+  /* titoli sezione ben visibili */
+  .detail-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cat-strong, var(--accent)); font-family: Arial, sans-serif; margin-bottom: 9px; }
+  .detail-price { font-size: 40px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1; }
+  .detail-price::after { content: '€'; font-size: 20px; margin-left: 3px; color: var(--cat-strong, var(--accent)); }
+  .detail-price.noprice { font-size: 22px; color: var(--text-faint); }
+  .detail-price.noprice::after { content: ''; }
+  .detail-region { font-size: 18px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-supplier { font-size: 17px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-sup-name { font-weight: 700; }
+  .detail-sup-tel { color: var(--cat-strong, var(--accent)); text-decoration: none; font-weight: 600; }
+  .detail-sup-tel:hover { text-decoration: underline; }
+  .detail-cassa { font-size: 17px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail-tags .d-tag { font-size: 15px; font-weight: 600; padding: 6px 14px; border-radius: 7px; font-family: Arial, sans-serif; background: var(--cat-tag-bg, var(--tag-bg)); color: var(--cat-strong, var(--text-muted)); }
+  .detail-stock { display: flex; flex-wrap: wrap; gap: 9px; }
+  .detail-stock .d-stock { font-size: 15px; font-weight: 700; padding: 8px 14px; border-radius: 8px; font-family: Arial, sans-serif; border: 1px solid transparent; }
+  .detail-stock .d-stock.loc   { background: #f0e9d6; color: #9a7a50; border-color: #d9c89e; }
+  .detail-stock .d-stock.frigo { background: var(--blue-light); color: var(--blue); border-color: #b8cff0; }
+  .detail-stock .d-stock.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .detail-stock .d-stock.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+  .detail-stock .d-stock.frigo.empty { background: #f3d6d6; color: #8a1010; border-color: #e09a9a; }
+  .detail-stock .d-stock.mag   { background: var(--green-light); color: var(--green); border-color: #a7d9be; }
+  .detail-stock .d-stock.mag.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .detail-stock .d-stock.mag.empty { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+  .detail-add-btn {
+    width: 100%; padding: 16px; margin-top: 28px; background: var(--cat-strong, var(--accent)); color: #fff;
+    border: none; border-radius: 12px; font-size: 17px; font-weight: 700; font-family: Arial, sans-serif;
+    cursor: pointer; transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
+  }
+  .detail-add-btn:hover { filter: brightness(1.08); }
+  .detail-add-btn:active { transform: scale(0.98); }
 
   /* ===================== ALERT SCORTE (frigo) ===================== */
   .stock-alert { font-size: 11.5px; font-family: Arial, sans-serif; font-weight: 700; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-top: 2px; width: fit-content; }
@@ -366,6 +518,7 @@
     <div class="header-actions">
       <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
       <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
+      <button class="icon-btn" onclick="openRubrica()" title="Rubrica Fornitori">📇</button>
       <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni">⚙️</button>
     </div>
   </div>
@@ -393,40 +546,18 @@
   <div id="results"></div>
 </div>
 
-    <div class="modal-header">
-      <div class="modal-wine-producer" id="modalProducer"></div>
-      <div class="modal-wine-name" id="modalName"></div>
-      <div class="modal-wine-meta">
-        <span class="modal-price" id="modalPrice"></span>
-        <span id="modalTags"></span>
-      </div>
-    </div>
-    <div class="modal-body">
-      <div class="qty-row">
-        <span class="qty-label">Qtà</span>
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <span class="qty-val" id="qtyVal">1</span>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-        </div>
-        <input class="note-input" id="noteInput" placeholder="Nota (opzionale)" />
-      </div>
-      <button class="modal-confirm" id="modalConfirm" onclick="confirmAdd()">📦 Aggiungi al Magazzino</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL INVENTARIO VINO -->
 <div class="inv-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
   <div class="inv-modal" id="invModal">
-    <div class="inv-modal-header">
-      <div class="inv-modal-titles">
-        <div class="inv-modal-producer" id="invProducer"></div>
-        <div class="inv-modal-name" id="invName"></div>
-      </div>
+    <div class="inv-modal-header" id="invModalHeader">
+      <span class="inv-modal-category" id="invCategory"></span>
       <button class="inv-modal-close" onclick="closeInvModal()">✕</button>
     </div>
     <div class="inv-modal-body">
+      <div class="inv-titles">
+        <div class="inv-modal-producer" id="invProducer"></div>
+        <div class="inv-modal-name" id="invName"></div>
+      </div>
 
       <div class="inv-section-label">Posizione — Scaffale</div>
       <div class="inv-chip-row" id="invScaffaleChips">
@@ -448,7 +579,7 @@
         <button class="inv-chip" data-val="5" onclick="selectInvChip('piano','5')">5</button>
       </div>
 
-      <div class="inv-section-label" style="margin-top:18px">Quantità</div>
+      <div class="inv-section-label" style="margin-top:18px">Scorte effettive</div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="inv-stepper-row">
           <span class="inv-stepper-label">❄️ Frigo</span>
@@ -459,7 +590,7 @@
           </div>
         </div>
         <div class="inv-stepper-row">
-          <span class="inv-stepper-label">▦ Magazzino</span>
+          <span class="inv-stepper-label">📦 Magazzino</span>
           <div class="inv-stepper">
             <button onclick="adjustInvQty('mag',-1)">−</button>
             <span class="inv-stepper-val" id="invMagVal">0</span>
@@ -468,13 +599,38 @@
         </div>
       </div>
 
-      <div class="inv-section-label" style="margin-top:18px">Prezzo Vendita</div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div class="inv-price-wrap">
-          <span class="inv-price-sym">€</span>
-          <input class="inv-price-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="—">
+      <div class="inv-money-grid">
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Prezzo Vendita</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">€</span>
+            <input class="inv-price-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="—">
+          </div>
+          <span class="inv-price-hint">vuoto = prezzo di default</span>
         </div>
-        <span class="inv-price-hint">lascia vuoto per usare il prezzo di default</span>
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Costo</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">€</span>
+            <input class="inv-price-input" id="invCosto" type="number" min="0" step="0.5" placeholder="—">
+          </div>
+          <span class="inv-price-hint">costo d'acquisto</span>
+        </div>
+      </div>
+
+      <div class="inv-money-grid">
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Bottiglie per cassa</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">🍾</span>
+            <input class="inv-price-input" id="invBottCassa" type="number" min="1" step="1" placeholder="—">
+          </div>
+        </div>
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Fornitore</div>
+          <select class="inv-select" id="invFornitore"></select>
+          <span class="inv-price-hint"><a href="#" onclick="event.preventDefault();closeInvModal();openRubrica();">gestisci rubrica →</a></span>
+        </div>
       </div>
 
       <button class="inv-save-btn" onclick="saveInvModal()">Salva</button>
@@ -529,7 +685,7 @@
 
       <div class="setting-section">
         <div class="setting-label">Tracker Mode</div>
-        <div class="setting-desc">Attiva per visualizzare e modificare coordinate scaffale, quantità frigo/magazzino e prezzi di vendita per ogni vino.</div>
+        <div class="setting-desc">Modalità di sola lettura per seguire le scorte: le celle restano come al solito, ma i vini con frigo esaurito vengono segnalati (❌) e non sono più vendibili.</div>
         <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
           <div class="toggle-wrap" onclick="toggleTrackerMode()">
             <div class="toggle-track" id="trackerTrack">
@@ -541,10 +697,88 @@
       </div>
 
       <div class="setting-section">
+        <div class="setting-label">Manager Mode</div>
+        <div class="setting-desc">Modalità di gestione: ogni cella mostra il pulsante ✏️ per aprire la scheda con scaffale, piano, scorte effettive (frigo/magazzino), prezzo di vendita e costo. Da usare per inizializzare e correggere i dati.</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
+          <div class="toggle-wrap" onclick="toggleManagerMode()">
+            <div class="toggle-track" id="managerTrack">
+              <div class="toggle-thumb" id="managerThumb"></div>
+            </div>
+          </div>
+          <span id="managerLabel" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-muted)">Off</span>
+        </div>
+      </div>
+
+      <div class="setting-section">
         <div class="setting-label">Stato Connessione</div>
         <div id="connStatus" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-faint)">Verifica in corso...</div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- PANEL RUBRICA FORNITORI -->
+<div class="panel-overlay" id="rubricaPanel" onclick="handlePanelClick(event,'rubricaPanel')">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">📇 Rubrica Fornitori</span>
+      <button class="panel-close" onclick="closePanel('rubricaPanel')">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="sup-form">
+        <div class="sup-form-title" id="supFormTitle">Nuovo fornitore</div>
+        <input type="hidden" id="supEditId" value="">
+        <input class="sup-input" id="supName" placeholder="Nome fornitore" autocomplete="off">
+        <input class="sup-input" id="supTel" placeholder="Numero di telefono" autocomplete="off" inputmode="tel">
+        <button class="sup-save-btn" onclick="saveSupplier(document.getElementById('supName').value, document.getElementById('supTel').value, document.getElementById('supEditId').value)">Salva fornitore</button>
+      </div>
+      <div class="sup-list" id="suppliersList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SCHEDA VINO (dettaglio) -->
+<div class="inv-overlay" id="detailOverlay" onclick="if(event.target===this)closeWineDetail()">
+  <div class="inv-modal detail-modal" id="detailModal">
+    <div class="detail-header" id="detailHeader">
+      <span class="detail-category" id="detailCategory"></span>
+      <button class="inv-modal-close" onclick="closeWineDetail()">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-titles">
+        <div class="detail-producer" id="detailProducer"></div>
+        <div class="detail-name-row">
+          <span class="detail-name" id="detailName"></span>
+          <span class="detail-format" id="detailFormat"></span>
+        </div>
+      </div>
+      <div class="detail-section" id="detailPriceWrap">
+        <div class="detail-label">Prezzo</div>
+        <div class="detail-price" id="detailPrice"></div>
+      </div>
+      <div class="detail-section" id="detailRegionWrap">
+        <div class="detail-label">Regione</div>
+        <div class="detail-region" id="detailRegion"></div>
+      </div>
+      <div class="detail-section" id="detailTagsWrap">
+        <div class="detail-label">Caratteristiche</div>
+        <div class="detail-tags" id="detailTags"></div>
+      </div>
+      <div class="detail-section" id="detailStockWrap" style="display:none">
+        <div class="detail-label">Disponibilità</div>
+        <div class="detail-stock" id="detailStock"></div>
+      </div>
+      <div class="detail-section" id="detailSupplierWrap" style="display:none">
+        <div class="detail-label">Fornitore</div>
+        <div class="detail-supplier" id="detailSupplier"></div>
+      </div>
+      <div class="detail-section" id="detailCassaWrap" style="display:none">
+        <div class="detail-label">Confezione</div>
+        <div class="detail-cassa" id="detailCassa"></div>
+      </div>
+      <button class="detail-add-btn" id="detailAddBtn">+ Aggiungi al magazzino</button>
     </div>
   </div>
 </div>
@@ -775,9 +1009,12 @@ let pdfFileName = null;
 let magazzino = []; // cache locale
 let inventory = {}; // producer+name -> record
 let trackerMode = false;
+let managerMode = false;
 let invModalWine = null;
 let viewMode = 'list'; // 'list' (computer) | 'gallery' (ipad/touch)
 let popularity = {}; // "producer|||name" -> { clicks, last_click }
+let suppliers = []; // rubrica fornitori
+let suppliersAvailable = true;
 let popularityAvailable = true; // diventa false se la tabella non esiste
 
 // ===================== INIT =====================
@@ -785,7 +1022,8 @@ async function init() {
   startLoad();
   initViewMode();
   initTrackerMode();
-  await Promise.all([loadMagazzino(), loadInventory(), loadPopularity(), checkConnection(), loadPdfMeta()]);
+  initManagerMode();
+  await Promise.all([loadMagazzino(), loadInventory(), loadPopularity(), loadSuppliers(), checkConnection(), loadPdfMeta()]);
   endLoad();
   render();
 }
@@ -1171,16 +1409,41 @@ async function addDirectly(idx) {
 // ===================== TRACKER MODE =====================
 function toggleTrackerMode() {
   trackerMode = !trackerMode;
+  if (trackerMode && managerMode) { managerMode = false; localStorage.setItem('managerMode','0'); syncManagerUI(); }
   localStorage.setItem('trackerMode', trackerMode ? '1' : '0');
+  syncTrackerUI();
+  render();
+}
+
+function syncTrackerUI() {
   document.getElementById('trackerTrack').classList.toggle('on', trackerMode);
   document.getElementById('trackerLabel').textContent = trackerMode ? 'On' : 'Off';
-  render();
 }
 
 function initTrackerMode() {
   trackerMode = localStorage.getItem('trackerMode') === '1';
-  document.getElementById('trackerTrack').classList.toggle('on', trackerMode);
-  document.getElementById('trackerLabel').textContent = trackerMode ? 'On' : 'Off';
+  syncTrackerUI();
+}
+
+// ===================== MANAGER MODE (inizializzazione scorte) =====================
+function toggleManagerMode() {
+  managerMode = !managerMode;
+  if (managerMode && trackerMode) { trackerMode = false; localStorage.setItem('trackerMode','0'); syncTrackerUI(); }
+  localStorage.setItem('managerMode', managerMode ? '1' : '0');
+  syncManagerUI();
+  render();
+}
+
+function syncManagerUI() {
+  const t = document.getElementById('managerTrack');
+  const l = document.getElementById('managerLabel');
+  if (t) t.classList.toggle('on', managerMode);
+  if (l) l.textContent = managerMode ? 'On' : 'Off';
+}
+
+function initManagerMode() {
+  managerMode = localStorage.getItem('managerMode') === '1';
+  syncManagerUI();
 }
 
 // ===================== VIEW MODE (Computer / iPad) =====================
@@ -1236,6 +1499,61 @@ function getInv(wine) {
   return inventory[wine.p + '|||' + wine.n] || null;
 }
 
+// ===================== MANAGER MODE — set scorte assolute =====================
+// field: 'frigo' | 'mag'. delta: +1 / -1. Aggiorna la cache locale, ri-renderizza
+// solo la cella interessata (per non perdere lo scroll) e persiste su Supabase.
+let stockSaveTimers = {};
+async function setStock(idx, field, delta) {
+  const w = WINES[idx];
+  if (!w) return;
+  const key = w.p + '|||' + w.n;
+  let inv = inventory[key];
+  if (!inv) { inv = { producer: w.p, name: w.n, qty_frigo: 0, qty_magazzino: 0, scaffale: '', piano: '' }; inventory[key] = inv; }
+  const col = field === 'frigo' ? 'qty_frigo' : 'qty_magazzino';
+  const next = Math.max(0, (inv[col] || 0) + delta);
+  if (next === (inv[col] || 0)) return; // già a 0, niente da fare
+  inv[col] = next;
+  // aggiorna subito i numeri nella cella senza re-render completo
+  updateManagerCell(idx);
+  // persiste su Supabase con un piccolo debounce per non spammare richieste
+  clearTimeout(stockSaveTimers[key]);
+  stockSaveTimers[key] = setTimeout(() => persistStock(w), 450);
+}
+
+async function persistStock(w) {
+  const key = w.p + '|||' + w.n;
+  const inv = inventory[key];
+  if (!inv) return;
+  const row = {
+    producer: w.p, name: w.n,
+    qty_frigo: inv.qty_frigo || 0,
+    qty_magazzino: inv.qty_magazzino || 0,
+    updated_at: new Date().toISOString()
+  };
+  try {
+    if (inv.id) {
+      await sbFetch(`wine_inventory?id=eq.${inv.id}`, { method: 'PATCH', body: JSON.stringify(row) });
+    } else {
+      // mantieni scaffale/piano se già presenti
+      if (inv.scaffale) row.scaffale = inv.scaffale;
+      if (inv.piano) row.piano = inv.piano;
+      const res = await sbFetch('wine_inventory', { method: 'POST', body: JSON.stringify(row) });
+      if (res && res[0]) inventory[key] = { ...inv, ...res[0] };
+    }
+  } catch(e) {
+    showToast('Errore salvataggio scorte', 'error');
+    console.error('persistStock:', e);
+  }
+}
+
+// Aggiorna i contatori frigo/magazzino dentro la cella manager senza re-render
+function updateManagerCell(idx) {
+  const w = WINES[idx];
+  const inv = inventory[w.p + '|||' + w.n] || {};
+  document.querySelectorAll(`[data-mgr-frigo="${idx}"]`).forEach(el => el.textContent = inv.qty_frigo || 0);
+  document.querySelectorAll(`[data-mgr-mag="${idx}"]`).forEach(el => el.textContent = inv.qty_magazzino || 0);
+}
+
 // ===================== POPOLARITÀ (ordinamento smart, condiviso su Supabase) =====================
 const POP_KEY = w => w.p + '|||' + w.n;
 
@@ -1288,13 +1606,157 @@ function popularityScore(wine) {
   return p.clicks + recency * 3;
 }
 
+// ===================== FORNITORI (rubrica, condivisa su Supabase) =====================
+async function loadSuppliers() {
+  try {
+    const data = await sbFetch('fornitori?select=*&order=nome.asc');
+    suppliers = data || [];
+    suppliersAvailable = true;
+  } catch(e) {
+    suppliersAvailable = false;
+    suppliers = [];
+    console.warn('fornitori non disponibile:', e.message);
+  }
+}
+
+// Trova il fornitore associato a un vino. L'associazione è memorizzata su
+// wine_inventory.fornitore_id (impostato dalla scheda manager).
+function getSupplierForWine(w) {
+  const inv = getInv(w);
+  if (!inv || inv.fornitore_id == null) return null;
+  return suppliers.find(s => s.id === inv.fornitore_id) || null;
+}
+
+// Elenco vini associati a un fornitore (via wine_inventory.fornitore_id)
+function winesForSupplier(supId) {
+  const keys = Object.values(inventory).filter(inv => inv.fornitore_id === supId);
+  return keys.map(inv => {
+    const w = WINES.find(x => x.p === inv.producer && x.n === inv.name);
+    return w ? { producer: w.p, name: w.n } : { producer: inv.producer, name: inv.name };
+  });
+}
+
+async function saveSupplier(nome, telefono, id) {
+  const row = { nome: (nome||'').trim(), telefono: (telefono||'').trim() };
+  if (!row.nome) { showToast('Inserisci un nome', 'error'); return; }
+  startLoad();
+  try {
+    if (id) {
+      await sbFetch(`fornitori?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(row) });
+      const s = suppliers.find(x => x.id === id); if (s) Object.assign(s, row);
+    } else {
+      const res = await sbFetch('fornitori', { method: 'POST', body: JSON.stringify(row) });
+      if (res && res[0]) suppliers.push(res[0]);
+    }
+    suppliers.sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+    renderSuppliersList();
+    refreshSupplierSelect();
+    showToast('✓ Fornitore salvato', 'success');
+    document.getElementById('supName').value = '';
+    document.getElementById('supTel').value = '';
+    document.getElementById('supEditId').value = '';
+    document.getElementById('supFormTitle').textContent = 'Nuovo fornitore';
+  } catch(e) {
+    showToast(suppliersAvailable ? 'Errore salvataggio' : 'Tabella fornitori assente', 'error');
+    console.error('saveSupplier:', e);
+  }
+  endLoad();
+}
+
+async function deleteSupplier(id) {
+  if (!confirm('Eliminare questo fornitore?')) return;
+  startLoad();
+  try {
+    await sbFetch(`fornitori?id=eq.${id}`, { method: 'DELETE' });
+    suppliers = suppliers.filter(s => s.id !== id);
+    renderSuppliersList();
+    refreshSupplierSelect();
+    showToast('Fornitore eliminato', '');
+  } catch(e) {
+    showToast('Errore eliminazione', 'error');
+    console.error(e);
+  }
+  endLoad();
+}
+
+function editSupplier(id) {
+  const s = suppliers.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('supName').value = s.nome || '';
+  document.getElementById('supTel').value = s.telefono || '';
+  document.getElementById('supEditId').value = s.id;
+  document.getElementById('supFormTitle').textContent = 'Modifica fornitore';
+  document.getElementById('supName').focus();
+}
+
+let expandedSupplier = null;
+function toggleSupplierRow(id) {
+  expandedSupplier = (expandedSupplier === id) ? null : id;
+  renderSuppliersList();
+}
+
+function renderSuppliersList() {
+  const cont = document.getElementById('suppliersList');
+  if (!cont) return;
+  if (!suppliersAvailable) {
+    cont.innerHTML = `<div class="sup-empty">La rubrica non è ancora configurata su Supabase.<br>Esegui lo script SQL fornito.</div>`;
+    return;
+  }
+  if (!suppliers.length) {
+    cont.innerHTML = `<div class="sup-empty">Nessun fornitore. Aggiungine uno qui sopra.</div>`;
+    return;
+  }
+  cont.innerHTML = suppliers.map(s => {
+    const open = expandedSupplier === s.id;
+    const vini = open ? winesForSupplier(s.id) : [];
+    const viniHtml = open
+      ? `<div class="sup-wines">${vini.length
+          ? vini.map(v => `<div class="sup-wine"><span class="sup-wine-prod">${escHtml(v.producer)}</span> <span class="sup-wine-name">${escHtml(v.name)}</span></div>`).join('')
+          : '<div class="sup-wine-empty">Nessun vino associato</div>'}</div>`
+      : '';
+    const tel = s.telefono ? `<a href="tel:${escHtml(s.telefono)}" class="sup-tel" onclick="event.stopPropagation()">📞 ${escHtml(s.telefono)}</a>` : '<span class="sup-tel-empty">— nessun numero —</span>';
+    return `<div class="sup-row ${open?'open':''}">
+      <div class="sup-row-head" onclick="toggleSupplierRow(${s.id})">
+        <div class="sup-row-main">
+          <div class="sup-name">${escHtml(s.nome)}</div>
+          ${tel}
+        </div>
+        <div class="sup-row-actions">
+          <button class="sup-mini-btn" onclick="event.stopPropagation();editSupplier(${s.id})" title="Modifica">✏️</button>
+          <button class="sup-mini-btn del" onclick="event.stopPropagation();deleteSupplier(${s.id})" title="Elimina">🗑️</button>
+          <span class="sup-chevron">${open?'▴':'▾'}</span>
+        </div>
+      </div>
+      ${viniHtml}
+    </div>`;
+  }).join('');
+}
+
+// Popola il <select> del fornitore nel modal manager
+function refreshSupplierSelect() {
+  const sel = document.getElementById('invFornitore');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— nessuno —</option>' +
+    suppliers.map(s => `<option value="${s.id}">${escHtml(s.nome)}</option>`).join('');
+  sel.value = cur;
+}
+
+function openRubrica() {
+  closePanel('magPanel'); closePanel('settingsPanel');
+  renderSuppliersList();
+  document.getElementById('rubricaPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
 function openInvModal(producer, name) {
   const wine = WINES.find(w => w.p === producer && w.n === name);
   if (!wine) return;
   invModalWine = wine;
   const inv = getInv(wine);
-  // Calcola qty in lista per questo vino
-  const inLista = magazzino.filter(m => m.producer === producer && m.name === name).reduce((s, m) => s + (m.qty || 0), 0);
+  // colore categoria sull'intero modal + header
+  document.getElementById('invModal').className = 'inv-modal cat-' + wine.cat;
+  document.getElementById('invCategory').textContent = tabLabel(wine.cat);
   document.getElementById('invProducer').textContent = producer;
   document.getElementById('invName').textContent = name;
   // Reset chips
@@ -1308,11 +1770,14 @@ function openInvModal(producer, name) {
     const pi = document.querySelector(`#invPianoChips [data-val="${inv.piano}"]`);
     if (pi) pi.classList.add('sel-blue');
   }
-  const qtyFrigo = inv ? Math.max(0, (inv.qty_frigo || 0) - inLista) : 0;
-  const qtyMag = inv ? Math.max(0, (inv.qty_magazzino || 0) - inLista) : 0;
-  document.getElementById('invFrigoVal').textContent = qtyFrigo;
-  document.getElementById('invMagVal').textContent = qtyMag;
+  // scorte effettive (assolute): è la modalità manager, mostriamo i valori reali del DB
+  document.getElementById('invFrigoVal').textContent = inv ? (inv.qty_frigo || 0) : 0;
+  document.getElementById('invMagVal').textContent = inv ? (inv.qty_magazzino || 0) : 0;
   document.getElementById('invPrezzo').value = inv && inv.prezzo_vendita != null ? inv.prezzo_vendita : '';
+  document.getElementById('invCosto').value = inv && inv.costo != null ? inv.costo : '';
+  document.getElementById('invBottCassa').value = inv && inv.bott_cassa != null ? inv.bott_cassa : '';
+  refreshSupplierSelect();
+  document.getElementById('invFornitore').value = inv && inv.fornitore_id != null ? inv.fornitore_id : '';
   document.getElementById('invOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1321,6 +1786,102 @@ function closeInvModal() {
   document.getElementById('invOverlay').classList.remove('open');
   document.body.style.overflow = '';
   invModalWine = null;
+}
+
+// ===================== SCHEDA VINO (dettaglio) =====================
+let detailWineIdx = null;
+function openWineDetail(idx) {
+  const w = WINES[idx];
+  if (!w) return;
+  detailWineIdx = idx;
+  const modal = document.getElementById('detailModal');
+  // colore categoria sull'intera scheda
+  modal.className = 'inv-modal detail-modal cat-' + w.cat;
+
+  document.getElementById('detailCategory').textContent = tabLabel(w.cat);
+  document.getElementById('detailProducer').textContent = w.p;
+  document.getElementById('detailName').textContent = w.n;
+
+  // prezzo (con eventuale override da inventario in tracker)
+  const inv = trackerMode ? getInv(w) : null;
+  const displayPrice = (inv && inv.prezzo_vendita != null) ? inv.prezzo_vendita : w.price;
+  const priceEl = document.getElementById('detailPrice');
+  if (displayPrice != null) { priceEl.textContent = displayPrice; priceEl.classList.remove('noprice'); }
+  else { priceEl.textContent = 'Prezzo n.d.'; priceEl.classList.add('noprice'); }
+
+  // formato (mostrato solo se presente, es. 375ml)
+  const fmtEl = document.getElementById('detailFormat');
+  if (w.fmt) { fmtEl.textContent = w.fmt; fmtEl.style.display = ''; }
+  else { fmtEl.style.display = 'none'; }
+
+  // regione
+  document.getElementById('detailRegion').textContent = w.region || '—';
+
+  // caratteristiche (tutti i tag tranne il formato 375ml, già mostrato sopra)
+  const tags = visibleTags(w);
+  const tagsWrap = document.getElementById('detailTagsWrap');
+  if (tags.length) {
+    document.getElementById('detailTags').innerHTML = tags.map(t => `<span class="d-tag">${escHtml(t)}</span>`).join('');
+    tagsWrap.style.display = '';
+  } else {
+    tagsWrap.style.display = 'none';
+  }
+
+  // disponibilità (solo in tracker mode)
+  const stockWrap = document.getElementById('detailStockWrap');
+  if (trackerMode && inv) {
+    const { fr, mg } = netStock(w, inv);
+    const loc = (inv.scaffale || inv.piano) ? `${inv.scaffale || '?'}·${inv.piano || '?'}` : null;
+    // livello basato su % di una cassa (rosso se basso); fallback assoluto
+    const lvl = (n) => {
+      const pc = inv.bott_cassa || 0;
+      if (n === 0) return 'empty';
+      if (pc > 0) { const f = n / pc; return f < 0.30 ? 'crit' : f < 0.60 ? 'warn' : ''; }
+      return n <= 1 ? 'crit' : n <= 3 ? 'warn' : '';
+    };
+    let h = '';
+    if (loc) h += `<span class="d-stock loc">📍 Scaffale ${escHtml(loc)}</span>`;
+    h += `<span class="d-stock frigo ${lvl(fr)}">❄️ Frigo: ${fr}</span>`;
+    h += `<span class="d-stock mag ${lvl(mg)}">📦 Magazzino: ${mg}</span>`;
+    document.getElementById('detailStock').innerHTML = h;
+    stockWrap.style.display = '';
+  } else {
+    stockWrap.style.display = 'none';
+  }
+
+  // fornitore (se associato, in qualsiasi modalità)
+  const supplier = getSupplierForWine(w);
+  const supWrap = document.getElementById('detailSupplierWrap');
+  if (supplier) {
+    const tel = supplier.telefono ? ` · <a href="tel:${escHtml(supplier.telefono)}" class="detail-sup-tel">${escHtml(supplier.telefono)}</a>` : '';
+    document.getElementById('detailSupplier').innerHTML = `<span class="detail-sup-name">${escHtml(supplier.nome)}</span>${tel}`;
+    supWrap.style.display = '';
+  } else {
+    supWrap.style.display = 'none';
+  }
+
+  // bottiglie per cassa (da inventario)
+  const cassaWrap = document.getElementById('detailCassaWrap');
+  const invAny = getInv(w);
+  if (invAny && invAny.bott_cassa) {
+    document.getElementById('detailCassa').textContent = `${invAny.bott_cassa} bottiglie per cassa`;
+    cassaWrap.style.display = '';
+  } else {
+    cassaWrap.style.display = 'none';
+  }
+
+  // pulsante aggiungi
+  const addBtn = document.getElementById('detailAddBtn');
+  addBtn.onclick = () => { addDirectly(idx); closeWineDetail(); };
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWineDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  detailWineIdx = null;
 }
 
 function adjustInvQty(field, delta) {
@@ -1340,10 +1901,9 @@ function selectInvChip(type, val) {
 async function saveInvModal() {
   if (!invModalWine) return;
   const wine = invModalWine;
-  const inLista = magazzino.filter(m => m.producer === wine.p && m.name === wine.n).reduce((s, m) => s + (m.qty || 0), 0);
-  // I valori mostrati sono post-lista, quindi per salvare aggiungiamo inLista
-  const displayFrigo = parseInt(document.getElementById('invFrigoVal').textContent) || 0;
-  const displayMag = parseInt(document.getElementById('invMagVal').textContent) || 0;
+  // scorte effettive assolute (manager mode): salviamo i valori così come mostrati
+  const qtyFrigo = parseInt(document.getElementById('invFrigoVal').textContent) || 0;
+  const qtyMag = parseInt(document.getElementById('invMagVal').textContent) || 0;
   const selScaffale = document.querySelector('#invScaffaleChips .inv-chip.sel');
   const selPiano = document.querySelector('#invPianoChips .inv-chip.sel-blue');
   const row = {
@@ -1351,9 +1911,12 @@ async function saveInvModal() {
     name: wine.n,
     scaffale: selScaffale ? selScaffale.dataset.val : '',
     piano: selPiano ? selPiano.dataset.val : '',
-    qty_frigo: displayFrigo + inLista,
-    qty_magazzino: displayMag + inLista,
+    qty_frigo: qtyFrigo,
+    qty_magazzino: qtyMag,
     prezzo_vendita: document.getElementById('invPrezzo').value !== '' ? parseFloat(document.getElementById('invPrezzo').value) : null,
+    costo: document.getElementById('invCosto').value !== '' ? parseFloat(document.getElementById('invCosto').value) : null,
+    bott_cassa: document.getElementById('invBottCassa').value !== '' ? parseInt(document.getElementById('invBottCassa').value) : null,
+    fornitore_id: document.getElementById('invFornitore').value !== '' ? parseInt(document.getElementById('invFornitore').value) : null,
     updated_at: new Date().toISOString()
   };
   startLoad();
@@ -1496,6 +2059,27 @@ function netStock(w, inv){
 }
 // soglie scorte: 0 esaurito · <=1 critico · <=2 basso
 function stockLevel(n){ return n===0 ? 'empty' : n<=1 ? 'crit' : n<=2 ? 'warn' : ''; }
+
+// Flag scorte MAGAZZINO per tracker: livello in base a % di una cassa.
+// <30% cassa → 'crit' (rosso), 30–60% → 'warn' (giallo), oltre → ''.
+// Se manca bott_cassa, fallback assoluto (≤1 crit, ≤3 warn).
+function magStockFlag(w){
+  const inv = getInv(w);
+  if (!inv) return '';
+  const { mg } = netStock(w, inv);
+  if (mg === 0) return ''; // 0 magazzino non è "critico-basso", è semplicemente vuoto: niente flag qui
+  const perCassa = inv.bott_cassa || 0;
+  if (perCassa > 0) {
+    const frac = mg / perCassa;
+    if (frac < 0.30) return 'crit';
+    if (frac < 0.60) return 'warn';
+    return '';
+  }
+  // fallback senza cassa definita
+  if (mg <= 1) return 'crit';
+  if (mg <= 3) return 'warn';
+  return '';
+}
 function invBadges(w, inv){
   const {fr,mg} = netStock(w, inv);
   const loc = (inv.scaffale||inv.piano) ? `${inv.scaffale||'?'}·${inv.piano||'?'}` : null;
@@ -1513,73 +2097,150 @@ function lowStockAlert(w, inv){
   return '';
 }
 
+// In tracker: frigo esaurito (netto = 0)? La cella diventa non cliccabile.
+function isFrigoEmpty(w){
+  const inv = getInv(w);
+  if (!inv) return false;
+  return netStock(w, inv).fr === 0;
+}
+
+// Stepper Manager mode: − [n] + per una destinazione (frigo/mag)
+function managerStepper(idx, field){
+  const w = WINES[idx];
+  const inv = getInv(w) || {};
+  const val = field === 'frigo' ? (inv.qty_frigo||0) : (inv.qty_magazzino||0);
+  const emoji = field === 'frigo' ? '❄️' : '📦';
+  const valAttr = field === 'frigo' ? `data-mgr-frigo="${idx}"` : `data-mgr-mag="${idx}"`;
+  const cls = field === 'frigo' ? 'mgr-frigo' : 'mgr-mag';
+  return `<div class="mgr-stepper ${cls}">
+    <span class="mgr-emoji">${emoji}</span>
+    <button class="mgr-btn mgr-minus" data-stock-idx="${idx}" data-stock-field="${field}" data-stock-delta="-1" title="Togli una bottiglia">−</button>
+    <span class="mgr-val" ${valAttr}>${val}</span>
+    <button class="mgr-btn mgr-plus" data-stock-idx="${idx}" data-stock-field="${field}" data-stock-delta="1" title="Aggiungi una bottiglia">+</button>
+  </div>`;
+}
+
 function wineRow(w, q, isMaybe=false){
   const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
   const name=q?highlight(escHtml(w.n),q):escHtml(w.n);
-  const inv = trackerMode ? getInv(w) : null;
-  const displayPrice = (inv && inv.prezzo_vendita != null) ? inv.prezzo_vendita : w.price;
-  const price = displayPrice != null ? displayPrice : '—';
-  const tags=tagsHtml(w);
-  const invBadgesHtml = (trackerMode && inv) ? invBadges(w, inv) : '';
-  const alertHtml = (trackerMode && inv) ? lowStockAlert(w, inv) : '';
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
   const idx=WINES.indexOf(w);
-  const menuBtn = trackerMode
-    ? `<button class="wine-menu-btn" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
-    : '';
+  const fmtRow = (w.fmt||isMaybe) ? `<div class="wine-tags">${fmt}${maybeCat}</div>` : '';
+
+  // --- MANAGER MODE: magazzino | matita | frigo ---
+  if (managerMode) {
+    return `<div class="wine-row cat-${w.cat}${maybeClass}">
+      <div class="wine-left">
+        <div class="wine-producer">${producer}</div>
+        <div class="wine-name">${name}</div>
+        ${fmtRow}
+      </div>
+      <div class="wine-right mgr-trio">
+        ${managerStepper(idx,'mag')}
+        <button class="wine-edit-btn" data-edit-idx="${idx}" title="Modifica scheda completa">✏️</button>
+        ${managerStepper(idx,'frigo')}
+      </div>
+    </div>`;
+  }
+
+  // --- TRACKER: frigo esaurito → riga disabilitata con ❌ ---
+  const emptyFrigo = trackerMode && isFrigoEmpty(w);
+  if (emptyFrigo) {
+    return `<div class="wine-row cat-${w.cat}${maybeClass} sold-out">
+      <div class="wine-left">
+        <div class="wine-producer">${producer}</div>
+        <div class="wine-name">${name}</div>
+        ${fmtRow}
+      </div>
+      <div class="wine-right">
+        <span class="row-soldout">❌ esaurito</span>
+        <button class="wine-info-btn" data-detail-idx="${idx}" title="Scheda vino">i</button>
+      </div>
+    </div>`;
+  }
+
+  // --- NEUTRAL / TRACKER con scorte: identiche (i + +) ---
+  const magFlagRow = trackerMode ? magStockFlag(w) : '';
+  const dotRow = magFlagRow ? `<span class="stock-dot ${magFlagRow}" title="Scorte magazzino ${magFlagRow==='crit'?'critiche':'basse'}"></span>` : '';
   return `<div class="wine-row cat-${w.cat}${maybeClass}" data-add-idx="${idx}">
     <div class="wine-left">
       <div class="wine-producer">${producer}</div>
       <div class="wine-name">${name}</div>
-      <div class="wine-tags">${tags}${fmt}${maybeCat}</div>
-      ${invBadgesHtml}${alertHtml}
+      ${fmtRow}
     </div>
     <div class="wine-right">
-      <div class="wine-price" style="${w.price==null?'font-size:14px;color:var(--text-faint)':''}${isMaybe?';font-size:16px;':''}">${price}</div>
-      ${menuBtn}
+      ${dotRow}
+      <button class="wine-info-btn" data-detail-idx="${idx}" title="Scheda vino">i</button>
       <button class="wine-add-btn" title="Aggiungi">+</button>
     </div>
   </div>`;
 }
 
 // ===================== WINE CARD (gallery / touch mode) =====================
-// In questa modalità la cella NON è cliccabile per vendere: l'azione di vendita
-// avviene SOLO tramite il pulsante "Aggiungi". Così lo scorrimento è sicuro.
+// Tre stati:
+//  - neutral (default): cella minimale + pulsanti "i" e "+"
+//  - tracker: come neutral, ma se frigo esaurito → ❌, cella non cliccabile
+//  - manager: cella minimale + pulsante ✏️ che apre la scheda coordinate/scorte
 function wineCard(w, q, isMaybe=false){
   const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
   const name=q?highlight(escHtml(w.n),q):escHtml(w.n);
-  const inv = trackerMode ? getInv(w) : null;
-  const displayPrice = (inv && inv.prezzo_vendita != null) ? inv.prezzo_vendita : w.price;
-  const hasPrice = displayPrice != null;
-  const price = hasPrice ? displayPrice : '—';
-  const tags=tagsHtml(w);
-  const invBadgesHtml = (trackerMode && inv) ? invBadges(w, inv) : '';
-  const alertHtml = (trackerMode && inv) ? lowStockAlert(w, inv) : '';
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
   const idx=WINES.indexOf(w);
-  const menuBtn = trackerMode
-    ? `<button class="wine-card-menu" data-inv-idx="${idx}" title="Modifica scheda">⋯</button>`
-    : '';
-  const priceStyle = !hasPrice ? 'font-size:16px;color:var(--text-faint);' : '';
-  // data-card-idx (NON data-add-idx): il clic sulla card non vende nulla
-  return `<div class="wine-card cat-${w.cat}${maybeClass}" data-card-idx="${idx}">
-    <div class="wine-card-top">
+  const fmtRow = (w.fmt||isMaybe) ? `<div class="wine-card-tags">${fmt}${maybeCat}</div>` : '';
+
+  // --- MANAGER MODE: magazzino | matita | frigo ---
+  if (managerMode) {
+    return `<div class="wine-card cat-${w.cat}${maybeClass} manager">
       <div class="wine-card-titles">
         <div class="wine-card-producer">${producer}</div>
         <div class="wine-card-name">${name}</div>
       </div>
-      <div class="wine-card-price" style="${priceStyle}">${price}</div>
+      ${fmtRow}
+      <div class="wine-card-spacer"></div>
+      <div class="wine-card-bottom mgr-trio">
+        ${managerStepper(idx,'mag')}
+        <button class="wine-card-edit-mid" data-edit-idx="${idx}" title="Modifica scheda completa">✏️</button>
+        ${managerStepper(idx,'frigo')}
+      </div>
+    </div>`;
+  }
+
+  // --- TRACKER MODE: se frigo esaurito → cella disabilitata con ❌ ---
+  const emptyFrigo = trackerMode && isFrigoEmpty(w);
+  if (emptyFrigo) {
+    return `<div class="wine-card cat-${w.cat}${maybeClass} sold-out" data-card-idx="${idx}">
+      <div class="wine-card-titles">
+        <div class="wine-card-producer">${producer}</div>
+        <div class="wine-card-name">${name}</div>
+      </div>
+      ${fmtRow}
+      <div class="sold-out-banner">❌ Frigo esaurito</div>
+      <div class="wine-card-spacer"></div>
+      <div class="wine-card-bottom">
+        <button class="wine-card-info" data-detail-idx="${idx}" title="Scheda vino">i</button>
+      </div>
+    </div>`;
+  }
+
+  // --- NEUTRAL / TRACKER con scorte: identiche (i + +) ---
+  // data-card-idx (NON data-add-idx): il clic sulla card non vende nulla
+  const magFlag = trackerMode ? magStockFlag(w) : '';
+  const flagHtml = magFlag ? `<span class="stock-flag ${magFlag}" title="Scorte magazzino ${magFlag==='crit'?'critiche':'basse'}">📦 ${magFlag==='crit'?'!':'•'}</span>` : '';
+  return `<div class="wine-card cat-${w.cat}${maybeClass}${magFlag?' low-stock':''}" data-card-idx="${idx}">
+    ${flagHtml}
+    <div class="wine-card-titles">
+      <div class="wine-card-producer">${producer}</div>
+      <div class="wine-card-name">${name}</div>
     </div>
-    <div class="wine-card-tags">${tags}${fmt}${maybeCat}</div>
-    ${invBadgesHtml}${alertHtml}
+    ${fmtRow}
     <div class="wine-card-spacer"></div>
     <div class="wine-card-bottom">
+      <button class="wine-card-info" data-detail-idx="${idx}" title="Scheda vino">i</button>
       <button class="wine-card-add" data-add-idx="${idx}" title="Aggiungi al magazzino"><span class="add-plus">+</span></button>
-      ${menuBtn}
     </div>
   </div>`;
 }
@@ -1595,17 +2256,37 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeInvModal(); closePanel('magPanel'); closePanel('settingsPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeWineDetail(); closeInvModal(); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 
 // Event delegation for dynamic buttons
 document.addEventListener('click', function(e) {
-  // ⋯ menu button (lista o card) — controllato PER PRIMO
-  const menuBtn = e.target.closest('.wine-menu-btn, .wine-card-menu');
-  if (menuBtn) {
+  // Manager mode: stepper scorte (− / +) — controllato per primo
+  const stockBtn = e.target.closest('.mgr-btn');
+  if (stockBtn) {
     e.preventDefault();
     e.stopImmediatePropagation();
-    const idx = parseInt(menuBtn.dataset.invIdx);
+    const idx = parseInt(stockBtn.dataset.stockIdx);
+    const field = stockBtn.dataset.stockField;
+    const delta = parseInt(stockBtn.dataset.stockDelta);
+    if (!isNaN(idx) && field && !isNaN(delta)) setStock(idx, field, delta);
+    return;
+  }
+  // Manager mode: matita (lista o card) → apre la scheda completa
+  const editBtn = e.target.closest('.wine-edit-btn, .wine-card-edit, .wine-card-edit-mid');
+  if (editBtn) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const idx = parseInt(editBtn.dataset.editIdx);
     if (!isNaN(idx) && WINES[idx]) openInvModal(WINES[idx].p, WINES[idx].n);
+    return;
+  }
+  // ℹ️ pulsante scheda vino (lista o card) — apre il dettaglio
+  const infoBtn = e.target.closest('.wine-info-btn, .wine-card-info');
+  if (infoBtn) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const idx = parseInt(infoBtn.dataset.detailIdx);
+    if (!isNaN(idx)) openWineDetail(idx);
     return;
   }
   // Pulsante "+ Aggiungi" (lista: .wine-add-btn, card: .wine-card-add)
@@ -1619,6 +2300,13 @@ document.addEventListener('click', function(e) {
       const idx = parseInt(holder.dataset.addIdx);
       if (!isNaN(idx)) addDirectly(idx);
     }
+    return;
+  }
+  // Clic generico sulla RIGA in Manager mode (lista) → apre la scheda coordinate
+  const editRow = e.target.closest('.wine-row[data-edit-idx]');
+  if (editRow && !e.target.closest('button')) {
+    const idx = parseInt(editRow.dataset.editIdx);
+    if (!isNaN(idx) && WINES[idx]) openInvModal(WINES[idx].p, WINES[idx].n);
     return;
   }
   // Clic generico sulla RIGA (solo modalità lista/computer): vende il vino.
