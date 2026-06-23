@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -30,616 +29,643 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-/* HEADER */
-.header {
-background: var(–surface);
-border-bottom: 1px solid var(–border);
-padding: 18px 24px 0;
-position: sticky;
-top: 0;
-z-index: 100;
-box-shadow: var(–shadow);
-}
-.header-top { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-bottom: 12px; }
-.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.search-row { margin-bottom: 12px; }
-.icon-btn {
-width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(–border-strong);
-background: var(–surface); color: var(–text-muted); font-size: 16px; cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: all 0.15s; position: relative;
-}
-.icon-btn:hover { background: var(–accent-light); border-color: var(–accent-mid); color: var(–accent); }
-.icon-btn .badge {
-position: absolute; top: -4px; right: -4px; background: var(–accent); color: #fff;
-font-size: 9px; font-family: Arial, sans-serif; border-radius: 8px; padding: 1px 4px;
-min-width: 16px; text-align: center; font-weight: bold;
-}
-.search-wrap { flex: 1; position: relative; }
-.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(–text-faint); font-size: 15px; pointer-events: none; }
-#search {
-width: 100%; padding: 10px 40px 10px 36px; border: 1.5px solid var(–border-strong);
-border-radius: 8px; font-size: 15px; font-family: inherit; background: var(–bg);
-color: var(–text); outline: none; transition: border-color 0.15s;
-}
-#search:focus { border-color: var(–accent-mid); background: #fff; }
-#search::placeholder { color: var(–text-faint); }
-.clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(–text-faint); font-size: 16px; padding: 2px 4px; display: none; line-height: 1; }
-.clear-btn:hover { color: var(–accent); }
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .header-top { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-bottom: 12px; }
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .search-row { margin-bottom: 12px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-muted); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s; position: relative;
+  }
+  .icon-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .icon-btn .badge {
+    position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff;
+    font-size: 9px; font-family: Arial, sans-serif; border-radius: 8px; padding: 1px 4px;
+    min-width: 16px; text-align: center; font-weight: bold;
+  }
+  .search-wrap { flex: 1; position: relative; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 15px; pointer-events: none; }
+  #search {
+    width: 100%; padding: 10px 40px 10px 36px; border: 1.5px solid var(--border-strong);
+    border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--bg);
+    color: var(--text); outline: none; transition: border-color 0.15s;
+  }
+  #search:focus { border-color: var(--accent-mid); background: #fff; }
+  #search::placeholder { color: var(--text-faint); }
+  .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-faint); font-size: 16px; padding: 2px 4px; display: none; line-height: 1; }
+  .clear-btn:hover { color: var(--accent); }
 
-/* TABS */
-.tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 9px 16px; border: none; background: none; font-family: inherit; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(–text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
-.tab:hover { color: var(–text); }
-.tab.active { color: var(–accent); border-bottom-color: var(–accent); font-weight: bold; }
+  /* TABS */
+  .tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 9px 16px; border: none; background: none; font-family: inherit; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: bold; }
 
-/* CONTENT */
-.content { padding: 20px 24px 100px; max-width: 800px; margin: 0 auto; }
-.count-bar { font-size: 12px; color: var(–text-faint); margin-bottom: 16px; letter-spacing: 0.03em; }
-.count-bar span { color: var(–accent); font-weight: bold; }
+  /* CONTENT */
+  .content { padding: 20px 24px 100px; max-width: 800px; margin: 0 auto; }
+  .count-bar { font-size: 12px; color: var(--text-faint); margin-bottom: 16px; letter-spacing: 0.03em; }
+  .count-bar span { color: var(--accent); font-weight: bold; }
 
-/* SECTION HEADER */
-.section-head { display: flex; align-items: baseline; gap: 10px; margin: 24px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(–border); }
-.section-head:first-of-type { margin-top: 0; }
-.section-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(–text-muted); font-family: Arial, sans-serif; }
+  /* SECTION HEADER */
+  .section-head { display: flex; align-items: baseline; gap: 10px; margin: 24px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .section-head:first-of-type { margin-top: 0; }
+  .section-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; }
 
-/* WINE ROW */
-.wine-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 8px; border-bottom: 1px solid var(–border); gap: 12px; cursor: pointer; border-radius: 6px; transition: background 0.12s; margin: 0 -8px; }
-.wine-row:last-child { border-bottom: none; }
-.wine-row:hover { background: var(–accent-light); }
-.wine-row:hover .wine-price { color: var(–accent); }
-.wine-left { flex: 1; min-width: 0; }
-.wine-producer { font-size: 14px; font-weight: bold; color: var(–text); font-family: Arial, sans-serif; }
-.wine-name { font-size: 13px; color: var(–text-muted); font-style: italic; margin-top: 1px; }
-.wine-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.wine-tag { font-size: 10px; background: var(–tag-bg); color: var(–text-muted); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; letter-spacing: 0.04em; }
-.wine-format { font-size: 10px; background: var(–accent-light); color: var(–accent); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; }
-.wine-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.wine-price { font-size: 18px; font-weight: bold; color: var(–accent); white-space: nowrap; font-family: Arial, sans-serif; min-width: 48px; text-align: right; }
-.wine-price::after { content: ‘€’; font-size: 12px; margin-left: 1px; color: var(–accent-mid); }
-.wine-add-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(–border-strong); background: var(–surface); color: var(–text-muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; line-height: 1; font-family: Arial, sans-serif; }
-.wine-add-btn:hover { background: var(–accent); border-color: var(–accent); color: #fff; }
-.wine-info-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(–cat-strong, var(–accent)); color: #fff; font-family: Georgia, ‘Times New Roman’, serif; font-size: 16px; font-weight: 700; font-style: italic; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
-.wine-info-btn:hover { filter: brightness(1.1); }
-.wine-edit-btn { padding: 7px 14px; border-radius: 8px; border: none; background: var(–cat-strong, var(–accent)); color: #fff; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
-.wine-edit-btn:hover { filter: brightness(1.1); }
-.hl { background: #fde68a; border-radius: 2px; padding: 0 1px; }
-.maybe-head { display: flex; align-items: center; gap: 8px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px dashed var(–border-strong); }
-.maybe-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(–text-faint); font-family: Arial, sans-serif; font-style: italic; }
-.maybe-badge { font-size: 10px; background: #f0e9d6; color: #9a7a50; padding: 2px 7px; border-radius: 3px; font-family: Arial, sans-serif; border: 1px solid #d9c89e; }
-.wine-row.maybe { opacity: 0.75; }
-.empty { text-align: center; padding: 50px 20px; color: var(–text-faint); font-style: italic; font-size: 15px; }
+  /* WINE ROW */
+  .wine-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 8px; border-bottom: 1px solid var(--border); gap: 12px; cursor: pointer; border-radius: 6px; transition: background 0.12s; margin: 0 -8px; }
+  .wine-row:last-child { border-bottom: none; }
+  .wine-row:hover { background: var(--accent-light); }
+  .wine-row:hover .wine-price { color: var(--accent); }
+  .wine-left { flex: 1; min-width: 0; }
+  .wine-producer { font-size: 14px; font-weight: bold; color: var(--text); font-family: Arial, sans-serif; }
+  .wine-name { font-size: 13px; color: var(--text-muted); font-style: italic; margin-top: 1px; }
+  .wine-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .wine-tag { font-size: 10px; background: var(--tag-bg); color: var(--text-muted); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; letter-spacing: 0.04em; }
+  .wine-format { font-size: 10px; background: var(--accent-light); color: var(--accent); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; }
+  .wine-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .wine-price { font-size: 18px; font-weight: bold; color: var(--accent); white-space: nowrap; font-family: Arial, sans-serif; min-width: 48px; text-align: right; }
+  .wine-price::after { content: '€'; font-size: 12px; margin-left: 1px; color: var(--accent-mid); }
+  .wine-add-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text-muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; line-height: 1; font-family: Arial, sans-serif; }
+  .wine-add-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .wine-info-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--cat-strong, var(--accent)); color: #fff; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-weight: 700; font-style: italic; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
+  .wine-info-btn:hover { filter: brightness(1.1); }
+  .wine-edit-btn { padding: 7px 14px; border-radius: 8px; border: none; background: var(--cat-strong, var(--accent)); color: #fff; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: filter 0.15s; flex-shrink: 0; line-height: 1; }
+  .wine-edit-btn:hover { filter: brightness(1.1); }
+  .hl { background: #fde68a; border-radius: 2px; padding: 0 1px; }
+  .maybe-head { display: flex; align-items: center; gap: 8px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-strong); }
+  .maybe-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; }
+  .maybe-badge { font-size: 10px; background: #f0e9d6; color: #9a7a50; padding: 2px 7px; border-radius: 3px; font-family: Arial, sans-serif; border: 1px solid #d9c89e; }
+  .wine-row.maybe { opacity: 0.75; }
+  .empty { text-align: center; padding: 50px 20px; color: var(--text-faint); font-style: italic; font-size: 15px; }
 
-/* INVENTORY OVERLAY */
 
-/* INVENTORY OVERLAY — centered dialog */
-.inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
-.inv-overlay.open { display: flex; }
-.inv-modal { background: var(–surface); border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); overflow: hidden; animation: popIn 0.2s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; }
-@keyframes popIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-/* header colorato per categoria (stile nuovo, come la scheda dettaglio) */
-.inv-modal-header { padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(–cat-strong, var(–accent)); }
-.inv-modal-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
-.inv-titles { margin-bottom: 6px; }
-.inv-modal-producer { font-size: 22px; font-weight: 800; color: var(–text); font-family: Arial, sans-serif; line-height: 1.15; }
-.inv-modal-name { font-size: 15px; color: var(–text); opacity: 0.8; margin-top: 4px; line-height: 1.3; font-family: Arial, sans-serif; }
-.inv-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 6px; flex-shrink: 0; line-height: 1; }
-.inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
-.inv-modal-body { padding: 18px 22px 22px; }
-.inv-section-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(–cat-strong, var(–accent)); font-family: Arial, sans-serif; margin-bottom: 9px; margin-top: 18px; }
-.inv-section-label:first-child { margin-top: 0; }
-/* Chip selectors */
-.inv-chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.inv-chip { padding: 7px 15px; border: 1.5px solid var(–cat-border, var(–border-strong)); border-radius: 20px; background: var(–surface); cursor: pointer; font-size: 14px; font-family: Arial, sans-serif; color: var(–text-muted); transition: all 0.12s; font-weight: bold; }
-.inv-chip:hover { border-color: var(–cat-strong, var(–accent-mid)); color: var(–cat-strong, var(–accent)); background: var(–cat-tag-bg, var(–accent-light)); }
-.inv-chip.sel { border-color: var(–cat-strong, var(–accent)); background: var(–cat-strong, var(–accent)); color: #fff; }
-.inv-chip.sel-blue { border-color: var(–cat-strong, var(–blue)); background: var(–cat-strong, var(–blue)); color: #fff; }
-.inv-chip.sel-green { border-color: var(–green); background: var(–green); color: #fff; }
-/* Qty stepper */
-.inv-stepper-row { display: flex; align-items: center; gap: 12px; }
-.inv-stepper-label { font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; color: var(–text); min-width: 110px; }
-.inv-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(–cat-border, var(–border-strong)); border-radius: 10px; overflow: hidden; background: var(–surface); }
-.inv-stepper button { width: 40px; height: 40px; border: none; background: none; cursor: pointer; font-size: 22px; color: var(–cat-strong, var(–text-muted)); transition: background 0.1s; font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-.inv-stepper button:hover { background: var(–cat-tag-bg, var(–bg)); }
-.inv-stepper-val { font-size: 18px; font-weight: 800; min-width: 40px; text-align: center; font-family: Arial, sans-serif; color: var(–text); }
-/* Price + Costo grid */
-.inv-money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.inv-select { width: 100%; padding: 10px 12px; border: 1.5px solid var(–cat-border, var(–border-strong)); border-radius: 9px; background: var(–bg); font-size: 15px; font-family: Arial, sans-serif; color: var(–text); outline: none; cursor: pointer; }
-.inv-select:focus { border-color: var(–cat-strong, var(–accent-mid)); background: #fff; }
-/* Rubrica fornitori */
-.sup-form { background: var(–bg); border: 1px solid var(–border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
-.sup-form-title { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(–accent); font-family: Arial, sans-serif; margin-bottom: 10px; }
-.sup-input { width: 100%; padding: 11px 12px; border: 1.5px solid var(–border-strong); border-radius: 9px; background: #fff; font-size: 15px; font-family: Arial, sans-serif; color: var(–text); outline: none; margin-bottom: 9px; box-sizing: border-box; }
-.sup-input:focus { border-color: var(–accent-mid); }
-.sup-save-btn { width: 100%; padding: 12px; background: var(–accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; cursor: pointer; transition: filter 0.15s; }
-.sup-save-btn:hover { filter: brightness(1.08); }
-.sup-list { display: flex; flex-direction: column; gap: 10px; }
-.sup-empty { text-align: center; color: var(–text-faint); font-family: Arial, sans-serif; font-size: 14px; padding: 24px 12px; line-height: 1.6; }
-.sup-row { border: 1px solid var(–border-strong); border-radius: 12px; overflow: hidden; background: #fff; }
-.sup-row.open { border-color: var(–accent-mid); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-.sup-row-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 14px; cursor: pointer; }
-.sup-row-main { min-width: 0; flex: 1; }
-.sup-name { font-size: 16px; font-weight: 800; color: var(–text); font-family: Arial, sans-serif; }
-.sup-tel { display: inline-block; margin-top: 3px; font-size: 14px; color: var(–accent); text-decoration: none; font-family: Arial, sans-serif; }
-.sup-tel:hover { text-decoration: underline; }
-.sup-tel-empty { display: inline-block; margin-top: 3px; font-size: 13px; color: var(–text-faint); font-style: italic; font-family: Arial, sans-serif; }
-.sup-row-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.sup-mini-btn { width: 32px; height: 32px; border: 1.5px solid var(–border-strong); border-radius: 8px; background: var(–surface); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
-.sup-mini-btn:hover { background: var(–accent-light); border-color: var(–accent-mid); }
-.sup-mini-btn.del:hover { background: #fde2e2; border-color: #f5b5b5; }
-.sup-chevron { font-size: 13px; color: var(–text-faint); width: 18px; text-align: center; }
-.sup-wines { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(–border); margin-top: 2px; padding-top: 12px; }
-.sup-wine { font-size: 14px; font-family: Arial, sans-serif; color: var(–text); }
-.sup-wine-prod { font-weight: 700; }
-.sup-wine-name { color: var(–text-muted); }
-.sup-wine-empty { font-size: 13px; color: var(–text-faint); font-style: italic; font-family: Arial, sans-serif; }
-.inv-price-wrap { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(–cat-border, var(–border-strong)); border-radius: 9px; padding: 0 12px; background: var(–bg); }
-.inv-price-wrap:focus-within { border-color: var(–cat-strong, var(–accent-mid)); background: #fff; }
-.inv-price-sym { font-size: 16px; color: var(–cat-strong, var(–text-faint)); font-family: Arial, sans-serif; font-weight: 700; }
-.inv-price-input { flex: 1; border: none; background: none; font-size: 17px; font-weight: 700; font-family: inherit; color: var(–text); outline: none; padding: 9px 0; width: 60px; min-width: 0; }
-.inv-price-hint { font-size: 11px; color: var(–text-faint); font-family: Arial, sans-serif; font-style: italic; display: block; margin-top: 5px; }
-/* Save btn */
-.inv-save-btn { width: 100%; padding: 15px; background: var(–cat-strong, var(–accent)); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-family: Arial, sans-serif; cursor: pointer; font-weight: 700; margin-top: 24px; transition: filter 0.15s; }
-.inv-save-btn:hover { filter: brightness(1.08); }
 
-/* TRACKER MODE TOGGLE */
-.toggle-wrap { cursor: pointer; }
-.toggle-track { width: 44px; height: 24px; background: var(–border-strong); border-radius: 12px; position: relative; transition: background 0.2s; }
-.toggle-track.on { background: var(–green); }
-.toggle-thumb { width: 20px; height: 20px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
-.toggle-track.on .toggle-thumb { left: 22px; }
+  /* INVENTORY OVERLAY */
 
-/* TRACKER BADGES on wine rows */
-.wine-inv-badges { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
-.inv-badge { font-size: 10px; font-family: Arial, sans-serif; padding: 2px 7px; border-radius: 3px; font-weight: bold; }
-.inv-badge.scaffale { background: #f0e9d6; color: #9a7a50; border: 1px solid #d9c89e; }
-.inv-badge.frigo { background: var(–blue-light); color: var(–blue); border: 1px solid #b8cff0; }
-.inv-badge.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.inv-badge.frigo.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
-.inv-badge.mag { background: var(–green-light); color: var(–green); border: 1px solid #a7d9be; }
-.inv-badge.mag.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.inv-badge.mag.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
+  /* INVENTORY OVERLAY — centered dialog */
+  .inv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .inv-overlay.open { display: flex; }
+  .inv-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); overflow: hidden; animation: popIn 0.2s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; }
+  @keyframes popIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  /* header colorato per categoria (stile nuovo, come la scheda dettaglio) */
+  .inv-modal-header { padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--cat-strong, var(--accent)); }
+  .inv-modal-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
+  .inv-titles { margin-bottom: 6px; }
+  .inv-modal-producer { font-size: 22px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.15; }
+  .inv-modal-name { font-size: 15px; color: var(--text); opacity: 0.8; margin-top: 4px; line-height: 1.3; font-family: Arial, sans-serif; }
+  .inv-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 6px; flex-shrink: 0; line-height: 1; }
+  .inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  .inv-modal-body { padding: 18px 22px 22px; }
+  .inv-section-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cat-strong, var(--accent)); font-family: Arial, sans-serif; margin-bottom: 9px; margin-top: 18px; }
+  .inv-section-label:first-child { margin-top: 0; }
+  /* Chip selectors */
+  .inv-chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .inv-chip { padding: 7px 15px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 20px; background: var(--surface); cursor: pointer; font-size: 14px; font-family: Arial, sans-serif; color: var(--text-muted); transition: all 0.12s; font-weight: bold; }
+  .inv-chip:hover { border-color: var(--cat-strong, var(--accent-mid)); color: var(--cat-strong, var(--accent)); background: var(--cat-tag-bg, var(--accent-light)); }
+  .inv-chip.sel { border-color: var(--cat-strong, var(--accent)); background: var(--cat-strong, var(--accent)); color: #fff; }
+  .inv-chip.sel-blue { border-color: var(--cat-strong, var(--blue)); background: var(--cat-strong, var(--blue)); color: #fff; }
+  .inv-chip.sel-green { border-color: var(--green); background: var(--green); color: #fff; }
+  /* Qty stepper */
+  .inv-stepper-row { display: flex; align-items: center; gap: 12px; }
+  .inv-stepper-label { font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; color: var(--text); min-width: 110px; }
+  .inv-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .inv-stepper button { width: 40px; height: 40px; border: none; background: none; cursor: pointer; font-size: 22px; color: var(--cat-strong, var(--text-muted)); transition: background 0.1s; font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .inv-stepper button:hover { background: var(--cat-tag-bg, var(--bg)); }
+  .inv-stepper-val { font-size: 18px; font-weight: 800; min-width: 40px; text-align: center; font-family: Arial, sans-serif; color: var(--text); }
+  /* Price + Costo grid */
+  .inv-money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .inv-select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 9px; background: var(--bg); font-size: 15px; font-family: Arial, sans-serif; color: var(--text); outline: none; cursor: pointer; }
+  .inv-select:focus { border-color: var(--cat-strong, var(--accent-mid)); background: #fff; }
+  /* Rubrica fornitori */
+  .sup-form { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+  .sup-form-title { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-family: Arial, sans-serif; margin-bottom: 10px; }
+  .sup-input { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border-strong); border-radius: 9px; background: #fff; font-size: 15px; font-family: Arial, sans-serif; color: var(--text); outline: none; margin-bottom: 9px; box-sizing: border-box; }
+  .sup-input:focus { border-color: var(--accent-mid); }
+  .sup-save-btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; cursor: pointer; transition: filter 0.15s; }
+  .sup-save-btn:hover { filter: brightness(1.08); }
+  .sup-list { display: flex; flex-direction: column; gap: 10px; }
+  .sup-empty { text-align: center; color: var(--text-faint); font-family: Arial, sans-serif; font-size: 14px; padding: 24px 12px; line-height: 1.6; }
+  .sup-row { border: 1px solid var(--border-strong); border-radius: 12px; overflow: hidden; background: #fff; }
+  .sup-row.open { border-color: var(--accent-mid); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .sup-row-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 14px; cursor: pointer; }
+  .sup-row-main { min-width: 0; flex: 1; }
+  .sup-name { font-size: 16px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; }
+  .sup-tel { display: inline-block; margin-top: 3px; font-size: 14px; color: var(--accent); text-decoration: none; font-family: Arial, sans-serif; }
+  .sup-tel:hover { text-decoration: underline; }
+  .sup-tel-empty { display: inline-block; margin-top: 3px; font-size: 13px; color: var(--text-faint); font-style: italic; font-family: Arial, sans-serif; }
+  .sup-row-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .sup-mini-btn { width: 32px; height: 32px; border: 1.5px solid var(--border-strong); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+  .sup-mini-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); }
+  .sup-mini-btn.del:hover { background: #fde2e2; border-color: #f5b5b5; }
+  .sup-chevron { font-size: 13px; color: var(--text-faint); width: 18px; text-align: center; }
+  .sup-wines { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--border); margin-top: 2px; padding-top: 12px; }
+  .sup-wine { font-size: 14px; font-family: Arial, sans-serif; color: var(--text); }
+  .sup-wine-prod { font-weight: 700; }
+  .sup-wine-name { color: var(--text-muted); }
+  .sup-wine-empty { font-size: 13px; color: var(--text-faint); font-style: italic; font-family: Arial, sans-serif; }
+  .inv-price-wrap { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 9px; padding: 0 12px; background: var(--bg); }
+  .inv-price-wrap:focus-within { border-color: var(--cat-strong, var(--accent-mid)); background: #fff; }
+  .inv-price-sym { font-size: 16px; color: var(--cat-strong, var(--text-faint)); font-family: Arial, sans-serif; font-weight: 700; }
+  .inv-price-input { flex: 1; border: none; background: none; font-size: 17px; font-weight: 700; font-family: inherit; color: var(--text); outline: none; padding: 9px 0; width: 60px; min-width: 0; }
+  .inv-price-hint { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; display: block; margin-top: 5px; }
+  /* Save btn */
+  .inv-save-btn { width: 100%; padding: 15px; background: var(--cat-strong, var(--accent)); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-family: Arial, sans-serif; cursor: pointer; font-weight: 700; margin-top: 24px; transition: filter 0.15s; }
+  .inv-save-btn:hover { filter: brightness(1.08); }
 
-/* MAG LIST tracker icon */
-/* MAG TRACKER BADGES */
-.mag-tracker-badges { display: flex; gap: 5px; margin: 4px 0 2px; flex-wrap: wrap; }
-.mag-tbadge { font-size: 11px; font-family: Arial, sans-serif; padding: 2px 8px; border-radius: 4px; font-weight: bold; border: 1px solid transparent; }
-.mag-tbadge.loc { background: #f0e9d6; color: #9a7a50; border-color: #d9c89e; }
-.mag-tbadge.loc.empty { background: var(–bg); color: var(–text-faint); border-color: var(–border); }
-.mag-tbadge.frigo { background: var(–blue-light); color: var(–blue); border-color: #b8cff0; }
-.mag-tbadge.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.mag-tbadge.frigo.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
-.mag-tbadge.magaz { background: var(–green-light); color: var(–green); border-color: #a7d9be; }
-.mag-tbadge.magaz.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.mag-tbadge.magaz.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
-.mag-tbadge.piccolo { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; margin-left: 6px; vertical-align: middle; }
+  /* TRACKER MODE TOGGLE */
+  .toggle-wrap { cursor: pointer; }
+  .toggle-track { width: 44px; height: 24px; background: var(--border-strong); border-radius: 12px; position: relative; transition: background 0.2s; }
+  .toggle-track.on { background: var(--green); }
+  .toggle-thumb { width: 20px; height: 20px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  .toggle-track.on .toggle-thumb { left: 22px; }
 
-/* ⋯ MENU BTN */
-.wine-menu-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(–border-strong); background: var(–surface); color: var(–text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px; }
-.wine-menu-btn:hover { background: var(–accent-light); border-color: var(–accent-mid); color: var(–accent); }
 
-/* ===================== PANEL (magazzino / impostazioni) ===================== */
-.panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-.panel-overlay.open { opacity: 1; pointer-events: all; }
-.panel { background: var(–surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 680px; padding: 0 0 32px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
-.panel-overlay.open .panel { transform: translateY(0); }
-.panel-handle { width: 40px; height: 4px; background: var(–border-strong); border-radius: 2px; margin: 12px auto 8px; }
-.panel-header { padding: 12px 22px 14px; border-bottom: 1px solid var(–border); display: flex; align-items: center; justify-content: space-between; }
-.panel-title { font-size: 16px; font-weight: bold; font-family: Arial, sans-serif; color: var(–text); }
-.panel-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(–text-faint); padding: 2px 6px; border-radius: 6px; }
-.panel-close:hover { background: var(–bg); color: var(–text); }
-.panel-body { padding: 18px 22px 0; }
+  /* TRACKER BADGES on wine rows */
+  .wine-inv-badges { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+  .inv-badge { font-size: 10px; font-family: Arial, sans-serif; padding: 2px 7px; border-radius: 3px; font-weight: bold; }
+  .inv-badge.scaffale { background: #f0e9d6; color: #9a7a50; border: 1px solid #d9c89e; }
+  .inv-badge.frigo { background: var(--blue-light); color: var(--blue); border: 1px solid #b8cff0; }
+  .inv-badge.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .inv-badge.frigo.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
+  .inv-badge.mag { background: var(--green-light); color: var(--green); border: 1px solid #a7d9be; }
+  .inv-badge.mag.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .inv-badge.mag.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
 
-/* MAGAZZINO LIST */
-.mag-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-.mag-count { font-size: 12px; color: var(–text-faint); font-family: Arial, sans-serif; flex: 1; }
-.mag-count span { color: var(–accent); font-weight: bold; }
-.reload-btn { padding: 8px 16px; background: var(–accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-family: Arial, sans-serif; cursor: pointer; font-weight: bold; transition: background 0.15s; }
-.reload-btn:hover { background: #a0442f; }
-.reload-timestamp { font-size: 11px; color: var(–text-faint); font-family: Arial, sans-serif; font-style: italic; }
-.mag-empty { text-align: center; padding: 40px 20px; color: var(–text-faint); font-style: italic; font-size: 14px; }
-.mag-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(–border); }
-.mag-item:last-child { border-bottom: none; }
-.mag-item-left { flex: 1; min-width: 0; }
-.mag-item-producer { font-size: 13px; font-weight: bold; font-family: Arial, sans-serif; color: var(–text); }
-.mag-item-name { font-size: 12px; color: var(–text-muted); font-style: italic; margin-top: 1px; }
-.mag-item-meta { font-size: 11px; color: var(–text-faint); font-family: Arial, sans-serif; margin-top: 3px; }
-.mag-item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.mag-qty-badge { background: var(–accent-light); color: var(–accent); font-weight: bold; font-size: 13px; font-family: Arial, sans-serif; padding: 3px 10px; border-radius: 20px; }
-.sel-chip { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: Arial, sans-serif; cursor: pointer; border: 1.5px solid; transition: all 0.15s; font-weight: bold; white-space: nowrap; }
-.sel-chip.in { border-color: var(–green); color: var(–green); background: var(–green-light); }
-.sel-chip.out { border-color: var(–text-faint); color: var(–text-faint); background: var(–bg); }
-.sel-chip:hover { opacity: 0.75; }
-.mag-del-btn { background: none; border: none; color: var(–text-faint); font-size: 16px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
-.mag-del-btn:hover { color: var(–accent); background: var(–accent-light); }
+  /* MAG LIST tracker icon */
+  /* MAG TRACKER BADGES */
+  .mag-tracker-badges { display: flex; gap: 5px; margin: 4px 0 2px; flex-wrap: wrap; }
+  .mag-tbadge { font-size: 11px; font-family: Arial, sans-serif; padding: 2px 8px; border-radius: 4px; font-weight: bold; border: 1px solid transparent; }
+  .mag-tbadge.loc { background: #f0e9d6; color: #9a7a50; border-color: #d9c89e; }
+  .mag-tbadge.loc.empty { background: var(--bg); color: var(--text-faint); border-color: var(--border); }
+  .mag-tbadge.frigo { background: var(--blue-light); color: var(--blue); border-color: #b8cff0; }
+  .mag-tbadge.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .mag-tbadge.frigo.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
+  .mag-tbadge.magaz { background: var(--green-light); color: var(--green); border-color: #a7d9be; }
+  .mag-tbadge.magaz.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .mag-tbadge.magaz.empty { background: #fde8e8; color: #991b1b; border-color: #f5c6c6; }
+  .mag-tbadge.piccolo { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; margin-left: 6px; vertical-align: middle; }
 
-/* NON DISPONIBILI SECTION */
-.mag-nd-section { margin-top: 20px; }
-.mag-nd-header {
-display: flex; align-items: center; gap: 10px; padding: 9px 0;
-cursor: pointer; border-top: 1px dashed var(–border-strong);
-user-select: none;
-}
-.mag-nd-header:hover .mag-nd-title { color: var(–text); }
-.mag-nd-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(–text-faint); font-family: Arial, sans-serif; font-style: italic; flex: 1; }
-.mag-nd-count-badge { font-size: 10px; background: #f0e9d6; color: #9a7a50; padding: 2px 8px; border-radius: 10px; font-family: Arial, sans-serif; border: 1px solid #d9c89e; font-weight: bold; }
-.mag-nd-arrow { font-size: 12px; color: var(–text-faint); transition: transform 0.2s; }
-.mag-nd-arrow.open { transform: rotate(90deg); }
-.mag-nd-list { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
-.mag-nd-list.open { max-height: 9999px; }
-/* non disponibile item style */
-.mag-item.nd { opacity: 0.6; }
-.mag-item.nd .mag-item-producer { text-decoration: line-through; text-decoration-color: var(–text-faint); }
-/* ND toggle button in mag item */
-.mag-nd-btn {
-padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: Arial, sans-serif;
-cursor: pointer; border: 1.5px solid; transition: all 0.15s; font-weight: bold; white-space: nowrap;
-border-color: var(–text-faint); color: var(–text-faint); background: var(–bg);
-}
-.mag-nd-btn.active { border-color: var(–orange); color: var(–orange); background: var(–orange-light); }
-.mag-nd-btn:hover { opacity: 0.75; }
+  /* ⋯ MENU BTN */
+  .wine-menu-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px; }
+  .wine-menu-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
 
-/* IMPOSTAZIONI */
-.setting-section { margin-bottom: 28px; }
-.setting-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(–text-muted); font-family: Arial, sans-serif; margin-bottom: 10px; }
-.setting-desc { font-size: 13px; color: var(–text-muted); font-family: Arial, sans-serif; margin-bottom: 12px; line-height: 1.5; }
-.pdf-drop-zone { border: 2px dashed var(–border-strong); border-radius: 12px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all 0.15s; background: var(–bg); }
-.pdf-drop-zone:hover, .pdf-drop-zone.drag-over { border-color: var(–accent-mid); background: var(–accent-light); }
-.pdf-drop-icon { font-size: 32px; margin-bottom: 8px; }
-.pdf-drop-text { font-size: 14px; color: var(–text-muted); font-family: Arial, sans-serif; }
-.pdf-drop-sub { font-size: 12px; color: var(–text-faint); font-family: Arial, sans-serif; margin-top: 4px; }
-.pdf-status { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; margin-top: 12px; font-family: Arial, sans-serif; font-size: 13px; }
-.pdf-status.loaded { background: var(–green-light); color: var(–green); border: 1px solid #a7d9be; }
-.pdf-status.none { background: var(–bg); color: var(–text-faint); border: 1px solid var(–border); }
-.pdf-status-icon { font-size: 18px; }
-.pdf-remove-btn { margin-left: auto; background: none; border: none; color: var(–text-faint); cursor: pointer; font-size: 14px; }
-.pdf-remove-btn:hover { color: var(–accent); }
+  /* ===================== PANEL (magazzino / impostazioni) ===================== */
+  .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .panel-overlay.open { opacity: 1; pointer-events: all; }
+  .panel { background: var(--surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 680px; padding: 0 0 32px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
+  .panel-overlay.open .panel { transform: translateY(0); }
+  .panel-handle { width: 40px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 12px auto 8px; }
+  .panel-header { padding: 12px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 16px; font-weight: bold; font-family: Arial, sans-serif; color: var(--text); }
+  .panel-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-faint); padding: 2px 6px; border-radius: 6px; }
+  .panel-close:hover { background: var(--bg); color: var(--text); }
+  .panel-body { padding: 18px 22px 0; }
 
-/* ===================== VIEW MODE BTN (singolo, mostra lo stato attivo) ===================== */
-.viewmode-single { font-size: 18px; }
-.viewmode-single span { display: block; line-height: 1; }
+  /* MAGAZZINO LIST */
+  .mag-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .mag-count { font-size: 12px; color: var(--text-faint); font-family: Arial, sans-serif; flex: 1; }
+  .mag-count span { color: var(--accent); font-weight: bold; }
+  .reload-btn { padding: 8px 16px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-family: Arial, sans-serif; cursor: pointer; font-weight: bold; transition: background 0.15s; }
+  .reload-btn:hover { background: #a0442f; }
+  .reload-timestamp { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; }
+  .mag-empty { text-align: center; padding: 40px 20px; color: var(--text-faint); font-style: italic; font-size: 14px; }
+  .mag-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .mag-item:last-child { border-bottom: none; }
+  .mag-item-left { flex: 1; min-width: 0; }
+  .mag-item-producer { font-size: 13px; font-weight: bold; font-family: Arial, sans-serif; color: var(--text); }
+  .mag-item-name { font-size: 12px; color: var(--text-muted); font-style: italic; margin-top: 1px; }
+  .mag-item-meta { font-size: 11px; color: var(--text-faint); font-family: Arial, sans-serif; margin-top: 3px; }
+  .mag-item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .mag-qty-badge { background: var(--accent-light); color: var(--accent); font-weight: bold; font-size: 13px; font-family: Arial, sans-serif; padding: 3px 10px; border-radius: 20px; }
+  .sel-chip { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: Arial, sans-serif; cursor: pointer; border: 1.5px solid; transition: all 0.15s; font-weight: bold; white-space: nowrap; }
+  .sel-chip.in { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .sel-chip.out { border-color: var(--text-faint); color: var(--text-faint); background: var(--bg); }
+  .sel-chip:hover { opacity: 0.75; }
+  .mag-del-btn { background: none; border: none; color: var(--text-faint); font-size: 16px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+  .mag-del-btn:hover { color: var(--accent); background: var(--accent-light); }
 
-/* ===================== GALLERY (iPad / touch) MODE ===================== */
-.results-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-@media (max-width: 680px) { .results-gallery { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; } }
+  /* NON DISPONIBILI SECTION */
+  .mag-nd-section { margin-top: 20px; }
+  .mag-nd-header {
+    display: flex; align-items: center; gap: 10px; padding: 9px 0;
+    cursor: pointer; border-top: 1px dashed var(--border-strong);
+    user-select: none;
+  }
+  .mag-nd-header:hover .mag-nd-title { color: var(--text); }
+  .mag-nd-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); font-family: Arial, sans-serif; font-style: italic; flex: 1; }
+  .mag-nd-count-badge { font-size: 10px; background: #f0e9d6; color: #9a7a50; padding: 2px 8px; border-radius: 10px; font-family: Arial, sans-serif; border: 1px solid #d9c89e; font-weight: bold; }
+  .mag-nd-arrow { font-size: 12px; color: var(--text-faint); transition: transform 0.2s; }
+  .mag-nd-arrow.open { transform: rotate(90deg); }
+  .mag-nd-list { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+  .mag-nd-list.open { max-height: 9999px; }
+  /* non disponibile item style */
+  .mag-item.nd { opacity: 0.6; }
+  .mag-item.nd .mag-item-producer { text-decoration: line-through; text-decoration-color: var(--text-faint); }
+  /* ND toggle button in mag item */
+  .mag-nd-btn {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: Arial, sans-serif;
+    cursor: pointer; border: 1.5px solid; transition: all 0.15s; font-weight: bold; white-space: nowrap;
+    border-color: var(--text-faint); color: var(--text-faint); background: var(--bg);
+  }
+  .mag-nd-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+  .mag-nd-btn:hover { opacity: 0.75; }
 
-/* In gallery mode the region heads span the whole grid row */
-.results-gallery .section-head,
-.results-gallery .maybe-head { grid-column: 1 / -1; }
+  /* IMPOSTAZIONI */
+  .setting-section { margin-bottom: 28px; }
+  .setting-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 10px; }
+  .setting-desc { font-size: 13px; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 12px; line-height: 1.5; }
+  .pdf-drop-zone { border: 2px dashed var(--border-strong); border-radius: 12px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all 0.15s; background: var(--bg); }
+  .pdf-drop-zone:hover, .pdf-drop-zone.drag-over { border-color: var(--accent-mid); background: var(--accent-light); }
+  .pdf-drop-icon { font-size: 32px; margin-bottom: 8px; }
+  .pdf-drop-text { font-size: 14px; color: var(--text-muted); font-family: Arial, sans-serif; }
+  .pdf-drop-sub { font-size: 12px; color: var(--text-faint); font-family: Arial, sans-serif; margin-top: 4px; }
+  .pdf-status { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; margin-top: 12px; font-family: Arial, sans-serif; font-size: 13px; }
+  .pdf-status.loaded { background: var(--green-light); color: var(--green); border: 1px solid #a7d9be; }
+  .pdf-status.none { background: var(--bg); color: var(--text-faint); border: 1px solid var(--border); }
+  .pdf-status-icon { font-size: 18px; }
+  .pdf-remove-btn { margin-left: auto; background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 14px; }
+  .pdf-remove-btn:hover { color: var(--accent); }
 
-.wine-card {
-position: relative; background: var(–cat-bg, var(–surface));
-border: 1px solid var(–cat-border, var(–border));
-border-radius: 14px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 8px;
-box-shadow: 0 1px 5px rgba(0,0,0,0.05); transition: box-shadow 0.15s, transform 0.1s;
-min-height: 130px;
-}
-.wine-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.12); }
-.wine-card.maybe { opacity: 0.78; }
-.wine-card-titles { min-width: 0; }
-/* cella minimale: nome cantina ben grande, nome etichetta leggibile */
-.wine-card-producer { font-size: 21px; font-weight: 800; color: var(–text); font-family: Arial, sans-serif; line-height: 1.12; }
-.wine-card-name { font-size: 17px; color: var(–text); opacity: 0.82; margin-top: 5px; line-height: 1.3; font-family: Arial, sans-serif; }
-.wine-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-.wine-card-tags .wine-tag { font-size: 12px; padding: 2px 9px; font-weight: 600; background: #fff; color: var(–cat-strong, var(–text-muted)); border: 1px solid var(–cat-border, var(–border)); }
-.wine-card-tags .wine-format { font-size: 12px; padding: 2px 9px; font-weight: 700; background: var(–cat-strong, var(–accent)); color: #fff; }
-.wine-card-spacer { flex: 1; }
-.wine-card-bottom { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
-/* pulsante aggiungi compatto: rotondo col + */
-.wine-card-add {
-width: 44px; height: 44px; border-radius: 50%; background: var(–cat-strong, var(–accent)); color: #fff; border: none;
-cursor: pointer; display: flex; align-items: center; justify-content: center;
-transition: transform 0.1s, filter 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-box-shadow: 0 2px 6px rgba(0,0,0,0.18); margin-left: auto;
-}
-.wine-card-add:hover { filter: brightness(1.08); }
-.wine-card-add:active { transform: scale(0.92); }
-.wine-card-add .add-plus { font-size: 26px; line-height: 1; font-family: Arial, sans-serif; font-weight: 400; }
-.wine-card-menu {
-width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(–border-strong);
-background: #fff; color: var(–text-muted); font-size: 18px; cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px;
-}
-.wine-card-menu:hover { background: var(–accent-light); border-color: var(–accent-mid); color: var(–accent); }
-.wine-card-info {
-width: 40px; height: 40px; border-radius: 50%; border: none;
-background: var(–cat-strong, var(–accent)); color: #fff; cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s; flex-shrink: 0;
-box-shadow: 0 2px 6px rgba(0,0,0,0.18); font-family: Georgia, ‘Times New Roman’, serif;
-font-size: 22px; font-weight: 700; font-style: italic; line-height: 1; -webkit-tap-highlight-color: transparent;
-}
-.wine-card-info:hover { filter: brightness(1.08); }
-.wine-card-info:active { transform: scale(0.92); }
-/* Manager: pulsante “✏️ Scorte” a larghezza piena, colore categoria */
-.wine-card-edit {
-width: 100%; padding: 11px; border: none; border-radius: 11px;
-background: var(–cat-strong, var(–accent)); color: #fff; cursor: pointer;
-font-size: 15px; font-weight: 700; font-family: Arial, sans-serif;
-display: flex; align-items: center; justify-content: center; gap: 6px;
-transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
-box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-.wine-card-edit:hover { filter: brightness(1.08); }
-.wine-card-edit:active { transform: scale(0.98); }
-.wine-card .wine-inv-badges { margin-top: 0; }
+  /* ===================== VIEW MODE BTN (singolo, mostra lo stato attivo) ===================== */
+  .viewmode-single { font-size: 18px; }
+  .viewmode-single span { display: block; line-height: 1; }
 
-/* ===================== COLORI PER CATEGORIA ===================== */
-.cat-bollicine  { –cat-strong:#a07d00; –cat-border:#e8d795; –cat-tag-bg:#fbf3d6; –cat-bg:#fdf8e6; }
-.cat-champagne  { –cat-strong:#9a6f1c; –cat-border:#e0cfa6; –cat-tag-bg:#f7efdd; –cat-bg:#faf4e4; }
-.cat-bianco     { –cat-strong:#2a8049; –cat-border:#b6e0c6; –cat-tag-bg:#e6f5ec; –cat-bg:#edf8f1; }
-.cat-rosso      { –cat-strong:#a83636; –cat-border:#e6bcbc; –cat-tag-bg:#fbe7e7; –cat-bg:#fcefef; }
-.cat-rose       { –cat-strong:#bd5680; –cat-border:#eec6d6; –cat-tag-bg:#fceaf1; –cat-bg:#fdf0f5; }
-.cat-stranieri  { –cat-strong:#544dbd; –cat-border:#cbc8ec; –cat-tag-bg:#ecebfb; –cat-bg:#f3f2fc; }
-.cat-piccoli    { –cat-strong:#1b68a8; –cat-border:#b3d3eb; –cat-tag-bg:#e6f1fa; –cat-bg:#eef6fc; }
-/* in modalità lista coloriamo solo il bordo sinistro, in modo discreto */
-.wine-row { border-left: 4px solid transparent; padding-left: 10px; }
-.wine-row.cat-bollicine  { border-left-color:#e3c54d; }
-.wine-row.cat-champagne  { border-left-color:#cBa85a; }
-.wine-row.cat-bianco     { border-left-color:#6cc28a; }
-.wine-row.cat-rosso      { border-left-color:#d96f6f; }
-.wine-row.cat-rose       { border-left-color:#e29ab9; }
-.wine-row.cat-stranieri  { border-left-color:#928bdf; }
-.wine-row.cat-piccoli    { border-left-color:#62a8de; }
+  /* ===================== GALLERY (iPad / touch) MODE ===================== */
+  .results-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  @media (max-width: 680px) { .results-gallery { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; } }
 
-/* ===================== MANAGER MODE (3 elementi: magazzino | matita | frigo) ===================== */
-/* le card manager hanno bisogno di un po’ più di larghezza */
-.results-gallery.is-manager { grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
-.wine-card.manager { min-height: 158px; }
-/* layout trio: stepper verticali ai lati, emoji + matita allineate al centro */
-.mgr-trio { display: flex; align-items: center; justify-content: center; gap: 5px; }
-.wine-card.manager .mgr-trio { width: 100%; justify-content: space-between; }
-/* stepper verticale: + / numero / − (emoji ora è fuori, sul piano centrale) */
-.mgr-stepper {
-display: flex; flex-direction: column; align-items: center; gap: 3px; background: #fff;
-border: 1.5px solid var(–cat-border, var(–border-strong)); border-radius: 12px; padding: 6px 5px;
-flex-shrink: 0;
-}
-.mgr-emoji { font-size: 19px; line-height: 1; flex-shrink: 0; }
-.mgr-btn {
-width: 34px; height: 30px; border-radius: 8px; border: none; cursor: pointer;
-font-size: 20px; font-weight: 700; font-family: Arial, sans-serif; line-height: 1;
-display: flex; align-items: center; justify-content: center; transition: filter 0.12s, transform 0.08s;
--webkit-tap-highlight-color: transparent; color: #fff;
-}
-.mgr-btn:active { transform: scale(0.9); }
-.mgr-minus { background: #b0683a; }
-.mgr-plus  { background: var(–cat-strong, var(–accent)); }
-.mgr-btn:hover { filter: brightness(1.08); }
-.mgr-val { font-size: 19px; font-weight: 800; font-family: Arial, sans-serif; color: var(–text); min-width: 24px; text-align: center; line-height: 1.1; }
-/* matita centrale */
-.wine-card-edit-mid, .wine-edit-btn {
-width: 44px; height: 44px; flex-shrink: 0; align-self: center; border-radius: 50%; border: none;
-background: var(–cat-strong, var(–accent)); color: #fff; font-size: 18px; cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s;
-box-shadow: 0 2px 6px rgba(0,0,0,0.15); -webkit-tap-highlight-color: transparent;
-}
-.wine-card-edit-mid:hover, .wine-edit-btn:hover { filter: brightness(1.08); }
-.wine-card-edit-mid:active { transform: scale(0.92); }
-/* lista manager: trio allineato a destra, compatto */
-.wine-row .mgr-trio { gap: 8px; }
+  /* In gallery mode the region heads span the whole grid row */
+  .results-gallery .section-head,
+  .results-gallery .maybe-head { grid-column: 1 / -1; }
 
-/* ===================== TRACKER: cella esaurita (frigo = 0) ===================== */
-.wine-card.sold-out { opacity: 0.5; pointer-events: none; filter: grayscale(0.3); }
-.wine-card.sold-out .wine-card-info, .wine-card.sold-out .wine-card-menu { pointer-events: auto; }
-.sold-out-banner { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; background: #fde2e2; border: 1px solid #f5b5b5; border-radius: 6px; padding: 4px 9px; width: fit-content; }
-.wine-row.sold-out { opacity: 0.55; pointer-events: none; }
-.wine-row.sold-out .wine-info-btn, .wine-row.sold-out .wine-menu-btn { pointer-events: auto; }
-.row-soldout { font-size: 12px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; }
+  .wine-card {
+    position: relative; background: var(--cat-bg, var(--surface));
+    border: 1px solid var(--cat-border, var(--border));
+    border-radius: 14px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05); transition: box-shadow 0.15s, transform 0.1s;
+    min-height: 130px;
+  }
+  .wine-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.12); }
+  .wine-card.maybe { opacity: 0.78; }
+  .wine-card-titles { min-width: 0; }
+  /* cella minimale: nome cantina ben grande, nome etichetta leggibile */
+  .wine-card-producer { font-size: 21px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.12; }
+  .wine-card-name { font-size: 17px; color: var(--text); opacity: 0.82; margin-top: 5px; line-height: 1.3; font-family: Arial, sans-serif; }
+  .wine-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .wine-card-tags .wine-tag { font-size: 12px; padding: 2px 9px; font-weight: 600; background: #fff; color: var(--cat-strong, var(--text-muted)); border: 1px solid var(--cat-border, var(--border)); }
+  .wine-card-tags .wine-format { font-size: 12px; padding: 2px 9px; font-weight: 700; background: var(--cat-strong, var(--accent)); color: #fff; }
+  .wine-card-spacer { flex: 1; }
+  .wine-card-bottom { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  /* pulsante aggiungi compatto: rotondo col + */
+  .wine-card-add {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--cat-strong, var(--accent)); color: #fff; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, filter 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18); margin-left: auto;
+  }
+  .wine-card-add:hover { filter: brightness(1.08); }
+  .wine-card-add:active { transform: scale(0.92); }
+  .wine-card-add .add-plus { font-size: 26px; line-height: 1; font-family: Arial, sans-serif; font-weight: 400; }
+  .wine-card-menu {
+    width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border-strong);
+    background: #fff; color: var(--text-muted); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    flex-shrink: 0; font-family: Arial, sans-serif; letter-spacing: -1px;
+  }
+  .wine-card-menu:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .wine-card-info {
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: var(--cat-strong, var(--accent)); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18); font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px; font-weight: 700; font-style: italic; line-height: 1; -webkit-tap-highlight-color: transparent;
+  }
+  .wine-card-info:hover { filter: brightness(1.08); }
+  .wine-card-info:active { transform: scale(0.92); }
+  /* Manager: pulsante "✏️ Scorte" a larghezza piena, colore categoria */
+  .wine-card-edit {
+    width: 100%; padding: 11px; border: none; border-radius: 11px;
+    background: var(--cat-strong, var(--accent)); color: #fff; cursor: pointer;
+    font-size: 15px; font-weight: 700; font-family: Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .wine-card-edit:hover { filter: brightness(1.08); }
+  .wine-card-edit:active { transform: scale(0.98); }
+  .wine-card .wine-inv-badges { margin-top: 0; }
 
-/* ===================== TRACKER: segnale scorte magazzino critiche ===================== */
-.wine-card.low-stock { border-color: var(–cat-border); }
-.stock-flag { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; font-family: Arial, sans-serif; padding: 3px 8px; border-radius: 20px; }
-.stock-flag.warn { background: #fff3cd; color: #856404; border: 1px solid #ffd766; }
-.stock-flag.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
-/* lista: pallino laterale */
-.wine-row .stock-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.wine-row .stock-dot.warn { background: #e0a800; }
-.wine-row .stock-dot.crit { background: #d6342a; }
+  /* ===================== COLORI PER CATEGORIA ===================== */
+  .cat-bollicine  { --cat-strong:#a07d00; --cat-border:#e8d795; --cat-tag-bg:#fbf3d6; --cat-bg:#fdf8e6; }
+  .cat-champagne  { --cat-strong:#9a6f1c; --cat-border:#e0cfa6; --cat-tag-bg:#f7efdd; --cat-bg:#faf4e4; }
+  .cat-bianco     { --cat-strong:#2a8049; --cat-border:#b6e0c6; --cat-tag-bg:#e6f5ec; --cat-bg:#edf8f1; }
+  .cat-rosso      { --cat-strong:#a83636; --cat-border:#e6bcbc; --cat-tag-bg:#fbe7e7; --cat-bg:#fcefef; }
+  .cat-rose       { --cat-strong:#bd5680; --cat-border:#eec6d6; --cat-tag-bg:#fceaf1; --cat-bg:#fdf0f5; }
+  .cat-stranieri  { --cat-strong:#544dbd; --cat-border:#cbc8ec; --cat-tag-bg:#ecebfb; --cat-bg:#f3f2fc; }
+  .cat-piccoli    { --cat-strong:#1b68a8; --cat-border:#b3d3eb; --cat-tag-bg:#e6f1fa; --cat-bg:#eef6fc; }
+  /* in modalità lista coloriamo solo il bordo sinistro, in modo discreto */
+  .wine-row { border-left: 4px solid transparent; padding-left: 10px; }
+  .wine-row.cat-bollicine  { border-left-color:#e3c54d; }
+  .wine-row.cat-champagne  { border-left-color:#cBa85a; }
+  .wine-row.cat-bianco     { border-left-color:#6cc28a; }
+  .wine-row.cat-rosso      { border-left-color:#d96f6f; }
+  .wine-row.cat-rose       { border-left-color:#e29ab9; }
+  .wine-row.cat-stranieri  { border-left-color:#928bdf; }
+  .wine-row.cat-piccoli    { border-left-color:#62a8de; }
 
-/* ===================== SCHEDA VINO (dettaglio) ===================== */
-.detail-modal { max-width: 460px; width: 100%; }
-/* header = nome categoria, colorato */
-.detail-header {
-padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-background: var(–cat-strong, var(–accent));
-}
-.detail-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
-.detail-header .inv-modal-close { color: rgba(255,255,255,0.85); }
-.detail-header .inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
-.detail-body { padding: 22px 24px 26px; }
-.detail-titles { margin-bottom: 4px; }
-.detail-producer { font-size: 26px; font-weight: 800; color: var(–text); font-family: Arial, sans-serif; line-height: 1.12; }
-.detail-name-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 7px; }
-.detail-name { font-size: 18px; color: var(–text); opacity: 0.82; line-height: 1.3; font-family: Arial, sans-serif; }
-.detail-format { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; background: var(–cat-strong, var(–accent)); color: #fff; padding: 3px 11px; border-radius: 20px; letter-spacing: 0.03em; }
-.detail-section { margin-top: 22px; }
-/* titoli sezione ben visibili */
-.detail-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(–cat-strong, var(–accent)); font-family: Arial, sans-serif; margin-bottom: 9px; }
-.detail-price { font-size: 40px; font-weight: 800; color: var(–text); font-family: Arial, sans-serif; line-height: 1; }
-.detail-price::after { content: ‘€’; font-size: 20px; margin-left: 3px; color: var(–cat-strong, var(–accent)); }
-.detail-price.noprice { font-size: 22px; color: var(–text-faint); }
-.detail-price.noprice::after { content: ‘’; }
-.detail-region { font-size: 18px; color: var(–text); font-family: Arial, sans-serif; }
-.detail-supplier { font-size: 17px; color: var(–text); font-family: Arial, sans-serif; }
-.detail-sup-name { font-weight: 700; }
-.detail-sup-tel { color: var(–cat-strong, var(–accent)); text-decoration: none; font-weight: 600; }
-.detail-sup-tel:hover { text-decoration: underline; }
-.detail-cassa { font-size: 17px; color: var(–text); font-family: Arial, sans-serif; }
-.detail-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.detail-tags .d-tag { font-size: 15px; font-weight: 600; padding: 6px 14px; border-radius: 7px; font-family: Arial, sans-serif; background: var(–cat-tag-bg, var(–tag-bg)); color: var(–cat-strong, var(–text-muted)); }
-.detail-stock { display: flex; flex-wrap: wrap; gap: 9px; }
-.detail-stock .d-stock { font-size: 15px; font-weight: 700; padding: 8px 14px; border-radius: 8px; font-family: Arial, sans-serif; border: 1px solid transparent; }
-.detail-stock .d-stock.loc   { background: #f0e9d6; color: #9a7a50; border-color: #d9c89e; }
-.detail-stock .d-stock.none  { background: var(–bg); color: var(–text-faint); border-color: var(–border); font-style: italic; font-weight: 600; }
-.detail-stock .d-stock.frigo { background: var(–blue-light); color: var(–blue); border-color: #b8cff0; }
-.detail-stock .d-stock.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.detail-stock .d-stock.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
-.detail-stock .d-stock.frigo.empty { background: #f3d6d6; color: #8a1010; border-color: #e09a9a; }
-.detail-stock .d-stock.mag   { background: var(–green-light); color: var(–green); border-color: #a7d9be; }
-.detail-stock .d-stock.mag.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
-.detail-stock .d-stock.mag.empty { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
-.detail-add-btn {
-width: 100%; padding: 16px; margin-top: 28px; background: var(–cat-strong, var(–accent)); color: #fff;
-border: none; border-radius: 12px; font-size: 17px; font-weight: 700; font-family: Arial, sans-serif;
-cursor: pointer; transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
-}
-.detail-add-btn:hover { filter: brightness(1.08); }
-.detail-add-btn:active { transform: scale(0.98); }
+  /* ===================== MANAGER MODE (3 elementi: magazzino | matita | frigo) ===================== */
+  /* le card manager hanno bisogno di un po' più di larghezza */
+  .results-gallery.is-manager { grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
+  .wine-card.manager { min-height: 158px; }
+  /* layout trio: stepper verticali ai lati, emoji + matita allineate al centro */
+  .mgr-trio { display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .wine-card.manager .mgr-trio { width: 100%; justify-content: space-between; }
+  /* stepper verticale: + / numero / − (emoji ora è fuori, sul piano centrale) */
+  .mgr-stepper {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; background: #fff;
+    border: 1.5px solid var(--cat-border, var(--border-strong)); border-radius: 12px; padding: 6px 5px;
+    flex-shrink: 0;
+  }
+  .mgr-emoji { font-size: 19px; line-height: 1; flex-shrink: 0; }
+  .mgr-btn {
+    width: 34px; height: 30px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: 20px; font-weight: 700; font-family: Arial, sans-serif; line-height: 1;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.12s, transform 0.08s;
+    -webkit-tap-highlight-color: transparent; color: #fff;
+  }
+  .mgr-btn:active { transform: scale(0.9); }
+  .mgr-minus { background: #b0683a; }
+  .mgr-plus  { background: var(--cat-strong, var(--accent)); }
+  .mgr-btn:hover { filter: brightness(1.08); }
+  .mgr-val { font-size: 19px; font-weight: 800; font-family: Arial, sans-serif; color: var(--text); min-width: 24px; text-align: center; line-height: 1.1; }
+  /* matita centrale */
+  .wine-card-edit-mid, .wine-edit-btn {
+    width: 44px; height: 44px; flex-shrink: 0; align-self: center; border-radius: 50%; border: none;
+    background: var(--cat-strong, var(--accent)); color: #fff; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: filter 0.15s, transform 0.1s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); -webkit-tap-highlight-color: transparent;
+  }
+  .wine-card-edit-mid:hover, .wine-edit-btn:hover { filter: brightness(1.08); }
+  .wine-card-edit-mid:active { transform: scale(0.92); }
+  /* lista manager: trio allineato a destra, compatto */
+  .wine-row .mgr-trio { gap: 8px; }
 
-/* ===================== ALERT SCORTE (frigo) ===================== */
-.stock-alert { font-size: 11.5px; font-family: Arial, sans-serif; font-weight: 700; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-top: 2px; width: fit-content; }
-.stock-alert.low  { background: #fff3cd; color: #856404; border: 1px solid #ffe08a; }
-.stock-alert.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
-.stock-alert.out  { background: #f3d6d6; color: #8a1010; border: 1px solid #e09a9a; }
-/* badge frigo livello critico (oltre warn/empty già esistenti) */
-.inv-badge.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+  /* ===================== TRACKER: cella esaurita (frigo = 0) ===================== */
+  .wine-card.sold-out { opacity: 0.5; pointer-events: none; filter: grayscale(0.3); }
+  .wine-card.sold-out .wine-card-info, .wine-card.sold-out .wine-card-menu { pointer-events: auto; }
+  .sold-out-banner { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; background: #fde2e2; border: 1px solid #f5b5b5; border-radius: 6px; padding: 4px 9px; width: fit-content; }
+  .wine-row.sold-out { opacity: 0.55; pointer-events: none; }
+  .wine-row.sold-out .wine-info-btn, .wine-row.sold-out .wine-menu-btn { pointer-events: auto; }
+  .row-soldout { font-size: 12px; font-weight: 800; font-family: Arial, sans-serif; color: #b42318; }
 
-/* ALERT SCORTE (frigo) — fine blocco galleria */
-.pop-head .section-title { color: var(–accent); font-weight: bold; }
+  /* ===================== TRACKER: segnale scorte magazzino critiche ===================== */
+  .wine-card.low-stock { border-color: var(--cat-border); }
+  .stock-flag { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; font-family: Arial, sans-serif; padding: 3px 8px; border-radius: 20px; }
+  .stock-flag.warn { background: #fff3cd; color: #856404; border: 1px solid #ffd766; }
+  .stock-flag.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
+  /* lista: pallino laterale */
+  .wine-row .stock-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .wine-row .stock-dot.warn { background: #e0a800; }
+  .wine-row .stock-dot.crit { background: #d6342a; }
 
-/* TOAST */
-.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1714; color: #fff; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: Arial, sans-serif; z-index: 3000; opacity: 0; transition: all 0.25s; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.success { background: var(–green); }
-.toast.info { background: var(–blue); }
-.toast.error { background: #991b1b; }
+  /* ===================== SCHEDA VINO (dettaglio) ===================== */
+  .detail-modal { max-width: 460px; width: 100%; }
+  /* header = nome categoria, colorato */
+  .detail-header {
+    padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--cat-strong, var(--accent));
+  }
+  .detail-category { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-family: Arial, sans-serif; }
+  .detail-header .inv-modal-close { color: rgba(255,255,255,0.85); }
+  .detail-header .inv-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  .detail-body { padding: 22px 24px 26px; }
+  .detail-titles { margin-bottom: 4px; }
+  .detail-producer { font-size: 26px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1.12; }
+  .detail-name-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 7px; }
+  .detail-name { font-size: 18px; color: var(--text); opacity: 0.82; line-height: 1.3; font-family: Arial, sans-serif; }
+  .detail-format { font-size: 13px; font-weight: 800; font-family: Arial, sans-serif; background: var(--cat-strong, var(--accent)); color: #fff; padding: 3px 11px; border-radius: 20px; letter-spacing: 0.03em; }
+  .detail-section { margin-top: 22px; }
+  /* titoli sezione ben visibili */
+  .detail-label { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cat-strong, var(--accent)); font-family: Arial, sans-serif; margin-bottom: 9px; }
+  .detail-price { font-size: 40px; font-weight: 800; color: var(--text); font-family: Arial, sans-serif; line-height: 1; }
+  .detail-price::after { content: '€'; font-size: 20px; margin-left: 3px; color: var(--cat-strong, var(--accent)); }
+  .detail-price.noprice { font-size: 22px; color: var(--text-faint); }
+  .detail-price.noprice::after { content: ''; }
+  .detail-region { font-size: 18px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-supplier { font-size: 17px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-sup-name { font-weight: 700; }
+  .detail-sup-tel { color: var(--cat-strong, var(--accent)); text-decoration: none; font-weight: 600; }
+  .detail-sup-tel:hover { text-decoration: underline; }
+  .detail-cassa { font-size: 17px; color: var(--text); font-family: Arial, sans-serif; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail-tags .d-tag { font-size: 15px; font-weight: 600; padding: 6px 14px; border-radius: 7px; font-family: Arial, sans-serif; background: var(--cat-tag-bg, var(--tag-bg)); color: var(--cat-strong, var(--text-muted)); }
+  .detail-stock { display: flex; flex-wrap: wrap; gap: 9px; }
+  .detail-stock .d-stock { font-size: 15px; font-weight: 700; padding: 8px 14px; border-radius: 8px; font-family: Arial, sans-serif; border: 1px solid transparent; }
+  .detail-stock .d-stock.loc   { background: #f0e9d6; color: #9a7a50; border-color: #d9c89e; }
+  .detail-stock .d-stock.none  { background: var(--bg); color: var(--text-faint); border-color: var(--border); font-style: italic; font-weight: 600; }
+  .detail-stock .d-stock.frigo { background: var(--blue-light); color: var(--blue); border-color: #b8cff0; }
+  .detail-stock .d-stock.frigo.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .detail-stock .d-stock.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+  .detail-stock .d-stock.frigo.empty { background: #f3d6d6; color: #8a1010; border-color: #e09a9a; }
+  .detail-stock .d-stock.mag   { background: var(--green-light); color: var(--green); border-color: #a7d9be; }
+  .detail-stock .d-stock.mag.warn { background: #fff3cd; color: #856404; border-color: #ffc107; }
+  .detail-stock .d-stock.mag.empty { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
+  .detail-add-btn {
+    width: 100%; padding: 16px; margin-top: 28px; background: var(--cat-strong, var(--accent)); color: #fff;
+    border: none; border-radius: 12px; font-size: 17px; font-weight: 700; font-family: Arial, sans-serif;
+    cursor: pointer; transition: filter 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent;
+  }
+  .detail-add-btn:hover { filter: brightness(1.08); }
+  .detail-add-btn:active { transform: scale(0.98); }
 
-/* LOADING OVERLAY */
-.loading-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(–accent); z-index: 9999; transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
-.loading-bar.active { transform: scaleX(0.7); }
-.loading-bar.done { transform: scaleX(1); transition: transform 0.1s; }
+  /* ===================== ALERT SCORTE (frigo) ===================== */
+  .stock-alert { font-size: 11.5px; font-family: Arial, sans-serif; font-weight: 700; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-top: 2px; width: fit-content; }
+  .stock-alert.low  { background: #fff3cd; color: #856404; border: 1px solid #ffe08a; }
+  .stock-alert.crit { background: #fde2e2; color: #b42318; border: 1px solid #f5b5b5; }
+  .stock-alert.out  { background: #f3d6d6; color: #8a1010; border: 1px solid #e09a9a; }
+  /* badge frigo livello critico (oltre warn/empty già esistenti) */
+  .inv-badge.frigo.crit { background: #fde2e2; color: #b42318; border-color: #f5b5b5; }
 
-/* ===================== MODALITÀ CLIENTE (QR #carta) ===================== */
-/* Tutto ciò che è gestionale viene nascosto e reso inoperante. La carta
-resta una vista di sola lettura: ricerca, categorie e scheda informativa. */
-body.client-mode .header-actions { display: none !important; }
-body.client-mode .wine-card-add,
-body.client-mode .wine-add-btn,
-body.client-mode .wine-card-edit,
-body.client-mode .wine-card-edit-mid,
-body.client-mode .wine-edit-btn,
-body.client-mode .mgr-stepper,
-body.client-mode .mgr-emoji,
-body.client-mode .mgr-trio { display: none !important; }
-/* Niente apertura pannelli/azioni: blocchiamo i clic su tutto tranne info */
-body.client-mode .panel-overlay,
-body.client-mode .inv-overlay#invOverlay { display: none !important; }
-/* In modalità cliente la cella non è cliccabile per “vendere”: solo la “i” apre la scheda */
-body.client-mode .wine-card { cursor: default; }
+  /* ALERT SCORTE (frigo) — fine blocco galleria */
+  .pop-head .section-title { color: var(--accent); font-weight: bold; }
 
-/* –– Header cliente: brand grande e centrato –– */
-body.client-mode .header-top { justify-content: center; margin-bottom: 14px; }
-body.client-mode .client-brand { display: flex; justify-content: center; width: 100%; }
-.client-brand { display: none; align-items: center; gap: 8px; }
-.client-brand-name {
-font-size: 30px; font-weight: 700; color: var(–text);
-font-family: ‘Georgia’, ‘Times New Roman’, serif; letter-spacing: 0.01em;
-text-align: center; line-height: 1.1;
-}
-.client-brand-name .accent { color: var(–accent); font-style: italic; }
-@media (max-width: 680px) { .client-brand-name { font-size: 25px; } }
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1714; color: #fff; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-family: Arial, sans-serif; z-index: 3000; opacity: 0; transition: all 0.25s; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--green); }
+  .toast.info { background: var(--blue); }
+  .toast.error { background: #991b1b; }
 
-/* –– In cliente: nascondi la barra conteggio (“N vini in…”) –– */
-body.client-mode #countBar { display: none; }
+  /* LOADING OVERLAY */
+  .loading-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); z-index: 9999; transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .loading-bar.active { transform: scaleX(0.7); }
+  .loading-bar.done { transform: scaleX(1); transition: transform 0.1s; }
 
-/* –– Titoli regione più grandi e leggibili (solo cliente) –– */
-body.client-mode .section-head {
-margin: 30px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(–border-strong);
-}
-body.client-mode .section-title {
-font-size: 19px; letter-spacing: 0.04em; text-transform: none;
-color: var(–text); font-family: ‘Georgia’, serif; font-weight: 700;
-}
-body.client-mode .pop-head .section-title { color: var(–accent); }
+  /* ===================== MODALITÀ CLIENTE (QR #carta) ===================== */
+  /* Tutto ciò che è gestionale viene nascosto e reso inoperante. La carta
+     resta una vista di sola lettura: ricerca, categorie e scheda informativa. */
+  body.client-mode .header-actions { display: none !important; }
+  body.client-mode .wine-card-add,
+  body.client-mode .wine-add-btn,
+  body.client-mode .wine-card-edit,
+  body.client-mode .wine-card-edit-mid,
+  body.client-mode .wine-edit-btn,
+  body.client-mode .mgr-stepper,
+  body.client-mode .mgr-emoji,
+  body.client-mode .mgr-trio { display: none !important; }
+  /* Niente apertura pannelli/azioni: blocchiamo i clic su tutto tranne info */
+  body.client-mode .panel-overlay,
+  body.client-mode .inv-overlay#invOverlay { display: none !important; }
+  /* In modalità cliente la cella non è cliccabile per "vendere": solo la "i" apre la scheda */
+  body.client-mode .wine-card { cursor: default; }
 
-/* –– Prezzo mostrato sulla cella cliente –– */
-.wine-card-price {
-font-size: 22px; font-weight: 800; font-family: Arial, sans-serif;
-color: var(–cat-strong, var(–accent)); line-height: 1; white-space: nowrap;
-}
-.wine-card-price::after { content: ‘€’; font-size: 14px; margin-left: 1px; opacity: 0.75; }
-.wine-card-price.noprice { font-size: 13px; font-weight: 600; color: var(–text-faint); font-style: italic; }
-.wine-card-price.noprice::after { content: ‘’; }
-.wine-card-bottom.client-bottom { justify-content: space-between; align-items: center; }
+  /* ---- Header cliente: brand grande e centrato ---- */
+  /* ---- FIX LAYOUT CLIENTE ----
+     Con i tre gruppi di filtri l'header diventa alto; su iOS Safari un header
+     'sticky' alto con figli a scorrimento orizzontale finisce sotto il contenuto.
+     In modalità cliente lasciamo quindi che header+filtri scorrano via
+     normalmente con la pagina: niente sovrapposizioni e più spazio alle card. */
+  body.client-mode .header {
+    position: relative;
+    padding-bottom: 6px;
+  }
+  body.client-mode .content { padding-top: 14px; }
+  /* le file di chip non devono andare a capo: scorrono in orizzontale */
+  body.client-mode .filter-chips { flex-wrap: nowrap; }
 
-/* –– BARRA FILTRI CLIENTE (regione / uvaggio / stile) –– */
-.client-filters { display: none; }
-body.client-mode .client-filters { display: block; padding: 2px 18px 10px; max-width: 820px; margin: 0 auto; }
-.filter-group { margin-top: 8px; }
-.filter-group-label {
-font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-color: var(–text-faint); font-family: Arial, sans-serif; font-weight: 700; margin: 0 0 5px 2px;
-}
-.filter-chips { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-.filter-chips::-webkit-scrollbar { display: none; }
-.filter-chip {
-flex-shrink: 0; padding: 6px 13px; border-radius: 18px; border: 1.5px solid var(–border-strong);
-background: var(–surface); color: var(–text-muted); font-size: 13px; font-family: Arial, sans-serif;
-cursor: pointer; transition: all 0.12s; white-space: nowrap; text-transform: capitalize;
-}
-.filter-chip:hover { border-color: var(–accent-mid); color: var(–accent); }
-.filter-chip.active { background: var(–accent); border-color: var(–accent); color: #fff; font-weight: 700; }
+  body.client-mode .header-top { justify-content: center; margin-bottom: 14px; }
+  body.client-mode .client-brand { display: flex; justify-content: center; width: 100%; }
+  .client-brand { display: none; align-items: center; gap: 8px; }
+  .client-brand-name {
+    font-size: 30px; font-weight: 700; color: var(--text);
+    font-family: 'Georgia', 'Times New Roman', serif; letter-spacing: 0.01em;
+    text-align: center; line-height: 1.1;
+  }
+  .client-brand-name .accent { color: var(--accent); font-style: italic; }
+  @media (max-width: 680px) { .client-brand-name { font-size: 25px; } }
 
-/* –– Cella “non disponibile” in modalità cliente: trasparente, non cliccabile –– */
-body.client-mode .wine-card.client-out {
-opacity: 0.42; filter: grayscale(0.35); pointer-events: none; position: relative;
-}
-.client-out-banner {
-font-size: 12px; font-weight: 800; font-family: Arial, sans-serif; color: #8a6d3b;
-background: #f7f1e3; border: 1px solid #e3d3a8; border-radius: 6px;
-padding: 3px 9px; width: fit-content; margin-top: 2px;
-}
-/* lista (computer) cliente: stessa idea sulle righe */
-body.client-mode .wine-row.client-out { opacity: 0.45; pointer-events: none; }
+  /* ---- In cliente: nascondi la barra conteggio ("N vini in...") ---- */
+  body.client-mode #countBar { display: none; }
 
-/* ===================== ANTEPRIMA CLIENTE (mockup telefono) ===================== */
-.preview-overlay { position: fixed; inset: 0; background: rgba(18,14,10,0.75); z-index: 3500; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-.preview-overlay.open { display: flex; }
-.preview-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: #fff; }
-.preview-bar .pv-title { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
-.preview-bar .pv-sub { font-family: Arial, sans-serif; font-size: 12px; opacity: 0.7; }
-.preview-actions { display: flex; gap: 8px; }
-.pv-btn { background: rgba(255,255,255,0.14); border: none; color: #fff; font-family: Arial, sans-serif; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
-.pv-btn:hover { background: rgba(255,255,255,0.26); }
-.pv-btn.close { background: rgba(255,255,255,0.1); }
-/* cornice telefono */
-.phone-frame { width: 390px; max-width: 92vw; height: 78vh; max-height: 820px; background: #111; border-radius: 38px; padding: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
-.phone-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 130px; height: 22px; background: #111; border-radius: 0 0 16px 16px; z-index: 2; }
-.phone-screen { width: 100%; height: 100%; border-radius: 28px; overflow: hidden; background: #fff; }
-.phone-screen iframe { width: 100%; height: 100%; border: none; display: block; }
-@media (max-width: 480px) { .phone-frame { border-radius: 28px; padding: 8px; height: 80vh; } .phone-screen { border-radius: 22px; } }
+  /* ---- Titoli regione più grandi e leggibili (solo cliente) ---- */
+  body.client-mode .section-head {
+    margin: 30px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border-strong);
+  }
+  body.client-mode .section-title {
+    font-size: 19px; letter-spacing: 0.04em; text-transform: none;
+    color: var(--text); font-family: 'Georgia', serif; font-weight: 700;
+  }
+  body.client-mode .pop-head .section-title { color: var(--accent); }
 
-.pw-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
-.pw-overlay.open { display: flex; }
-.pw-modal { background: var(–surface); border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 8px 40px rgba(0,0,0,0.28); overflow: hidden; animation: popIn 0.18s cubic-bezier(0.34,1.2,0.64,1); }
-.pw-head { padding: 18px 22px 4px; }
-.pw-title { font-size: 18px; font-weight: 800; font-family: Arial, sans-serif; color: var(–text); }
-.pw-sub { font-size: 13px; color: var(–text-muted); font-family: Arial, sans-serif; margin-top: 5px; line-height: 1.45; }
-.pw-body { padding: 14px 22px 22px; }
-.pw-input { width: 100%; padding: 13px 14px; border: 1.5px solid var(–border-strong); border-radius: 10px; font-size: 16px; font-family: Arial, sans-serif; color: var(–text); outline: none; background: var(–bg); margin-bottom: 10px; }
-.pw-input:focus { border-color: var(–accent-mid); background: #fff; }
-.pw-error { font-size: 13px; color: #b42318; font-family: Arial, sans-serif; margin: -2px 0 10px; min-height: 16px; }
-.pw-actions { display: flex; gap: 10px; }
-.pw-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; cursor: pointer; transition: filter 0.15s; }
-.pw-btn.primary { background: var(–accent); color: #fff; }
-.pw-btn.primary:hover { filter: brightness(1.08); }
-.pw-btn.ghost { background: var(–bg); color: var(–text-muted); border: 1.5px solid var(–border-strong); }
-.pw-btn.ghost:hover { background: var(–accent-light); }
-.pw-trust { display: flex; align-items: center; gap: 9px; margin: 4px 0 14px; cursor: pointer; user-select: none; }
-.pw-trust-box { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(–border-strong); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; background: var(–surface); transition: all 0.12s; flex-shrink: 0; }
-.pw-trust.on .pw-trust-box { background: var(–green); border-color: var(–green); }
-.pw-trust-label { font-size: 13px; color: var(–text); font-family: Arial, sans-serif; }
+  /* ---- Prezzo mostrato sulla cella cliente ---- */
+  .wine-card-price {
+    font-size: 22px; font-weight: 800; font-family: Arial, sans-serif;
+    color: var(--cat-strong, var(--accent)); line-height: 1; white-space: nowrap;
+  }
+  .wine-card-price::after { content: '€'; font-size: 14px; margin-left: 1px; opacity: 0.75; }
+  .wine-card-price.noprice { font-size: 13px; font-weight: 600; color: var(--text-faint); font-style: italic; }
+  .wine-card-price.noprice::after { content: ''; }
+  /* layout bottom quando c'è il prezzo accanto alle azioni (neutral/tracker) */
+  .wine-card-bottom.neutral-bottom { justify-content: space-between; }
+  .wine-card-actions { display: flex; align-items: center; gap: 8px; }
+  /* prezzo nella riga lista (computer) */
+  .wine-row-price {
+    font-size: 18px; font-weight: 800; font-family: Arial, sans-serif;
+    color: var(--cat-strong, var(--accent)); white-space: nowrap; min-width: 40px; text-align: right;
+  }
+  .wine-row-price::after { content: '€'; font-size: 12px; margin-left: 1px; opacity: 0.7; }
+  .wine-row-price.noprice { font-size: 12px; font-weight: 600; color: var(--text-faint); font-style: italic; }
+  .wine-row-price.noprice::after { content: ''; }
+  .wine-card-bottom.client-bottom { justify-content: space-between; align-items: center; }
 
-/* badge “accesso Manager non tuo” sull’icona impostazioni */
-.icon-btn .alert-dot {
-position: absolute; top: -4px; right: -4px; width: 11px; height: 11px; border-radius: 50%;
-background: #d6342a; border: 2px solid var(–surface); display: none;
-}
-.icon-btn .alert-dot.show { display: block; animation: alertPulse 1.6s ease-in-out infinite; }
-@keyframes alertPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+  /* ---- BARRA FILTRI CLIENTE (regione / uvaggio / stile) ---- */
+  .client-filters { display: none; }
+  body.client-mode .client-filters { display: block; padding: 2px 18px 10px; max-width: 820px; margin: 0 auto; }
+  .filter-group { margin-top: 8px; }
+  .filter-group-label {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-faint); font-family: Arial, sans-serif; font-weight: 700; margin: 0 0 5px 2px;
+  }
+  .filter-chips { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    flex-shrink: 0; padding: 6px 13px; border-radius: 18px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-muted); font-size: 13px; font-family: Arial, sans-serif;
+    cursor: pointer; transition: all 0.12s; white-space: nowrap; text-transform: capitalize;
+  }
+  .filter-chip:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+
+  /* ---- Cella "non disponibile" in modalità cliente: trasparente, non cliccabile ---- */
+  body.client-mode .wine-card.client-out {
+    opacity: 0.42; filter: grayscale(0.35); pointer-events: none; position: relative;
+  }
+  .client-out-banner {
+    font-size: 12px; font-weight: 800; font-family: Arial, sans-serif; color: #8a6d3b;
+    background: #f7f1e3; border: 1px solid #e3d3a8; border-radius: 6px;
+    padding: 3px 9px; width: fit-content; margin-top: 2px;
+  }
+  /* lista (computer) cliente: stessa idea sulle righe */
+  body.client-mode .wine-row.client-out { opacity: 0.45; pointer-events: none; }
+
+  /* ===================== ANTEPRIMA CLIENTE (mockup telefono) ===================== */
+  .preview-overlay { position: fixed; inset: 0; background: rgba(18,14,10,0.75); z-index: 3500; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  .preview-overlay.open { display: flex; }
+  .preview-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: #fff; }
+  .preview-bar .pv-title { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+  .preview-bar .pv-sub { font-family: Arial, sans-serif; font-size: 12px; opacity: 0.7; }
+  .preview-actions { display: flex; gap: 8px; }
+  .pv-btn { background: rgba(255,255,255,0.14); border: none; color: #fff; font-family: Arial, sans-serif; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+  .pv-btn:hover { background: rgba(255,255,255,0.26); }
+  .pv-btn.close { background: rgba(255,255,255,0.1); }
+  /* cornice telefono */
+  .phone-frame { width: 390px; max-width: 92vw; height: 78vh; max-height: 820px; background: #111; border-radius: 38px; padding: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
+  .phone-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 130px; height: 22px; background: #111; border-radius: 0 0 16px 16px; z-index: 2; }
+  .phone-screen { width: 100%; height: 100%; border-radius: 28px; overflow: hidden; background: #fff; }
+  .phone-screen iframe { width: 100%; height: 100%; border: none; display: block; }
+  @media (max-width: 480px) { .phone-frame { border-radius: 28px; padding: 8px; height: 80vh; } .phone-screen { border-radius: 22px; } }
+
+
+  .pw-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .pw-overlay.open { display: flex; }
+  .pw-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 8px 40px rgba(0,0,0,0.28); overflow: hidden; animation: popIn 0.18s cubic-bezier(0.34,1.2,0.64,1); }
+  .pw-head { padding: 18px 22px 4px; }
+  .pw-title { font-size: 18px; font-weight: 800; font-family: Arial, sans-serif; color: var(--text); }
+  .pw-sub { font-size: 13px; color: var(--text-muted); font-family: Arial, sans-serif; margin-top: 5px; line-height: 1.45; }
+  .pw-body { padding: 14px 22px 22px; }
+  .pw-input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--border-strong); border-radius: 10px; font-size: 16px; font-family: Arial, sans-serif; color: var(--text); outline: none; background: var(--bg); margin-bottom: 10px; }
+  .pw-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .pw-error { font-size: 13px; color: #b42318; font-family: Arial, sans-serif; margin: -2px 0 10px; min-height: 16px; }
+  .pw-actions { display: flex; gap: 10px; }
+  .pw-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; cursor: pointer; transition: filter 0.15s; }
+  .pw-btn.primary { background: var(--accent); color: #fff; }
+  .pw-btn.primary:hover { filter: brightness(1.08); }
+  .pw-btn.ghost { background: var(--bg); color: var(--text-muted); border: 1.5px solid var(--border-strong); }
+  .pw-btn.ghost:hover { background: var(--accent-light); }
+  .pw-trust { display: flex; align-items: center; gap: 9px; margin: 4px 0 14px; cursor: pointer; user-select: none; }
+  .pw-trust-box { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; background: var(--surface); transition: all 0.12s; flex-shrink: 0; }
+  .pw-trust.on .pw-trust-box { background: var(--green); border-color: var(--green); }
+  .pw-trust-label { font-size: 13px; color: var(--text); font-family: Arial, sans-serif; }
+
+  /* badge "accesso Manager non tuo" sull'icona impostazioni */
+  .icon-btn .alert-dot {
+    position: absolute; top: -4px; right: -4px; width: 11px; height: 11px; border-radius: 50%;
+    background: #d6342a; border: 2px solid var(--surface); display: none;
+  }
+  .icon-btn .alert-dot.show { display: block; animation: alertPulse 1.6s ease-in-out infinite; }
+  @keyframes alertPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 </style>
-
 </head>
 <body>
 
@@ -684,7 +710,6 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
 </div>
 
 <!-- MODAL INVENTARIO VINO -->
-
 <div class="inv-overlay" id="invOverlay" onclick="if(event.target===this)closeInvModal()">
   <div class="inv-modal" id="invModal">
     <div class="inv-modal-header" id="invModalHeader">
@@ -697,90 +722,86 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
         <div class="inv-modal-name" id="invName"></div>
       </div>
 
-```
-  <div class="inv-section-label">Posizione — Scaffale</div>
-  <div class="inv-chip-row" id="invScaffaleChips">
-    <button class="inv-chip" data-val="A" onclick="selectInvChip('scaffale','A')">A</button>
-    <button class="inv-chip" data-val="B" onclick="selectInvChip('scaffale','B')">B</button>
-    <button class="inv-chip" data-val="C" onclick="selectInvChip('scaffale','C')">C</button>
-    <button class="inv-chip" data-val="D" onclick="selectInvChip('scaffale','D')">D</button>
-    <button class="inv-chip" data-val="E" onclick="selectInvChip('scaffale','E')">E</button>
-    <button class="inv-chip" data-val="F" onclick="selectInvChip('scaffale','F')">F</button>
-    <button class="inv-chip" data-val="G" onclick="selectInvChip('scaffale','G')">G</button>
-  </div>
-
-  <div class="inv-section-label" style="margin-top:14px">Posizione — Piano</div>
-  <div class="inv-chip-row" id="invPianoChips">
-    <button class="inv-chip" data-val="1" onclick="selectInvChip('piano','1')">1</button>
-    <button class="inv-chip" data-val="2" onclick="selectInvChip('piano','2')">2</button>
-    <button class="inv-chip" data-val="3" onclick="selectInvChip('piano','3')">3</button>
-    <button class="inv-chip" data-val="4" onclick="selectInvChip('piano','4')">4</button>
-    <button class="inv-chip" data-val="5" onclick="selectInvChip('piano','5')">5</button>
-  </div>
-
-  <div class="inv-section-label" style="margin-top:18px">Scorte effettive</div>
-  <div style="display:flex; flex-direction:column; gap:10px;">
-    <div class="inv-stepper-row">
-      <span class="inv-stepper-label">❄️ Frigo</span>
-      <div class="inv-stepper">
-        <button onclick="adjustInvQty('frigo',-1)">−</button>
-        <span class="inv-stepper-val" id="invFrigoVal">0</span>
-        <button onclick="adjustInvQty('frigo',1)">+</button>
+      <div class="inv-section-label">Posizione — Scaffale</div>
+      <div class="inv-chip-row" id="invScaffaleChips">
+        <button class="inv-chip" data-val="A" onclick="selectInvChip('scaffale','A')">A</button>
+        <button class="inv-chip" data-val="B" onclick="selectInvChip('scaffale','B')">B</button>
+        <button class="inv-chip" data-val="C" onclick="selectInvChip('scaffale','C')">C</button>
+        <button class="inv-chip" data-val="D" onclick="selectInvChip('scaffale','D')">D</button>
+        <button class="inv-chip" data-val="E" onclick="selectInvChip('scaffale','E')">E</button>
+        <button class="inv-chip" data-val="F" onclick="selectInvChip('scaffale','F')">F</button>
+        <button class="inv-chip" data-val="G" onclick="selectInvChip('scaffale','G')">G</button>
       </div>
-    </div>
-    <div class="inv-stepper-row">
-      <span class="inv-stepper-label">📦 Magazzino</span>
-      <div class="inv-stepper">
-        <button onclick="adjustInvQty('mag',-1)">−</button>
-        <span class="inv-stepper-val" id="invMagVal">0</span>
-        <button onclick="adjustInvQty('mag',1)">+</button>
-      </div>
-    </div>
-  </div>
 
-  <div class="inv-money-grid">
-    <div>
-      <div class="inv-section-label" style="margin-top:18px">Prezzo Vendita</div>
-      <div class="inv-price-wrap">
-        <span class="inv-price-sym">€</span>
-        <input class="inv-price-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="—">
+      <div class="inv-section-label" style="margin-top:14px">Posizione — Piano</div>
+      <div class="inv-chip-row" id="invPianoChips">
+        <button class="inv-chip" data-val="1" onclick="selectInvChip('piano','1')">1</button>
+        <button class="inv-chip" data-val="2" onclick="selectInvChip('piano','2')">2</button>
+        <button class="inv-chip" data-val="3" onclick="selectInvChip('piano','3')">3</button>
+        <button class="inv-chip" data-val="4" onclick="selectInvChip('piano','4')">4</button>
+        <button class="inv-chip" data-val="5" onclick="selectInvChip('piano','5')">5</button>
       </div>
-      <span class="inv-price-hint">vuoto = prezzo di default</span>
-    </div>
-    <div>
-      <div class="inv-section-label" style="margin-top:18px">Costo</div>
-      <div class="inv-price-wrap">
-        <span class="inv-price-sym">€</span>
-        <input class="inv-price-input" id="invCosto" type="number" min="0" step="0.5" placeholder="—">
+
+      <div class="inv-section-label" style="margin-top:18px">Scorte effettive</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="inv-stepper-row">
+          <span class="inv-stepper-label">❄️ Frigo</span>
+          <div class="inv-stepper">
+            <button onclick="adjustInvQty('frigo',-1)">−</button>
+            <span class="inv-stepper-val" id="invFrigoVal">0</span>
+            <button onclick="adjustInvQty('frigo',1)">+</button>
+          </div>
+        </div>
+        <div class="inv-stepper-row">
+          <span class="inv-stepper-label">📦 Magazzino</span>
+          <div class="inv-stepper">
+            <button onclick="adjustInvQty('mag',-1)">−</button>
+            <span class="inv-stepper-val" id="invMagVal">0</span>
+            <button onclick="adjustInvQty('mag',1)">+</button>
+          </div>
+        </div>
       </div>
-      <span class="inv-price-hint">costo d'acquisto</span>
-    </div>
-  </div>
 
-  <div class="inv-money-grid">
-    <div>
-      <div class="inv-section-label" style="margin-top:18px">Bottiglie per cassa</div>
-      <div class="inv-price-wrap">
-        <span class="inv-price-sym">🍾</span>
-        <input class="inv-price-input" id="invBottCassa" type="number" min="1" step="1" placeholder="—">
+      <div class="inv-money-grid">
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Prezzo Vendita</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">€</span>
+            <input class="inv-price-input" id="invPrezzo" type="number" min="0" step="0.5" placeholder="—">
+          </div>
+          <span class="inv-price-hint">vuoto = prezzo di default</span>
+        </div>
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Costo</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">€</span>
+            <input class="inv-price-input" id="invCosto" type="number" min="0" step="0.5" placeholder="—">
+          </div>
+          <span class="inv-price-hint">costo d'acquisto</span>
+        </div>
       </div>
-    </div>
-    <div>
-      <div class="inv-section-label" style="margin-top:18px">Fornitore</div>
-      <select class="inv-select" id="invFornitore"></select>
-      <span class="inv-price-hint"><a href="#" onclick="event.preventDefault();closeInvModal();openRubrica();">gestisci rubrica →</a></span>
-    </div>
-  </div>
 
-  <button class="inv-save-btn" onclick="saveInvModal()">Salva</button>
-</div>
-```
+      <div class="inv-money-grid">
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Bottiglie per cassa</div>
+          <div class="inv-price-wrap">
+            <span class="inv-price-sym">🍾</span>
+            <input class="inv-price-input" id="invBottCassa" type="number" min="1" step="1" placeholder="—">
+          </div>
+        </div>
+        <div>
+          <div class="inv-section-label" style="margin-top:18px">Fornitore</div>
+          <select class="inv-select" id="invFornitore"></select>
+          <span class="inv-price-hint"><a href="#" onclick="event.preventDefault();closeInvModal();openRubrica();">gestisci rubrica →</a></span>
+        </div>
+      </div>
 
+      <button class="inv-save-btn" onclick="saveInvModal()">Salva</button>
+    </div>
   </div>
 </div>
 
 <!-- PANEL MAGAZZINO -->
-
 <div class="panel-overlay" id="magPanel" onclick="handlePanelClick(event,'magPanel')">
   <div class="panel">
     <div class="panel-handle"></div>
@@ -801,7 +822,6 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
 </div>
 
 <!-- PANEL IMPOSTAZIONI -->
-
 <div class="panel-overlay" id="settingsPanel" onclick="handlePanelClick(event,'settingsPanel')">
   <div class="panel">
     <div class="panel-handle"></div>
@@ -811,61 +831,57 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
     </div>
     <div class="panel-body">
 
-```
-  <div class="setting-section">
-    <div class="setting-label">Carta dei Vini (PDF)</div>
-    <div class="setting-desc">Carica il PDF della carta dei vini per abilitare l'assistente AI che risponde a domande sui vini in lista.</div>
-    <div class="pdf-drop-zone" id="pdfDropZone" onclick="document.getElementById('pdfInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-      <div class="pdf-drop-icon">📄</div>
-      <div class="pdf-drop-text">Clicca o trascina il PDF qui</div>
-      <div class="pdf-drop-sub">La carta dei vini Sol y Mar</div>
-    </div>
-    <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handlePdfSelect(event)">
-    <div class="pdf-status none" id="pdfStatus">
-      <span class="pdf-status-icon">📭</span>
-      <span id="pdfStatusText">Nessun PDF caricato</span>
-    </div>
-  </div>
-
-  <div class="setting-section">
-    <div class="setting-label">Tracker Mode</div>
-    <div class="setting-desc">Modalità di sola lettura per seguire le scorte: le celle restano come al solito, ma i vini con frigo esaurito vengono segnalati (❌) e non sono più vendibili.</div>
-    <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
-      <div class="toggle-wrap" onclick="toggleTrackerMode()">
-        <div class="toggle-track" id="trackerTrack">
-          <div class="toggle-thumb" id="trackerThumb"></div>
+      <div class="setting-section">
+        <div class="setting-label">Carta dei Vini (PDF)</div>
+        <div class="setting-desc">Carica il PDF della carta dei vini per abilitare l'assistente AI che risponde a domande sui vini in lista.</div>
+        <div class="pdf-drop-zone" id="pdfDropZone" onclick="document.getElementById('pdfInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <div class="pdf-drop-icon">📄</div>
+          <div class="pdf-drop-text">Clicca o trascina il PDF qui</div>
+          <div class="pdf-drop-sub">La carta dei vini Sol y Mar</div>
+        </div>
+        <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handlePdfSelect(event)">
+        <div class="pdf-status none" id="pdfStatus">
+          <span class="pdf-status-icon">📭</span>
+          <span id="pdfStatusText">Nessun PDF caricato</span>
         </div>
       </div>
-      <span id="trackerLabel" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-muted)">Off</span>
-    </div>
-  </div>
 
-  <div class="setting-section">
-    <div class="setting-label">Manager Mode</div>
-    <div class="setting-desc">Modalità di gestione: ogni cella mostra il pulsante ✏️ per aprire la scheda con scaffale, piano, scorte effettive (frigo/magazzino), prezzo di vendita e costo. Da usare per inizializzare e correggere i dati.</div>
-    <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
-      <div class="toggle-wrap" onclick="toggleManagerMode()">
-        <div class="toggle-track" id="managerTrack">
-          <div class="toggle-thumb" id="managerThumb"></div>
+      <div class="setting-section">
+        <div class="setting-label">Tracker Mode</div>
+        <div class="setting-desc">Modalità di sola lettura per seguire le scorte: le celle restano come al solito, ma i vini con frigo esaurito vengono segnalati (❌) e non sono più vendibili.</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
+          <div class="toggle-wrap" onclick="toggleTrackerMode()">
+            <div class="toggle-track" id="trackerTrack">
+              <div class="toggle-thumb" id="trackerThumb"></div>
+            </div>
+          </div>
+          <span id="trackerLabel" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-muted)">Off</span>
         </div>
       </div>
-      <span id="managerLabel" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-muted)">Off</span>
+
+      <div class="setting-section">
+        <div class="setting-label">Manager Mode</div>
+        <div class="setting-desc">Modalità di gestione: ogni cella mostra il pulsante ✏️ per aprire la scheda con scaffale, piano, scorte effettive (frigo/magazzino), prezzo di vendita e costo. Da usare per inizializzare e correggere i dati.</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:4px;">
+          <div class="toggle-wrap" onclick="toggleManagerMode()">
+            <div class="toggle-track" id="managerTrack">
+              <div class="toggle-thumb" id="managerThumb"></div>
+            </div>
+          </div>
+          <span id="managerLabel" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-muted)">Off</span>
+        </div>
+      </div>
+
+      <div class="setting-section">
+        <div class="setting-label">Stato Connessione</div>
+        <div id="connStatus" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-faint)">Verifica in corso...</div>
+      </div>
+
     </div>
-  </div>
-
-  <div class="setting-section">
-    <div class="setting-label">Stato Connessione</div>
-    <div id="connStatus" style="font-size:13px;font-family:Arial,sans-serif;color:var(--text-faint)">Verifica in corso...</div>
-  </div>
-
-</div>
-```
-
   </div>
 </div>
 
 <!-- PANEL RUBRICA FORNITORI -->
-
 <div class="panel-overlay" id="rubricaPanel" onclick="handlePanelClick(event,'rubricaPanel')">
   <div class="panel">
     <div class="panel-handle"></div>
@@ -887,7 +903,6 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
 </div>
 
 <!-- MODAL SCHEDA VINO (dettaglio) -->
-
 <div class="inv-overlay" id="detailOverlay" onclick="if(event.target===this)closeWineDetail()">
   <div class="inv-modal detail-modal" id="detailModal">
     <div class="detail-header" id="detailHeader">
@@ -932,9 +947,7 @@ background: #d6342a; border: 2px solid var(–surface); display: none;
 </div>
 
 <!-- MODALE PASSWORD (sblocco Manager / Tracker) -->
-
 <!-- ANTEPRIMA CLIENTE: carica la vista reale (#carta) dentro una cornice telefono -->
-
 <div class="preview-overlay" id="previewOverlay">
   <div class="preview-bar">
     <div>
@@ -2598,6 +2611,17 @@ function groupByRegion(wines){ const map=new Map(); for(const w of wines){ if(!m
 function visibleTags(w){
   return w.tags.filter(t => !/^375\s*ml$/i.test(t.trim()));
 }
+// Prezzo da mostrare sulla cella/riga (in tutte le modalità tranne Manager).
+function priceCardHtml(w){
+  return (w.price!=null)
+    ? `<span class="wine-card-price">${w.price}</span>`
+    : `<span class="wine-card-price noprice">su richiesta</span>`;
+}
+function priceRowHtml(w){
+  return (w.price!=null)
+    ? `<span class="wine-row-price">${w.price}</span>`
+    : `<span class="wine-row-price noprice">su richiesta</span>`;
+}
 function tagsHtml(w){
   return visibleTags(w).slice(0,3).map(t=>`<span class="wine-tag">${escHtml(t)}</span>`).join('');
 }
@@ -2708,6 +2732,7 @@ function wineRow(w, q, isMaybe=false){
       </div>
       <div class="wine-right">
         <span class="row-soldout">❌ esaurito</span>
+        ${priceRowHtml(w)}
         <button class="wine-info-btn" data-detail-idx="${idx}" title="Scheda vino">i</button>
       </div>
     </div>`;
@@ -2724,6 +2749,7 @@ function wineRow(w, q, isMaybe=false){
     </div>
     <div class="wine-right">
       ${dotRow}
+      ${priceRowHtml(w)}
       <button class="wine-info-btn" data-detail-idx="${idx}" title="Scheda vino">i</button>
       <button class="wine-add-btn" title="Aggiungi">+</button>
     </div>
@@ -2807,7 +2833,8 @@ function wineCard(w, q, isMaybe=false){
       ${fmtRow}
       <div class="sold-out-banner">❌ Frigo esaurito</div>
       <div class="wine-card-spacer"></div>
-      <div class="wine-card-bottom">
+      <div class="wine-card-bottom neutral-bottom">
+        ${priceCardHtml(w)}
         <button class="wine-card-info" data-detail-idx="${idx}" title="Scheda vino">i</button>
       </div>
     </div>`;
@@ -2825,9 +2852,12 @@ function wineCard(w, q, isMaybe=false){
     </div>
     ${fmtRow}
     <div class="wine-card-spacer"></div>
-    <div class="wine-card-bottom">
-      <button class="wine-card-info" data-detail-idx="${idx}" title="Scheda vino">i</button>
-      <button class="wine-card-add" data-add-idx="${idx}" title="Aggiungi al magazzino"><span class="add-plus">+</span></button>
+    <div class="wine-card-bottom neutral-bottom">
+      ${priceCardHtml(w)}
+      <div class="wine-card-actions">
+        <button class="wine-card-info" data-detail-idx="${idx}" title="Scheda vino">i</button>
+        <button class="wine-card-add" data-add-idx="${idx}" title="Aggiungi al magazzino"><span class="add-plus">+</span></button>
+      </div>
     </div>
   </div>`;
 }
@@ -2937,6 +2967,5 @@ document.addEventListener('click', function(e) {
 
 init();
 </script>
-
 </body>
 </html>
