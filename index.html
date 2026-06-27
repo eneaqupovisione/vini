@@ -665,6 +665,64 @@
   }
   .icon-btn .alert-dot.show { display: block; animation: alertPulse 1.6s ease-in-out infinite; }
   @keyframes alertPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+  /* ===================== PANNELLO SCARICO/STORNO (📝) ===================== */
+  .bulk-modes { display: flex; gap: 8px; margin: 4px 0 14px; }
+  .bulk-mode-btn {
+    flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--border-strong);
+    background: var(--surface); font-family: Arial, sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .bulk-mode-btn small { display: block; font-weight: 400; font-size: 11px; margin-top: 3px; opacity: 0.8; }
+  .bulk-mode-btn.active.scarico { background: #fdecec; border-color: #d6342a; color: #a31a12; }
+  .bulk-mode-btn.active.storno  { background: #e8f3ec; border-color: #2d6a4f; color: #1d5238; }
+  .bulk-textarea {
+    width: 100%; min-height: 150px; padding: 14px; border: 1.5px solid var(--border-strong);
+    border-radius: 12px; font-family: 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1.5;
+    color: var(--text); background: var(--bg); resize: vertical; outline: none;
+  }
+  .bulk-textarea:focus { border-color: var(--accent-mid); background: #fff; }
+  .bulk-actions-row { display: flex; gap: 10px; margin-top: 12px; }
+  .bulk-btn {
+    flex: 1; padding: 13px; border-radius: 12px; border: none; font-family: Arial, sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: filter 0.15s;
+  }
+  .bulk-btn.analyze { background: var(--accent); color: #fff; }
+  .bulk-btn.apply { background: var(--green); color: #fff; }
+  .bulk-btn.apply:disabled { background: var(--border-strong); cursor: not-allowed; }
+  .bulk-btn.ghost { background: var(--bg); color: var(--text-muted); border: 1.5px solid var(--border-strong); flex: 0 0 auto; padding: 13px 18px; }
+  .bulk-btn:hover:not(:disabled) { filter: brightness(1.08); }
+
+  .bulk-summary { margin-top: 16px; }
+  .bulk-summary-head { font-size: 12px; font-family: Arial, sans-serif; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.02em; }
+  .bulk-summary-head b { color: var(--text); }
+  .bulk-row {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px;
+    margin-bottom: 7px; border: 1px solid var(--border); background: var(--surface);
+  }
+  .bulk-row.alias { border-left: 4px solid var(--accent); }
+  .bulk-row.sure  { border-left: 4px solid var(--green); }
+  .bulk-row.ambiguous { border-left: 4px solid #d39e00; background: #fffdf5; }
+  .bulk-row.none  { border-left: 4px solid #d6342a; background: #fff7f6; }
+  .bulk-row.ignored { opacity: 0.45; }
+  .bulk-row-qty {
+    flex: 0 0 auto; min-width: 40px; height: 34px; display: flex; align-items: center; justify-content: center;
+    background: var(--accent-light); color: var(--accent); border-radius: 8px; font-family: Arial, sans-serif;
+    font-weight: 800; font-size: 15px;
+  }
+  .bulk-row.scarico .bulk-row-qty { background: #fdecec; color: #a31a12; }
+  .bulk-row.storno  .bulk-row-qty { background: #e8f3ec; color: #1d5238; }
+  .bulk-row-main { flex: 1; min-width: 0; }
+  .bulk-row-raw { font-size: 11px; color: var(--text-faint); font-family: 'SF Mono', monospace; }
+  .bulk-row-wine { font-size: 14px; font-weight: 600; color: var(--text); font-family: Arial, sans-serif; line-height: 1.25; }
+  .bulk-row-wine .pp { font-weight: 800; }
+  .bulk-row-select { width: 100%; margin-top: 4px; padding: 6px 8px; border-radius: 7px; border: 1.5px solid #e0c97a; background: #fff; font-family: Arial, sans-serif; font-size: 13px; color: var(--text); }
+  .bulk-row-none-msg { font-size: 13px; color: #a31a12; font-family: Arial, sans-serif; font-weight: 600; }
+  .bulk-row-toggle { flex: 0 0 auto; background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px; opacity: 0.6; }
+  .bulk-row-toggle:hover { opacity: 1; }
+  .bulk-empty-hint { text-align: center; color: var(--text-faint); font-style: italic; font-size: 14px; padding: 20px; font-family: Arial, sans-serif; }
+  .bulk-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; font-family: Arial, sans-serif; color: var(--text-muted); margin-top: 12px; }
+  .bulk-legend span { display: flex; align-items: center; gap: 5px; }
+  .bulk-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 </style>
 </head>
 <body>
@@ -680,6 +738,7 @@
       <button class="icon-btn" onclick="openClientPreview()" title="Anteprima cliente (come appare scansionando il QR)" id="previewBtn">👁️</button>
       <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
       <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
+      <button class="icon-btn" onclick="openBulkUpdate()" title="Scarico/Storno da messaggio" id="bulkBtn">📝</button>
       <button class="icon-btn" onclick="openRubrica()" title="Rubrica Fornitori">📇</button>
       <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni" id="settingsBtn">⚙️<span class="alert-dot" id="settingsAlert"></span></button>
     </div>
@@ -802,6 +861,44 @@
 </div>
 
 <!-- PANEL MAGAZZINO -->
+<!-- PANEL SCARICO/STORNO DA MESSAGGIO -->
+<div class="panel-overlay" id="bulkPanel" onclick="handlePanelClick(event,'bulkPanel')">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">📝 Scarico / Storno</span>
+      <button class="panel-close" onclick="closePanel('bulkPanel')">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="bulk-modes">
+        <button class="bulk-mode-btn scarico active" id="bulkModeScarico" onclick="setBulkMode('scarico')">
+          ➖ Scarico<small>Toglie dalle scorte (venduti)</small>
+        </button>
+        <button class="bulk-mode-btn storno" id="bulkModeStorno" onclick="setBulkMode('storno')">
+          ➕ Storno<small>Rimette in scorta (rientri)</small>
+        </button>
+      </div>
+      <textarea class="bulk-textarea" id="bulkText" placeholder="Incolla qui il messaggio (anche più messaggi insieme).
+Esempio:
+2 ca del bosco
+canevel
+gewu sv
+mosnel brut"></textarea>
+      <div class="bulk-actions-row">
+        <button class="bulk-btn analyze" onclick="analyzeBulk()">Analizza</button>
+        <button class="bulk-btn ghost" onclick="clearBulk()">Pulisci</button>
+      </div>
+      <div class="bulk-legend" id="bulkLegend" style="display:none">
+        <span><i style="background:var(--accent)"></i> Da regola di sala</span>
+        <span><i style="background:var(--green)"></i> Sicuro</span>
+        <span><i style="background:#d39e00"></i> Da verificare</span>
+        <span><i style="background:#d6342a"></i> Non trovato</span>
+      </div>
+      <div class="bulk-summary" id="bulkSummary"></div>
+    </div>
+  </div>
+</div>
+
 <div class="panel-overlay" id="magPanel" onclick="handlePanelClick(event,'magPanel')">
   <div class="panel">
     <div class="panel-handle"></div>
@@ -1698,6 +1795,155 @@ function openMagazzino() {
   renderMagazzinoList();
   loadReloadTimestamp();
 }
+
+// ===================== UI SCARICO/STORNO (📝) =====================
+let bulkMode = 'scarico';      // 'scarico' (sottrae) | 'storno' (riaggiunge)
+let bulkParsed = [];           // righe analizzate correnti
+
+async function openBulkUpdate() {
+  // tocca le scorte → protetto come Manager (password se dispositivo non fidato)
+  const ok = await requireUnlock();
+  if (!ok) return;
+  document.getElementById('bulkPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function setBulkMode(mode) {
+  bulkMode = mode;
+  document.getElementById('bulkModeScarico').classList.toggle('active', mode==='scarico');
+  document.getElementById('bulkModeStorno').classList.toggle('active', mode==='storno');
+  if (bulkParsed.length) renderBulkSummary(); // ridisegna con i colori della modalità
+}
+function clearBulk() {
+  document.getElementById('bulkText').value = '';
+  bulkParsed = [];
+  document.getElementById('bulkSummary').innerHTML = '';
+  document.getElementById('bulkLegend').style.display = 'none';
+}
+function analyzeBulk() {
+  const text = document.getElementById('bulkText').value;
+  if (!text.trim()) { showToast('Incolla prima un messaggio', 'error'); return; }
+  bulkParsed = parseBulkText(text);
+  // ogni riga porta uno stato: chosenIdx (indice WINES scelto) e ignored
+  bulkParsed.forEach(r => {
+    r.chosenIdx = r.wine ? WINES.indexOf(r.wine) : -1;
+    r.ignored = (r.confidence === 'none');
+  });
+  document.getElementById('bulkLegend').style.display = 'flex';
+  renderBulkSummary();
+}
+
+// Aggrega le quantità per vino scelto (somma righe sullo stesso vino)
+function bulkAggregate() {
+  const agg = {}; // idx -> qty
+  for (const r of bulkParsed) {
+    if (r.ignored || r.chosenIdx < 0) continue;
+    agg[r.chosenIdx] = (agg[r.chosenIdx] || 0) + r.qty;
+  }
+  return agg;
+}
+
+function renderBulkSummary() {
+  const box = document.getElementById('bulkSummary');
+  if (!bulkParsed.length) { box.innerHTML = ''; return; }
+
+  const agg = bulkAggregate();
+  const nWines = Object.keys(agg).length;
+  const totBottles = Object.values(agg).reduce((a,b)=>a+b, 0);
+  const verb = bulkMode === 'scarico' ? 'da scaricare' : 'da stornare';
+  const sign = bulkMode === 'scarico' ? '−' : '+';
+
+  let html = `<div class="bulk-summary-head"><b>${nWines}</b> vini · <b>${totBottles}</b> bottiglie ${verb}</div>`;
+
+  bulkParsed.forEach((r, i) => {
+    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' ' + bulkMode;
+    if (r.confidence === 'none' && r.chosenIdx < 0) {
+      html += `<div class="bulk-row none ${r.ignored?'ignored':''}">
+        <div class="bulk-row-qty">${sign}${r.qty}</div>
+        <div class="bulk-row-main">
+          <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
+          <div class="bulk-row-none-msg">Nessun vino riconosciuto</div>
+        </div>
+        <button class="bulk-row-toggle" onclick="toggleBulkRow(${i})" title="${r.ignored?'Ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
+      </div>`;
+      return;
+    }
+    const w = WINES[r.chosenIdx];
+    const wineLabel = w ? `<span class="pp">${escHtml(w.p)}</span> — ${escHtml(w.n.slice(0,40))}${w.fmt?` · ${w.fmt}`:''}` : '';
+    // per le righe ambigue, mostra un select con i candidati
+    let selectHtml = '';
+    if (r.confidence === 'ambiguous' && r.candidates.length > 1) {
+      const opts = r.candidates.map(c => {
+        const idx = WINES.indexOf(c);
+        return `<option value="${idx}" ${idx===r.chosenIdx?'selected':''}>${escHtml(c.p)} — ${escHtml(c.n.slice(0,38))}${c.fmt?' ('+c.fmt+')':''}</option>`;
+      }).join('');
+      selectHtml = `<select class="bulk-row-select" onchange="setBulkChoice(${i}, this.value)">${opts}</select>`;
+    }
+    html += `<div class="bulk-row ${cls}">
+      <div class="bulk-row-qty">${sign}${r.qty}</div>
+      <div class="bulk-row-main">
+        <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
+        <div class="bulk-row-wine">${wineLabel}</div>
+        ${selectHtml}
+      </div>
+      <button class="bulk-row-toggle" onclick="toggleBulkRow(${i})" title="${r.ignored?'Riga ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
+    </div>`;
+  });
+
+  html += `<div class="bulk-actions-row">
+    <button class="bulk-btn apply" id="bulkApplyBtn" onclick="applyBulk()" ${nWines===0?'disabled':''}>
+      ${bulkMode==='scarico'?'Applica scarico':'Applica storno'} (${totBottles} bott.)
+    </button>
+  </div>`;
+  box.innerHTML = html;
+}
+
+function setBulkChoice(i, idxStr) {
+  const idx = parseInt(idxStr);
+  bulkParsed[i].chosenIdx = idx;
+  bulkParsed[i].wine = WINES[idx];
+  bulkParsed[i].confidence = 'sure'; // l'utente ha confermato
+  renderBulkSummary();
+}
+function toggleBulkRow(i) {
+  bulkParsed[i].ignored = !bulkParsed[i].ignored;
+  renderBulkSummary();
+}
+
+async function applyBulk() {
+  const agg = bulkAggregate();
+  const entries = Object.entries(agg);
+  if (!entries.length) { showToast('Niente da applicare', 'error'); return; }
+
+  const totBottles = entries.reduce((a,[,q])=>a+q, 0);
+  const azione = bulkMode==='scarico' ? 'scaricare' : 'stornare';
+  if (!confirm(`Confermi di ${azione} ${totBottles} bottiglie su ${entries.length} vini?\nLe scorte (frigo) verranno aggiornate.`)) return;
+
+  // Applichaiamo sul FRIGO. Scarico = delta negativo, storno = positivo.
+  const dir = bulkMode==='scarico' ? -1 : 1;
+  let done = 0;
+  for (const [idxStr, qty] of entries) {
+    const idx = parseInt(idxStr);
+    // setStock applica un delta per volta sul frigo; lo chiamiamo con il totale
+    await applyStockDelta(idx, 'frigo', dir * qty);
+    done++;
+  }
+  showToast(`✓ ${bulkMode==='scarico'?'Scarico':'Storno'} applicato: ${totBottles} bottiglie`, 'success');
+  clearBulk();
+  closePanel('bulkPanel');
+  render();
+}
+
+// Applica un delta arbitrario (non solo ±1) a frigo/magazzino e persiste.
+async function applyStockDelta(idx, field, delta) {
+  const w = WINES[idx];
+  if (!w) return;
+  const key = w.p + '|||' + w.n;
+  let inv = inventory[key];
+  if (!inv) { inv = { producer: w.p, name: w.n, qty_frigo: 0, qty_magazzino: 0, scaffale: '', piano: '' }; inventory[key] = inv; }
+  const col = field === 'frigo' ? 'qty_frigo' : 'qty_magazzino';
+  inv[col] = Math.max(0, (inv[col] || 0) + delta);
+  await persistStock(w);
+}
 function openImpostazioni() {
   document.getElementById('settingsPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -2435,6 +2681,128 @@ function fuzzyScore(wine, q){
   }
   return score;
 }
+
+// ===================== MOTORE SCARICO/STORNO DA TESTO =====================
+// Interpreta in locale (niente AI per ora) un messaggio incollato dai camerieri.
+// Pipeline per ogni riga: mappa hardcoded → fuzzy match → spareggio per popolarità.
+// Le quantità dello stesso vino si sommano tra righe e tra messaggi diversi.
+
+// --- Mappa hardcoded: "gergo di sala" → vino preciso ----------------------
+// Due lavori: (1) disambigua nomi-cantina ripetuti (es. "ca del bosco" → Prestige),
+// (2) traduce abbreviazioni che la fuzzy non prende (es. "gewu sv" → Sanct Valentin).
+// Ogni chiave è una frase normalizzata; il valore identifica il vino con
+// { p: <produttore>, n: <nome> } (basta che siano sottostringhe univoche).
+// ESPANDIBILE: aggiungete qui le scorciatoie che usate davvero in sala.
+const SALA_ALIASES = [
+  // --- disambiguazione nomi-cantina ripetuti ---
+  { match: 'ca del bosco',     wine: { p:'Ca del Bosco',   n:'Cuvée Prestige' } },
+  { match: 'cadelbosco',       wine: { p:'Ca del Bosco',   n:'Cuvée Prestige' } },
+  { match: 'prestige',         wine: { p:'Ca del Bosco',   n:'Cuvée Prestige' } },
+  { match: 'canevel',          wine: { p:'Canevel',        n:'Prosecco Superiore Valdobbiadene' } },
+  { match: 'mosnel brut',      wine: { p:'Mosnel',         n:'Franciacorta Brut DOCG' } },
+  { match: 'pavese brut',      wine: { p:'Pavese',         n:'Pavese XXIV' } },
+  { match: 'pavese fermo',     wine: { p:'Pavese',         n:'Blanc de Morgex et de la Salle DOC' } },
+  { match: 'ca dei frati brut',wine: { p:'Ca dei Frati',   n:'Cuvée dei Frati' } },
+  // --- traduzione gergo / abbreviazioni ---
+  { match: 'gewu sv',          wine: { p:'San Michel',     n:'Gewurztraminer' } },
+  { match: 'gewu',             wine: { p:'Girlan',         n:'Gewur' } },
+  { match: 'strada corniolo',  wine: { p:'Villa Papiano',  n:'Corniolo' } },
+  { match: 'conde rose',       wine: { p:'Condé',          n:'rosato' } },
+  // Suggerimento: aggiungete qui le vostre, es:
+  // { match: 'tunina', wine: { p:'Jermann', n:'Vintage Tunina' } },
+];
+
+// Trova un vino per sottostringhe di produttore+nome (case/accent-insensitive).
+// Se più vini combaciano (tipico: stesso vino in 375 + formato grande),
+// preferisce il formato GRANDE salvo che si chieda esplicitamente il piccolo.
+function findWineByHint(hint, preferSmall){
+  const hp = normalize(hint.p || '');
+  const hn = normalize(hint.n || '');
+  let cands = WINES.filter(w => {
+    const np = normalize(w.p), nn = normalize(w.n);
+    return (!hp || np.includes(hp)) && (!hn || nn.includes(hn));
+  });
+  if (cands.length === 0) return null;
+  if (cands.length === 1) return cands[0];
+  // più candidati: scegli per formato, poi per popolarità
+  const small = cands.filter(w => w.cat === 'piccoli');
+  const big   = cands.filter(w => w.cat !== 'piccoli');
+  const pool = preferSmall ? (small.length ? small : big) : (big.length ? big : small);
+  pool.sort((a,b) => popularityScore(b) - popularityScore(a));
+  return pool[0];
+}
+
+// Estrae la quantità da una riga: numero davanti, dietro, o "xN". Default 1.
+function extractQty(rawLine){
+  let line = rawLine.trim();
+  let qty = 1;
+  // pattern "x2" / "X2" anche attaccato a una parola ("brutx2")
+  let m = line.match(/x\s*(\d{1,3})\b/i);
+  if (m) { qty = parseInt(m[1]); line = line.replace(m[0], ' '); return { qty, text: line.trim() }; }
+  // numero a inizio riga: "2 ca del bosco"
+  m = line.match(/^\s*(\d{1,3})\s+(.+)$/);
+  if (m) { qty = parseInt(m[1]); return { qty, text: m[2].trim() }; }
+  // numero a fine riga staccato: "ca del bosco 2" (ma non "375" che è formato)
+  m = line.match(/^(.+?)\s+(\d{1,2})\s*$/);
+  if (m) { qty = parseInt(m[2]); return { qty, text: m[1].trim() }; }
+  return { qty, text: line };
+}
+
+// "375" / "piccolo" → preferenza formato piccolo (anche se attaccato: "Prestige375")
+function wantsSmallFormat(text){
+  return /375|piccol/i.test(text);
+}
+
+// Matcha una riga (testo senza quantità) → { wine, confidence, candidates }
+// confidence: 'alias' | 'sure' | 'ambiguous' | 'none'
+function matchLine(text){
+  const norm = normalize(text);
+  if (!norm.trim()) return { wine:null, confidence:'none', candidates:[] };
+
+  // 1) MAPPA HARDCODED: la verità della sala vince sempre
+  const small = wantsSmallFormat(text);
+  for (const a of SALA_ALIASES){
+    if (norm.includes(normalize(a.match))){
+      const w = findWineByHint(a.wine, small);
+      if (w) return { wine:w, confidence:'alias', candidates:[w] };
+    }
+  }
+
+  // 2) FUZZY: punteggio su tutti i vini
+  let scored = WINES.map(w => {
+    let s = fuzzyScore(w, text);
+    // bonus/malus formato 375
+    if (small && w.cat === 'piccoli') s += 3;
+    if (!small && w.cat === 'piccoli') s -= 0.5;
+    // bias di popolarità: a parità, preferisci il più richiesto
+    s += Math.min(1.5, popularityScore(w) * 0.15);
+    return { w, s };
+  }).filter(x => x.s > 1).sort((a,b)=> b.s - a.s);
+
+  if (scored.length === 0) return { wine:null, confidence:'none', candidates:[] };
+
+  const top = scored[0], second = scored[1];
+  const candidates = scored.slice(0, 6).map(x => x.w);
+
+  // 3) DECISIONE: netto distacco dal secondo → sicuro; altrimenti ambiguo
+  const clear = !second || (top.s - second.s) >= 2.5;
+  if (clear) return { wine: top.w, confidence:'sure', candidates };
+  return { wine: top.w, confidence:'ambiguous', candidates };
+}
+
+// Interpreta l'intero testo (più messaggi). Ritorna righe + aggregato per vino.
+function parseBulkText(rawText){
+  const lines = rawText.split(/\r?\n/).map(l => l.trim())
+    .filter(l => l && !/^[-—=_*·•]+$/.test(l)); // scarta separatori tipo "----"
+  const rows = [];
+  for (const raw of lines){
+    const { qty, text } = extractQty(raw);
+    const res = matchLine(text);
+    rows.push({ raw, text, qty, wine: res.wine, confidence: res.confidence, candidates: res.candidates });
+  }
+  return rows;
+}
+
 function highlight(text, q){
   if(!q) return text;
   const terms = q.trim().split(/\s+/).filter(t=>t.length>=2);
@@ -2873,7 +3241,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
