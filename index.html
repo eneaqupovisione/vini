@@ -687,6 +687,8 @@
     font-size: 15px; font-weight: 700; cursor: pointer; transition: filter 0.15s;
   }
   .bulk-btn.analyze { background: var(--accent); color: #fff; }
+  .bulk-btn.ai { background: linear-gradient(135deg, #7c5cbf, #5b8def); color: #fff; }
+  .bulk-btn.ai:disabled { opacity: 0.6; cursor: wait; }
   .bulk-btn.apply { background: var(--green); color: #fff; }
   .bulk-btn.apply:disabled { background: var(--border-strong); cursor: not-allowed; }
   .bulk-btn.ghost { background: var(--bg); color: var(--text-muted); border: 1.5px solid var(--border-strong); flex: 0 0 auto; padding: 13px 18px; }
@@ -885,7 +887,7 @@ canevel
 gewu sv
 mosnel brut"></textarea>
       <div class="bulk-actions-row">
-        <button class="bulk-btn analyze" onclick="analyzeBulk()">Analizza</button>
+        <button class="bulk-btn analyze" onclick="analyzeBulk()" id="bulkAnalyzeBtn">Analizza</button>
         <button class="bulk-btn ghost" onclick="clearBulk()">Pulisci</button>
       </div>
       <div class="bulk-legend" id="bulkLegend" style="display:none">
@@ -1822,14 +1824,87 @@ function clearBulk() {
 function analyzeBulk() {
   const text = document.getElementById('bulkText').value;
   if (!text.trim()) { showToast('Incolla prima un messaggio', 'error'); return; }
+  // 1) interpretazione locale (mappa di sala + fuzzy), sempre
   bulkParsed = parseBulkText(text);
-  // ogni riga porta uno stato: chosenIdx (indice WINES scelto) e ignored
   bulkParsed.forEach(r => {
     r.chosenIdx = r.wine ? WINES.indexOf(r.wine) : -1;
     r.ignored = (r.confidence === 'none');
   });
   document.getElementById('bulkLegend').style.display = 'flex';
   renderBulkSummary();
+  // 2) subito dopo, in automatico, l'AI rifinisce gli ambigui (se c'è rete)
+  refineBulkWithAI();
+}
+
+// URL della funzione Netlify che custodisce la chiave API e parla con Haiku.
+const AI_MATCH_URL = '/.netlify/functions/match';
+
+// Rifinitura automatica con AI: manda SOLO le righe ambigue/non trovate a Haiku.
+// Parte da sola dopo l'analisi locale. Se la rete o la funzione non rispondono,
+// non blocca nulla: resta valido il risultato locale (con gli ambigui da toccare
+// a mano). Così online l'AI interviene sempre, offline si degrada con grazia.
+async function refineBulkWithAI() {
+  const toAsk = [];
+  bulkParsed.forEach((r, i) => {
+    if (r.confidence === 'ambiguous' || r.confidence === 'none') {
+      let cands = r.candidates && r.candidates.length ? r.candidates : topFuzzyCandidates(r.text, 8);
+      toAsk.push({
+        line: i,
+        raw: r.raw,
+        candidates: cands.map(w => ({ id: WINES.indexOf(w), label: `${w.p} — ${w.n}${w.fmt ? ' ('+w.fmt+')' : ''}` }))
+      });
+    }
+  });
+  if (toAsk.length === 0) return; // tutto già risolto in locale, niente AI
+
+  const btn = document.getElementById('bulkAnalyzeBtn');
+  const prevTxt = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Analizzo…'; }
+  try {
+    const res = await fetch(AI_MATCH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: toAsk })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error || ('HTTP ' + res.status)); }
+    const data = await res.json();
+    let improved = 0;
+    for (const r of (data.results || [])) {
+      const row = bulkParsed[r.line];
+      if (!row) continue;
+      if (r.chosenId === null || r.chosenId < 0) {
+        row.chosenIdx = -1; row.ignored = true; row.confidence = 'none';
+      } else {
+        row.chosenIdx = r.chosenId;
+        row.wine = WINES[r.chosenId];
+        row.ignored = false;
+        row.confidence = (r.confidence === 'high') ? 'sure' : 'ambiguous';
+        improved++;
+      }
+    }
+    renderBulkSummary();
+    if (improved) showToast(`✨ AI: ${improved} righe rifinite`, 'success');
+  } catch (err) {
+    // offline o funzione non disponibile: teniamo il risultato locale, niente blocco
+    console.warn('AI non disponibile, resta l\'analisi locale:', err.message);
+    showToast('Analisi locale (AI non raggiungibile)', '');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = prevTxt; }
+  }
+}
+
+async function analyzeBulkAI() {
+  // (compat) ora l'analisi AI è automatica dentro analyzeBulk
+  analyzeBulk();
+}
+
+// Migliori N candidati fuzzy su tutta la carta (per le righe "non trovate")
+function topFuzzyCandidates(text, n) {
+  return WINES.map(w => ({ w, s: fuzzyScore(w, text) }))
+    .filter(x => x.s > 0.5)
+    .sort((a,b) => b.s - a.s)
+    .slice(0, n)
+    .map(x => x.w);
 }
 
 // Aggrega le quantità per vino scelto (somma righe sullo stesso vino)
