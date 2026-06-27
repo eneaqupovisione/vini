@@ -1902,7 +1902,18 @@ async function refineBulkWithAI() {
     const data = await res.json();
     let improved = 0;
     for (const r of (data.results || [])) {
-      const row = bulkParsed[r.line];
+      // NON ci fidiamo dell'indice "line" che torna dall'AI (può sfasarsi e
+      // causare scambi tipo "prestige"→"arcari"). Riassociamo per testo grezzo,
+      // che è univoco: troviamo la riga il cui raw combacia con quello inviato.
+      let row = null;
+      if (r.raw != null) {
+        row = bulkParsed.find(b => b.raw === r.raw && (b.confidence === 'ambiguous' || b.confidence === 'none'));
+      }
+      // fallback prudente all'indice solo se il raw non c'è e l'indice è coerente
+      if (!row && typeof r.line === 'number' && bulkParsed[r.line]) {
+        const cand = bulkParsed[r.line];
+        if (cand.confidence === 'ambiguous' || cand.confidence === 'none') row = cand;
+      }
       if (!row) continue;
       if (r.chosenId === null || r.chosenId < 0) {
         row.chosenIdx = -1; row.ignored = true; row.confidence = 'none';
@@ -2810,6 +2821,9 @@ const SALA_ALIASES = [
   { match: 'pavese brut',      wine: { p:'Pavese',         n:'Pavese XXIV' } },
   { match: 'pavese fermo',     wine: { p:'Pavese',         n:'Blanc de Morgex et de la Salle DOC' } },
   { match: 'ca dei frati brut',wine: { p:'Ca dei Frati',   n:'Cuvée dei Frati' } },
+  { match: 'arcari zero',      wine: { p:'Arcari + Danesi', n:'Dosaggio Zero' } },
+  { match: 'arcari dosaggio',  wine: { p:'Arcari + Danesi', n:'Dosaggio Zero' } },
+  { match: 'arcari coro',      wine: { p:'Arcari + Danesi', n:'Coro delle Monache' } },
   // --- traduzione gergo / abbreviazioni ---
   { match: 'gewu sv',          wine: { p:'San Michel',     n:'Gewurztraminer' } },
   { match: 'gewu',             wine: { p:'Girlan',         n:'Gewur' } },
