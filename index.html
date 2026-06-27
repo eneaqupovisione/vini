@@ -1330,7 +1330,12 @@ function markManagerAlertsSeen() {
 }
 
 // ===================== WINE DATABASE =====================
-const WINES = [
+// I vini di seguito sono il fallback "di fabbrica". All'avvio l'app prova a
+// caricare carta_vini.json (stessa cartella): se c'è, quei dati VINCONO e
+// sostituiscono questa lista. Così la carta è aggiornabile in blocco modificando
+// il solo file JSON, senza toccare il codice. Se il file manca o è rotto, resta
+// valida questa lista incorporata (l'app non si rompe mai).
+let WINES = [
   { p:"Orsi Vigneto San Vito", n:"Sui Lieviti Bianco Frizzante", cat:"bollicine", region:"Emilia-Romagna", tags:["frizzante","bianco"], price:26 },
   { p:"Quarticello", n:"Despina Malvasia Emilia IGP", cat:"bollicine", region:"Emilia-Romagna", tags:["frizzante","malvasia"], price:28 },
   { p:"Valle delle Lepri", n:"Gazzola Spumante Brut Rubicone Bianco BIO IGP", cat:"bollicine", region:"Emilia-Romagna", tags:["spumante","bio"], price:26 },
@@ -1537,6 +1542,7 @@ let popularityAvailable = true; // diventa false se la tabella non esiste
 // ===================== INIT =====================
 async function init() {
   startLoad();
+  await loadCartaVini();    // se esiste carta_vini.json, sostituisce i vini di fabbrica
   initViewMode();
   initTrackerMode();
   initManagerMode();
@@ -1545,6 +1551,32 @@ async function init() {
   if (!clientMode) checkManagerAlerts();   // badge accessi Manager non tuoi
   endLoad();
   render();
+}
+
+// Carica la carta dei vini dal file esterno carta_vini.json (fonte di verità).
+// Validazione minima: dev'essere un array di oggetti con almeno p, n, cat.
+// In caso di qualsiasi problema, teniamo i vini incorporati (nessun blocco).
+async function loadCartaVini() {
+  try {
+    const res = await fetch('carta_vini.json?v=' + Date.now()); // no-cache
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error('formato non valido');
+    const ok = data.every(w => w && typeof w.p === 'string' && typeof w.n === 'string' && typeof w.cat === 'string');
+    if (!ok) throw new Error('campi mancanti');
+    // normalizza: assicura tags array e price numero o null
+    WINES = data.map(w => ({
+      p: w.p, n: w.n, cat: w.cat,
+      region: w.region || '',
+      price: (typeof w.price === 'number') ? w.price : (w.price ? Number(w.price) : null),
+      tags: Array.isArray(w.tags) ? w.tags : [],
+      ...(w.fmt ? { fmt: w.fmt } : {})
+    }));
+    console.log('carta_vini.json caricato:', WINES.length, 'vini');
+  } catch (e) {
+    console.warn('carta_vini.json non caricato, uso i vini incorporati:', e.message);
+    // WINES resta quello di fabbrica
+  }
 }
 
 // ===================== SUPABASE MAGAZZINO =====================
