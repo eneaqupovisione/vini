@@ -755,6 +755,16 @@
   }
   .aw-save:disabled { background: var(--border-strong); cursor: not-allowed; }
   .aw-hint { font-family: Arial, sans-serif; font-size: 12px; color: var(--text-faint); margin-top: 10px; text-align: center; }
+  /* ===================== STAMPA CARTA ===================== */
+  .print-intro { font-family: Arial, sans-serif; font-size: 14px; color: var(--text-muted); margin: 0 0 14px; }
+  .print-opt { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 1.5px solid var(--border-strong); border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .print-opt:has(input:checked) { border-color: var(--accent-mid); background: var(--accent-light); }
+  .print-opt input { margin-top: 3px; }
+  .print-opt span { display: flex; flex-direction: column; font-family: Arial, sans-serif; }
+  .print-opt b { font-size: 14px; color: var(--text); }
+  .print-opt small { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .print-warn { display: none; font-family: Arial, sans-serif; font-size: 12px; color: #8a5a00; background: #fff8e6; border: 1px solid #f0d98a; border-radius: 10px; padding: 10px 12px; margin: 4px 0 14px; line-height: 1.4; }
+  .print-warn.show { display: block; }
 </style>
 </head>
 <body>
@@ -767,6 +777,7 @@
       <span class="client-brand-name">La cantina <span class="accent">Sol y Mar</span></span>
     </div>
     <div class="header-actions">
+      <button class="icon-btn" onclick="openPrintDialog()" title="Stampa carta PDF" id="printBtn">🖨️</button>
       <button class="icon-btn" onclick="openClientPreview()" title="Anteprima cliente (come appare scansionando il QR)" id="previewBtn">👁️</button>
       <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
       <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
@@ -894,6 +905,33 @@
 </div>
 
 <!-- PANEL MAGAZZINO -->
+<!-- PANEL STAMPA CARTA -->
+<div class="panel-overlay" id="printPanel" onclick="handlePanelClick(event,'printPanel')">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">🖨️ Stampa carta PDF</span>
+      <button class="panel-close" onclick="closePanel('printPanel')">✕</button>
+    </div>
+    <div class="panel-body">
+      <p class="print-intro">Scegli cosa includere nella carta da stampare.</p>
+      <label class="print-opt">
+        <input type="radio" name="printScope" value="all" checked>
+        <span><b>Tutti i vini</b><small>Stampa l'intera carta, a prescindere dalle scorte.</small></span>
+      </label>
+      <label class="print-opt">
+        <input type="radio" name="printScope" value="available">
+        <span><b>Solo disponibili</b><small>Stampa solo i vini con scorta in frigo maggiore di zero.</small></span>
+      </label>
+      <div class="print-warn" id="printWarn">
+        ⚠️ Le scorte non risultano ancora gestite: l'opzione "solo disponibili" potrebbe produrre una carta incompleta o vuota. In caso di dubbio, scegli "Tutti i vini".
+      </div>
+      <button class="aw-save" onclick="doPrint()">Genera PDF / Stampa</button>
+      <div class="aw-hint">Si aprirà la finestra di stampa: scegli "Salva come PDF" come destinazione.</div>
+    </div>
+  </div>
+</div>
+
 <!-- PANEL AGGIUNGI VINO -->
 <div class="panel-overlay" id="addWinePanel" onclick="handlePanelClick(event,'addWinePanel')">
   <div class="panel">
@@ -1767,6 +1805,149 @@ async function saveNewWine() {
   } finally {
     btn.disabled = false; btn.textContent = prev;
   }
+}
+
+// ===================== STAMPA CARTA PDF =====================
+const PRINT_CAT_ORDER = ['bollicine','champagne','bianco','rosso','rose','stranieri','piccoli'];
+const PRINT_CAT_LABEL = {
+  bollicine:'Bollicine', champagne:'Champagne', bianco:'Vini Bianchi',
+  rosso:'Vini Rossi', rose:'Vini Rosé', stranieri:'Vini Stranieri', piccoli:'Piccoli Formati · 375ml'
+};
+
+function openPrintDialog() {
+  // se le scorte non risultano gestite, avvisa che "solo disponibili" è rischioso
+  const hasStock = Object.values(inventory || {}).some(i => (i.qty_frigo||0) > 0);
+  document.getElementById('printWarn').classList.toggle('show', !hasStock);
+  // default sempre "tutti"
+  const allRadio = document.querySelector('input[name="printScope"][value="all"]');
+  if (allRadio) allRadio.checked = true;
+  document.getElementById('printPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function frigoQty(w) {
+  const inv = inventory[w.p + '|||' + w.n];
+  return inv ? (inv.qty_frigo || 0) : 0;
+}
+
+function doPrint() {
+  const scope = (document.querySelector('input[name="printScope"]:checked') || {}).value || 'all';
+  const onlyAvail = scope === 'available';
+
+  // filtra e raggruppa: categoria → regione → vini
+  let list = WINES.slice();
+  if (onlyAvail) list = list.filter(w => frigoQty(w) > 0);
+
+  // raggruppa per categoria nell'ordine definito, poi per regione
+  const byCat = {};
+  for (const w of list) {
+    const c = w.cat || 'bianco';
+    (byCat[c] = byCat[c] || []).push(w);
+  }
+
+  const esc = s => String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  let body = '';
+  let anyContent = false;
+
+  for (const cat of PRINT_CAT_ORDER) {
+    const wines = byCat[cat];
+    if (!wines || !wines.length) continue;
+    anyContent = true;
+
+    // raggruppa per regione, preservando un ordine stabile
+    const byRegion = {};
+    const regionOrder = [];
+    for (const w of wines) {
+      const r = w.region || '—';
+      if (!(r in byRegion)) { byRegion[r] = []; regionOrder.push(r); }
+      byRegion[r].push(w);
+    }
+
+    // un blocco "categoria" che si ripete in testa pagina via thead
+    let rows = '';
+    for (const region of regionOrder) {
+      // intestazione regione: blocco regione tenuto unito se possibile
+      rows += `<tbody class="region-block">`;
+      if (region && region !== '—') {
+        rows += `<tr class="region-row"><td colspan="2"><div class="region-name">${esc(region)}</div></td></tr>`;
+      }
+      for (const w of byRegion[region]) {
+        const price = (w.price != null && w.price !== '') ? esc(w.price) + '€' : '';
+        rows += `<tr class="wine-row">
+          <td class="wcell">
+            <div class="wprod">${esc(w.p)}</div>
+            <div class="wname">${esc(w.n)}${w.fmt ? ' · '+esc(w.fmt) : ''}</div>
+          </td>
+          <td class="wprice">${price}</td>
+        </tr>`;
+      }
+      rows += `</tbody>`;
+    }
+
+    body += `<table class="cat-table">
+      <thead><tr><th colspan="2"><div class="cat-title">${esc(PRINT_CAT_LABEL[cat]||cat)}</div></th></tr></thead>
+      ${rows}
+    </table>`;
+  }
+
+  if (!anyContent) {
+    showToast(onlyAvail ? 'Nessun vino disponibile da stampare' : 'Nessun vino da stampare', 'error');
+    return;
+  }
+
+  const today = new Date().toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' });
+  const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
+<title>Carta dei Vini — Sol y Mar</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #1a1714; margin: 0; }
+  .cover { text-align: center; padding: 30mm 0 10mm; }
+  .cover h1 { font-family: Georgia, serif; font-size: 30px; font-weight: normal; margin: 0; letter-spacing: 0.02em; }
+  .cover .sub { font-family: Georgia, serif; font-style: italic; color: #7a6f64; margin-top: 6px; font-size: 14px; }
+  .cover .date { font-size: 11px; color: #a89a8c; margin-top: 14px; }
+
+  .cat-table { width: 100%; border-collapse: collapse; }
+  /* il titolo categoria si ripete su ogni pagina della stessa tabella */
+  thead { display: table-header-group; }
+  .cat-title {
+    font-family: Georgia, serif; font-size: 22px; color: #8b3a2a;
+    padding: 18px 0 4px; border-bottom: 1.5px solid #e8dfd2; margin-bottom: 6px;
+  }
+  .region-block { page-break-inside: avoid; break-inside: avoid; } /* tieni la regione unita se ci sta */
+  .region-name {
+    font-family: Arial, sans-serif; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7a6f64; padding: 12px 0 4px; font-weight: bold;
+  }
+  .wine-row { page-break-inside: avoid; break-inside: avoid; } /* mai spezzare una riga vino */
+  .wine-row td { padding: 7px 0; border-bottom: 1px solid #f0ebe3; vertical-align: baseline; }
+  .wcell { width: 82%; }
+  .wprod { font-size: 13px; font-weight: bold; color: #1a1714; }
+  .wname { font-size: 12px; font-style: italic; color: #7a6f64; margin-top: 1px; }
+  .wprice { width: 18%; text-align: right; font-size: 14px; font-weight: bold; color: #8b3a2a; white-space: nowrap; vertical-align: top; padding-top: 7px; }
+
+  @media screen { body { background: #faf8f4; } .sheet { max-width: 780px; margin: 0 auto; padding: 20px; background: #fff; } }
+</style></head>
+<body>
+  <div class="sheet">
+    <div class="cover">
+      <h1>La cantina Sol y Mar</h1>
+      <div class="sub">Carta dei Vini · dal 1994</div>
+      <div class="date">aggiornata al ${esc(today)}</div>
+    </div>
+    ${body}
+  </div>
+  <script>
+    window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };
+  <\/script>
+</body></html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) { showToast('Consenti i popup per stampare', 'error'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  closePanel('printPanel');
 }
 
 // ===================== SUPABASE MAGAZZINO =====================
@@ -3553,7 +3734,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
