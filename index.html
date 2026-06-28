@@ -367,8 +367,10 @@
   .wine-card .wine-inv-badges { margin-top: 0; }
 
   /* ===================== COLORI PER CATEGORIA ===================== */
+  .cat-emilia     { --cat-strong:#c0562a; --cat-border:#ecc4ad; --cat-tag-bg:#fbeade; --cat-bg:#fdf2ea; }
   .cat-bollicine  { --cat-strong:#a07d00; --cat-border:#e8d795; --cat-tag-bg:#fbf3d6; --cat-bg:#fdf8e6; }
   .cat-champagne  { --cat-strong:#9a6f1c; --cat-border:#e0cfa6; --cat-tag-bg:#f7efdd; --cat-bg:#faf4e4; }
+  .cat-fermi      { --cat-strong:#2a8049; --cat-border:#b6e0c6; --cat-tag-bg:#e6f5ec; --cat-bg:#edf8f1; }
   .cat-bianco     { --cat-strong:#2a8049; --cat-border:#b6e0c6; --cat-tag-bg:#e6f5ec; --cat-bg:#edf8f1; }
   .cat-rosso      { --cat-strong:#a83636; --cat-border:#e6bcbc; --cat-tag-bg:#fbe7e7; --cat-bg:#fcefef; }
   .cat-rose       { --cat-strong:#bd5680; --cat-border:#eec6d6; --cat-tag-bg:#fceaf1; --cat-bg:#fdf0f5; }
@@ -376,8 +378,10 @@
   .cat-piccoli    { --cat-strong:#1b68a8; --cat-border:#b3d3eb; --cat-tag-bg:#e6f1fa; --cat-bg:#eef6fc; }
   /* in modalità lista coloriamo solo il bordo sinistro, in modo discreto */
   .wine-row { border-left: 4px solid transparent; padding-left: 10px; }
+  .wine-row.cat-emilia     { border-left-color:#d97a4e; }
   .wine-row.cat-bollicine  { border-left-color:#e3c54d; }
   .wine-row.cat-champagne  { border-left-color:#cBa85a; }
+  .wine-row.cat-fermi      { border-left-color:#6cc28a; }
   .wine-row.cat-bianco     { border-left-color:#6cc28a; }
   .wine-row.cat-rosso      { border-left-color:#d96f6f; }
   .wine-row.cat-rose       { border-left-color:#e29ab9; }
@@ -796,10 +800,10 @@
   <button class="add-wine-btn" id="addWineBtn" onclick="openAddWine()">➕ Aggiungi vino</button>
   <div class="tabs" id="tabs">
     <button class="tab active" data-cat="all">Tutti</button>
+    <button class="tab" data-cat="emilia">Emilia-Romagna</button>
     <button class="tab" data-cat="bollicine">Bollicine</button>
     <button class="tab" data-cat="champagne">Champagne</button>
-    <button class="tab" data-cat="bianco">Bianchi</button>
-    <button class="tab" data-cat="rosso">Rossi</button>
+    <button class="tab" data-cat="fermi">Fermi Nord-Sud</button>
     <button class="tab" data-cat="rose">Rosé</button>
     <button class="tab" data-cat="stranieri">Stranieri</button>
     <button class="tab" data-cat="piccoli">Piccoli (375ml)</button>
@@ -953,10 +957,10 @@
         <div class="aw-field">
           <label>Tipo <span class="req">*</span></label>
           <select id="awCat">
+            <option value="emilia">Emilia-Romagna</option>
             <option value="bollicine">Bollicine</option>
             <option value="champagne">Champagne</option>
-            <option value="bianco">Bianco</option>
-            <option value="rosso">Rosso</option>
+            <option value="fermi">Fermi Nord-Sud</option>
             <option value="rose">Rosé</option>
             <option value="stranieri">Stranieri</option>
             <option value="piccoli">Piccoli formati (375ml)</option>
@@ -1699,6 +1703,7 @@ async function loadCartaVini() {
     // normalizza: assicura tags array e price numero o null
     WINES = data.map(w => ({
       p: w.p, n: w.n, cat: w.cat,
+      sub: w.sub || w.region || '',
       region: w.region || '',
       price: (typeof w.price === 'number') ? w.price : (w.price ? Number(w.price) : null),
       tags: Array.isArray(w.tags) ? w.tags : [],
@@ -1808,10 +1813,10 @@ async function saveNewWine() {
 }
 
 // ===================== STAMPA CARTA PDF =====================
-const PRINT_CAT_ORDER = ['bollicine','champagne','bianco','rosso','rose','stranieri','piccoli'];
+const PRINT_CAT_ORDER = ['emilia','piccoli','bollicine','rose','champagne','fermi','stranieri'];
 const PRINT_CAT_LABEL = {
-  bollicine:'Bollicine', champagne:'Champagne', bianco:'Vini Bianchi',
-  rosso:'Vini Rossi', rose:'Vini Rosé', stranieri:'Vini Stranieri', piccoli:'Piccoli Formati · 375ml'
+  emilia:'l\'Emilia-Romagna', piccoli:'i Piccoli Formati · 375ml', bollicine:'Le Bollicine',
+  rose:'Vini Rosé', champagne:'Champagne', fermi:'Vini Fermi da Nord a Sud', stranieri:'Vini Stranieri'
 };
 
 function openPrintDialog() {
@@ -1854,11 +1859,11 @@ function doPrint() {
     if (!wines || !wines.length) continue;
     anyContent = true;
 
-    // raggruppa per regione, preservando un ordine stabile
+    // raggruppa per sottogruppo (sub), preservando un ordine stabile
     const byRegion = {};
     const regionOrder = [];
     for (const w of wines) {
-      const r = w.region || '—';
+      const r = w.sub || w.region || '—';
       if (!(r in byRegion)) { byRegion[r] = []; regionOrder.push(r); }
       byRegion[r].push(w);
     }
@@ -3320,8 +3325,8 @@ const clearBtn = document.getElementById('clearBtn');
 searchEl.addEventListener('input', ()=>{ currentQ=searchEl.value; clearBtn.style.display=currentQ?'block':'none'; render(); });
 function clearSearch(){ searchEl.value=''; currentQ=''; clearBtn.style.display='none'; searchEl.focus(); render(); }
 
-function tabLabel(cat){ const m={all:'Tutti',bollicine:'Bollicine',champagne:'Champagne',bianco:'Bianchi',rosso:'Rossi',rose:'Rosé',stranieri:'Stranieri',piccoli:'Piccoli Formati'}; return m[cat]||cat; }
-function catLabel(cat){ const m={bollicine:'Bollicine',champagne:'Champagne',bianco:'Bianco',rosso:'Rosso',rose:'Rosé',stranieri:'Straniero',piccoli:'375ml'}; return m[cat]||cat; }
+function tabLabel(cat){ const m={all:'Tutti',emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermi Nord-Sud',rose:'Rosé',stranieri:'Stranieri',piccoli:'Piccoli Formati'}; return m[cat]||cat; }
+function catLabel(cat){ const m={emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermo',rose:'Rosé',stranieri:'Straniero',piccoli:'375ml'}; return m[cat]||cat; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function escJs(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
@@ -3465,7 +3470,7 @@ function render(){
   container.innerHTML=html;
 }
 
-function groupByRegion(wines){ const map=new Map(); for(const w of wines){ if(!map.has(w.region))map.set(w.region,[]); map.get(w.region).push(w); } return map; }
+function groupByRegion(wines){ const map=new Map(); for(const w of wines){ const k=w.sub||w.region||'—'; if(!map.has(k))map.set(k,[]); map.get(k).push(w); } return map; }
 
 // ===================== HELPER CELLA (condivisi lista + card) =====================
 // Tag visibili: escludo "375ml" perché il formato è già mostrato dal badge .wine-format
