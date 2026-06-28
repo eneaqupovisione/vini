@@ -1843,10 +1843,12 @@ function doPrint() {
   let list = WINES.slice();
   if (onlyAvail) list = list.filter(w => frigoQty(w) > 0);
 
-  // raggruppa per categoria nell'ordine definito, poi per regione
+  // raggruppa per categoria nell'ordine definito, poi per sottogruppo.
+  // I vini emiliani (per regione) vanno SEMPRE nella sezione Emilia-Romagna,
+  // anche se hanno una cat generica: così la sezione si popola e non si duplicano.
   const byCat = {};
   for (const w of list) {
-    const c = w.cat || 'bianco';
+    const c = isEmilia(w) ? 'emilia' : (w.cat || 'fermi');
     (byCat[c] = byCat[c] || []).push(w);
   }
 
@@ -3365,7 +3367,7 @@ function renderClientFilters(){
   const box = document.getElementById('clientFilters');
   if (!box || !clientMode) return;
   const cat = currentCat;
-  const inCat = cat==='all' ? WINES : WINES.filter(w=>w.cat===cat);
+  const inCat = cat==='all' ? WINES : WINES.filter(w=>inCategory(w,cat));
   const opt = collectFilterOptions(inCat);
 
   const chip = (label, group, value) => {
@@ -3399,17 +3401,35 @@ function renderClientFilters(){
   box.innerHTML = html;
 }
 
+// Verifica se un vino appartiene alla sezione (tab) indicata.
+// Caso speciale Emilia-Romagna: raccoglie sia i vini con cat="emilia"
+// sia quelli la cui REGIONE è Emilia-Romagna, così la sezione si popola
+// a prescindere da come è strutturato il file dei vini.
+function isEmilia(w){
+  if (w.cat === 'emilia') return true;
+  const r = (w.region || '').toLowerCase();
+  return r === 'emilia-romagna' || r === 'emilia romagna' || r === 'emilia';
+}
+function inCategory(w, cat){
+  if (cat === 'all') return true;
+  if (cat === 'emilia') return isEmilia(w);
+  // le altre sezioni: i vini emiliani stanno SOLO sotto Emilia-Romagna,
+  // quindi li escludo dalle categorie generiche (niente doppioni)
+  if (isEmilia(w)) return false;
+  return w.cat === cat;
+}
+
 function render(){
   const q = currentQ.trim();
   const cat = currentCat;
-  const inCat = cat==='all'?WINES:WINES.filter(w=>w.cat===cat);
+  const inCat = WINES.filter(w=>inCategory(w,cat));
   let primary=[], maybe=[];
   if(!q){ primary=inCat; }
   else {
     const scored = inCat.map(w=>({w,s:fuzzyScore(w,q)})).filter(x=>x.s>0);
     primary = scored.sort((a,b)=>b.s-a.s).map(x=>x.w);
     if(cat!=='all'&&primary.length<8){
-      const others=WINES.filter(w=>w.cat!==cat);
+      const others=WINES.filter(w=>!inCategory(w,cat));
       const othScored=others.map(w=>({w,s:fuzzyScore(w,q)})).filter(x=>x.s>0.5);
       maybe=othScored.sort((a,b)=>b.s-a.s).slice(0,6).map(x=>x.w);
       const primSet=new Set(primary.map(w=>w.p+w.n));
