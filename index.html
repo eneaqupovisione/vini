@@ -1900,46 +1900,40 @@ function doPrint() {
     return;
   }
 
-  const today = new Date().toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' });
   const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
 <title>Carta dei Vini — Sol y Mar</title>
 <style>
   @page { size: A4; margin: 16mm 14mm; }
   * { box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; color: #1a1714; margin: 0; }
-  .cover { text-align: center; padding: 30mm 0 10mm; }
-  .cover h1 { font-family: Georgia, serif; font-size: 30px; font-weight: normal; margin: 0; letter-spacing: 0.02em; }
-  .cover .sub { font-family: Georgia, serif; font-style: italic; color: #7a6f64; margin-top: 6px; font-size: 14px; }
-  .cover .date { font-size: 11px; color: #a89a8c; margin-top: 14px; }
 
+  /* ogni categoria è una tabella che inizia su pagina nuova (tranne la prima) */
   .cat-table { width: 100%; border-collapse: collapse; }
-  /* il titolo categoria si ripete su ogni pagina della stessa tabella */
+  .cat-table + .cat-table { page-break-before: always; break-before: page; }
+  /* il titolo categoria si ripete in cima a ogni pagina della stessa tabella */
   thead { display: table-header-group; }
   .cat-title {
-    font-family: Georgia, serif; font-size: 22px; color: #8b3a2a;
-    padding: 18px 0 4px; border-bottom: 1.5px solid #e8dfd2; margin-bottom: 6px;
+    font-family: Georgia, serif; font-size: 30px; color: #8b3a2a; font-weight: normal;
+    padding: 6px 0 8px; border-bottom: 2px solid #d9cab5; margin-bottom: 4px; letter-spacing: 0.01em;
   }
-  .region-block { page-break-inside: avoid; break-inside: avoid; } /* tieni la regione unita se ci sta */
+  /* sottointestazione (regione / tipo / nazione): ben visibile, vicina al titolo */
+  .region-block { page-break-inside: avoid; break-inside: avoid; }
   .region-name {
-    font-family: Arial, sans-serif; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: #7a6f64; padding: 12px 0 4px; font-weight: bold;
+    font-family: Georgia, serif; font-size: 19px; color: #2c2620; font-weight: normal;
+    padding: 20px 0 6px; margin-top: 4px;
   }
-  .wine-row { page-break-inside: avoid; break-inside: avoid; } /* mai spezzare una riga vino */
-  .wine-row td { padding: 7px 0; border-bottom: 1px solid #f0ebe3; vertical-align: baseline; }
+  .region-block:first-of-type .region-name { padding-top: 10px; }
+  .wine-row { page-break-inside: avoid; break-inside: avoid; }
+  .wine-row td { padding: 8px 0; border-bottom: 1px solid #ece5da; vertical-align: baseline; }
   .wcell { width: 82%; }
-  .wprod { font-size: 13px; font-weight: bold; color: #1a1714; }
-  .wname { font-size: 12px; font-style: italic; color: #7a6f64; margin-top: 1px; }
-  .wprice { width: 18%; text-align: right; font-size: 14px; font-weight: bold; color: #8b3a2a; white-space: nowrap; vertical-align: top; padding-top: 7px; }
+  .wprod { font-size: 14px; font-weight: bold; color: #1a1714; }
+  .wname { font-size: 12.5px; font-style: italic; color: #7a6f64; margin-top: 1px; }
+  .wprice { width: 18%; text-align: right; font-size: 15px; font-weight: bold; color: #8b3a2a; white-space: nowrap; vertical-align: top; padding-top: 8px; }
 
-  @media screen { body { background: #faf8f4; } .sheet { max-width: 780px; margin: 0 auto; padding: 20px; background: #fff; } }
+  @media screen { body { background: #faf8f4; } .sheet { max-width: 780px; margin: 0 auto; padding: 24px; background: #fff; } }
 </style></head>
 <body>
   <div class="sheet">
-    <div class="cover">
-      <h1>La cantina Sol y Mar</h1>
-      <div class="sub">Carta dei Vini · dal 1994</div>
-      <div class="date">aggiornata al ${esc(today)}</div>
-    </div>
     ${body}
   </div>
   <script>
@@ -1952,6 +1946,7 @@ function doPrint() {
   win.document.open();
   win.document.write(html);
   win.document.close();
+  try { win.document.title = 'Carta dei Vini — Sol y Mar'; } catch(e) {}
   closePanel('printPanel');
 }
 
