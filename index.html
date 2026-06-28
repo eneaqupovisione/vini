@@ -725,6 +725,36 @@
   .bulk-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; font-family: Arial, sans-serif; color: var(--text-muted); margin-top: 12px; }
   .bulk-legend span { display: flex; align-items: center; gap: 5px; }
   .bulk-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  /* ===================== AGGIUNGI VINO (Manager) ===================== */
+  .add-wine-btn {
+    display: none; width: calc(100% - 32px); margin: 0 16px 12px; padding: 12px;
+    border: 1.5px dashed var(--accent-mid); border-radius: 12px; background: var(--accent-light);
+    color: var(--accent); font-family: Arial, sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .add-wine-btn:hover { background: var(--accent); color: #fff; border-style: solid; }
+  body.is-manager-active .add-wine-btn { display: block; }
+  body.client-mode .add-wine-btn { display: none !important; }
+
+  .aw-field { margin-bottom: 14px; }
+  .aw-field label { display: block; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; letter-spacing: 0.02em; }
+  .aw-field label .req { color: #d6342a; }
+  .aw-field input, .aw-field select, .aw-field textarea {
+    width: 100%; padding: 11px 12px; border: 1.5px solid var(--border-strong); border-radius: 10px;
+    font-family: Arial, sans-serif; font-size: 14px; color: var(--text); background: var(--bg); outline: none;
+  }
+  .aw-field input:focus, .aw-field select:focus, .aw-field textarea:focus { border-color: var(--accent-mid); background: #fff; }
+  .aw-field textarea { resize: vertical; min-height: 56px; }
+  .aw-row2 { display: flex; gap: 10px; }
+  .aw-row2 .aw-field { flex: 1; }
+  .aw-check { display: flex; align-items: center; gap: 8px; font-family: Arial, sans-serif; font-size: 14px; color: var(--text); cursor: pointer; }
+  .aw-check input { width: auto; }
+  .aw-save {
+    width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--green); color: #fff;
+    font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 6px;
+  }
+  .aw-save:disabled { background: var(--border-strong); cursor: not-allowed; }
+  .aw-hint { font-family: Arial, sans-serif; font-size: 12px; color: var(--text-faint); margin-top: 10px; text-align: center; }
 </style>
 </head>
 <body>
@@ -752,6 +782,7 @@
       <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
     </div>
   </div>
+  <button class="add-wine-btn" id="addWineBtn" onclick="openAddWine()">➕ Aggiungi vino</button>
   <div class="tabs" id="tabs">
     <button class="tab active" data-cat="all">Tutti</button>
     <button class="tab" data-cat="bollicine">Bollicine</button>
@@ -863,6 +894,68 @@
 </div>
 
 <!-- PANEL MAGAZZINO -->
+<!-- PANEL AGGIUNGI VINO -->
+<div class="panel-overlay" id="addWinePanel" onclick="handlePanelClick(event,'addWinePanel')">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">➕ Aggiungi vino</span>
+      <button class="panel-close" onclick="closePanel('addWinePanel')">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="aw-field">
+        <label>Cantina / Produttore <span class="req">*</span></label>
+        <input type="text" id="awProducer" placeholder="es. Ca del Bosco" autocomplete="off">
+      </div>
+      <div class="aw-field">
+        <label>Nome vino <span class="req">*</span></label>
+        <input type="text" id="awName" placeholder="es. Cuvée Prestige Extra Brut" autocomplete="off">
+      </div>
+      <div class="aw-row2">
+        <div class="aw-field">
+          <label>Tipo <span class="req">*</span></label>
+          <select id="awCat">
+            <option value="bollicine">Bollicine</option>
+            <option value="champagne">Champagne</option>
+            <option value="bianco">Bianco</option>
+            <option value="rosso">Rosso</option>
+            <option value="rose">Rosé</option>
+            <option value="stranieri">Stranieri</option>
+            <option value="piccoli">Piccoli formati (375ml)</option>
+          </select>
+        </div>
+        <div class="aw-field">
+          <label>Prezzo €</label>
+          <input type="number" id="awPrice" placeholder="es. 30" min="0" step="1">
+        </div>
+      </div>
+      <div class="aw-field">
+        <label>Regione</label>
+        <input type="text" id="awRegion" placeholder="es. Lombardia" autocomplete="off">
+      </div>
+      <div class="aw-field">
+        <label>Dettagli (uvaggio, denominazione, note)</label>
+        <textarea id="awTags" placeholder="es. franciacorta, bio"></textarea>
+      </div>
+      <div class="aw-field">
+        <label class="aw-check"><input type="checkbox" id="awFmt"> Formato piccolo (375ml)</label>
+      </div>
+      <div class="aw-row2">
+        <div class="aw-field">
+          <label>Scorta frigo ❄️</label>
+          <input type="number" id="awFrigo" placeholder="0" min="0" step="1">
+        </div>
+        <div class="aw-field">
+          <label>Scorta magazzino 📦</label>
+          <input type="number" id="awMag" placeholder="0" min="0" step="1">
+        </div>
+      </div>
+      <button class="aw-save" id="awSaveBtn" onclick="saveNewWine()">Salva vino</button>
+      <div class="aw-hint">Il vino viene salvato e resta in carta anche dopo il ricaricamento.</div>
+    </div>
+  </div>
+</div>
+
 <!-- PANEL SCARICO/STORNO DA MESSAGGIO -->
 <div class="panel-overlay" id="bulkPanel" onclick="handlePanelClick(event,'bulkPanel')">
   <div class="panel">
@@ -1543,6 +1636,7 @@ let popularityAvailable = true; // diventa false se la tabella non esiste
 async function init() {
   startLoad();
   await loadCartaVini();    // se esiste carta_vini.json, sostituisce i vini di fabbrica
+  await loadViniExtra();    // aggiunge i vini creati da Manager (Supabase), se presenti
   initViewMode();
   initTrackerMode();
   initManagerMode();
@@ -1576,6 +1670,102 @@ async function loadCartaVini() {
   } catch (e) {
     console.warn('carta_vini.json non caricato, uso i vini incorporati:', e.message);
     // WINES resta quello di fabbrica
+  }
+}
+
+// Carica i vini aggiunti da Manager (tabella Supabase vini_extra) e li unisce
+// a WINES. Degrada con grazia: se la tabella non esiste, non blocca nulla.
+async function loadViniExtra() {
+  try {
+    const rows = await sbFetch('vini_extra?select=*');
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    const extra = rows.map(r => ({
+      p: r.producer, n: r.name, cat: r.cat || 'bianco',
+      region: r.region || '',
+      price: (r.price != null) ? Number(r.price) : null,
+      tags: r.tags ? (Array.isArray(r.tags) ? r.tags : String(r.tags).split(',').map(t=>t.trim()).filter(Boolean)) : [],
+      ...(r.fmt ? { fmt: r.fmt } : {}),
+      _extra: true   // marca: vino aggiunto da app
+    }));
+    // evita duplicati con la carta (stesso produttore+nome)
+    const known = new Set(WINES.map(w => (w.p+'|||'+w.n).toLowerCase()));
+    for (const e of extra) {
+      if (!known.has((e.p+'|||'+e.n).toLowerCase())) WINES.push(e);
+    }
+    console.log('vini_extra caricati:', extra.length);
+  } catch (e) {
+    console.warn('vini_extra non caricati (tabella assente?):', e.message);
+  }
+}
+
+// ---- Form "Aggiungi vino" (solo Manager) ----
+async function openAddWine() {
+  const ok = await requireUnlock();
+  if (!ok) return;
+  // reset campi
+  ['awProducer','awName','awPrice','awRegion','awTags','awFrigo','awMag'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('awFmt').checked = false;
+  // precompila la categoria con quella attiva, se sensata
+  const sel = document.getElementById('awCat');
+  if (sel && currentCat && currentCat !== 'all') {
+    const map = { rosso:'rosso', rose:'rose', bianco:'bianco', bollicine:'bollicine', champagne:'champagne', stranieri:'stranieri', piccoli:'piccoli' };
+    if (map[currentCat]) sel.value = map[currentCat];
+  }
+  document.getElementById('addWinePanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+async function saveNewWine() {
+  const p = document.getElementById('awProducer').value.trim();
+  const n = document.getElementById('awName').value.trim();
+  const cat = document.getElementById('awCat').value;
+  if (!p || !n) { showToast('Cantina e nome vino sono obbligatori', 'error'); return; }
+
+  const price = document.getElementById('awPrice').value.trim();
+  const region = document.getElementById('awRegion').value.trim();
+  const tagsRaw = document.getElementById('awTags').value.trim();
+  const tags = tagsRaw ? tagsRaw.split(',').map(t=>t.trim()).filter(Boolean) : [];
+  const fmt = document.getElementById('awFmt').checked ? '375ml' : null;
+  const frigo = parseInt(document.getElementById('awFrigo').value) || 0;
+  const mag = parseInt(document.getElementById('awMag').value) || 0;
+
+  // duplicato?
+  if (WINES.some(w => (w.p+'|||'+w.n).toLowerCase() === (p+'|||'+n).toLowerCase())) {
+    showToast('Esiste già un vino con questa cantina e nome', 'error'); return;
+  }
+
+  const btn = document.getElementById('awSaveBtn');
+  btn.disabled = true; const prev = btn.textContent; btn.textContent = 'Salvo…';
+  try {
+    // 1) salva anagrafica su vini_extra
+    const row = { producer: p, name: n, cat, region, price: price ? Number(price) : null, tags: tags.length ? tags : null };
+    if (fmt) row.fmt = fmt;
+    await sbFetch('vini_extra', { method: 'POST', body: JSON.stringify(row) });
+
+    // 2) aggiungi a WINES in memoria (così appare subito)
+    const wine = { p, n, cat, region, price: price ? Number(price) : null, tags, ...(fmt?{fmt}:{}), _extra:true };
+    WINES.push(wine);
+
+    // 3) scorte iniziali, se indicate
+    if (frigo || mag) {
+      const key = p+'|||'+n;
+      inventory[key] = { producer:p, name:n, qty_frigo:frigo, qty_magazzino:mag, scaffale:'', piano:'' };
+      await persistStock(wine);
+    }
+
+    showToast('✓ Vino aggiunto in carta', 'success');
+    closePanel('addWinePanel');
+    render();
+  } catch (e) {
+    console.error('saveNewWine:', e);
+    // se la tabella non esiste, messaggio chiaro
+    if (String(e).includes('404') || String(e).toLowerCase().includes('relation') || String(e).includes('does not exist')) {
+      showToast('Manca la tabella "vini_extra" su Supabase — vedi guida', 'error');
+    } else {
+      showToast('Errore nel salvataggio del vino', 'error');
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = prev;
   }
 }
 
@@ -2260,6 +2450,7 @@ function syncManagerUI() {
   const l = document.getElementById('managerLabel');
   if (t) t.classList.toggle('on', managerMode);
   if (l) l.textContent = managerMode ? 'On' : 'Off';
+  document.body.classList.toggle('is-manager-active', managerMode && !clientMode);
 }
 
 function initManagerMode() {
@@ -3362,7 +3553,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
