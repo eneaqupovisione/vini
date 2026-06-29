@@ -32,7 +32,7 @@
   {"p": "Rémi Leroy", "n": "Assemblage Extra Brut", "cat": "piccoli", "sub": "Champagne", "region": "Champagne", "price": 42, "tags": ["375ml", "champagne"], "fmt": "375ml"},
   {"p": "Pavese Ermes", "n": "Pavese XXIV Blanc de Morgex et de la Salle Metodo Classico DOP", "cat": "bollicine", "sub": "Valle d'Aosta", "region": "Valle d'Aosta", "price": 40, "tags": ["metodo classico"]},
   {"p": "Ettore Germano", "n": "Alta Langa 2020 Extra Brut DOCG", "cat": "bollicine", "sub": "Piemonte", "region": "Piemonte", "price": 48, "tags": ["metodo classico"]},
-  {"p": "Pojer e Sandri", "n": "Zero Infinito Vino Bianco Frizzante col Fondo", "cat": "bollicine", "sub": "Piemonte", "region": "Trentino", "price": 35, "tags": ["frizzante"]},
+  {"p": "Pojer e Sandri", "n": "Zero Infinito Vino Bianco Frizzante col Fondo", "cat": "bollicine", "sub": "Trentino", "region": "Trentino", "price": 35, "tags": ["frizzante"]},
   {"p": "Cà dei Frati", "n": "Cuvée dei Frati Metodo Classico Extra Brut", "cat": "bollicine", "sub": "Lombardia", "region": "Lombardia", "price": 40, "tags": ["metodo classico"]},
   {"p": "Casa Caterina", "n": "Cuvée 60 Blanc de Blancs Brut Nature VSQ Dosaggio 0", "cat": "bollicine", "sub": "Lombardia", "region": "Lombardia", "price": 60, "tags": ["metodo classico"]},
   {"p": "Casa Caterina", "n": "Rio Cami Spumante Brut Blanc de Noir", "cat": "bollicine", "sub": "Lombardia", "region": "Lombardia", "price": 80, "tags": ["spumante"]},
