@@ -784,6 +784,13 @@
   }
   .bulk-row.scarico .bulk-row-qty { background: #fdecec; color: #a31a12; }
   .bulk-row.storno  .bulk-row-qty { background: #e8f3ec; color: #1d5238; }
+  /* operazioni assolute: "è finito" (zero) e "rimaste N" (set) */
+  .bulk-row.absolute .bulk-row-qty { min-width: 48px; font-size: 14px; }
+  .bulk-row.zero-op .bulk-row-qty { background: #f3e8ff; color: #6b21a8; }
+  .bulk-row.set-op  .bulk-row-qty { background: #e6f0fb; color: #1d4f91; }
+  .bulk-op-note { display: inline-block; margin-top: 2px; font-size: 11.5px; font-family: Arial, sans-serif; color: var(--text-muted); font-style: italic; }
+  .bulk-row.zero-op .bulk-op-note { color: #7c3aed; }
+  .bulk-row.set-op  .bulk-op-note { color: #2563a8; }
   .bulk-row-main { flex: 1; min-width: 0; }
   .bulk-row-raw { font-size: 11px; color: var(--text-faint); font-family: 'SF Mono', monospace; }
   .bulk-row-wine { font-size: 14px; font-weight: 600; color: var(--text); font-family: Arial, sans-serif; line-height: 1.25; }
@@ -793,6 +800,8 @@
   .bulk-row-toggle { flex: 0 0 auto; background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px; opacity: 0.6; }
   .bulk-row-toggle:hover { opacity: 1; }
   .bulk-empty-hint { text-align: center; color: var(--text-faint); font-style: italic; font-size: 14px; padding: 20px; font-family: Arial, sans-serif; }
+  .bulk-cmd-hint { font-family: Arial, sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); background: var(--accent-light); border-radius: 8px; padding: 9px 11px; margin: 4px 0 10px; }
+  .bulk-cmd-hint b { color: var(--accent); font-weight: 700; }
   .bulk-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; font-family: Arial, sans-serif; color: var(--text-muted); margin-top: 12px; }
   .bulk-legend span { display: flex; align-items: center; gap: 5px; }
   .bulk-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
@@ -1157,9 +1166,14 @@
       <textarea class="bulk-textarea" id="bulkText" placeholder="Incolla qui il messaggio (anche più messaggi insieme).
 Esempio:
 2 ca del bosco
-canevel
-gewu sv
+canevel finito
+prestige rimaste 2
 mosnel brut"></textarea>
+      <div class="bulk-cmd-hint">
+        Oltre a scarico/storno puoi scrivere direttamente nella riga:
+        <b>«canevel finito»</b> (porta a 0) o <b>«prestige rimaste 2»</b> (imposta a 2 in frigo).
+        Queste righe aggiornano la scorta a prescindere dal toggle qui sopra.
+      </div>
       <div class="bulk-actions-row">
         <button class="bulk-btn analyze" onclick="analyzeBulk()" id="bulkAnalyzeBtn">Analizza</button>
         <button class="bulk-btn ghost" onclick="clearBulk()">Pulisci</button>
@@ -2712,33 +2726,48 @@ function topFuzzyCandidates(text, n) {
     .map(x => x.w);
 }
 
-// Aggrega le quantità per vino scelto (somma righe sullo stesso vino)
+// Aggrega le righe in due gruppi:
+//  - deltas:  idx -> bottiglie da sommare (seguono il toggle scarico/storno)
+//  - targets: idx -> valore frigo assoluto richiesto (op zero/set); l'ultima vince
 function bulkAggregate() {
-  const agg = {}; // idx -> qty
+  const deltas = {};   // idx -> qty (delta)
+  const targets = {};  // idx -> { target, op, raw }
   for (const r of bulkParsed) {
     if (r.ignored || r.chosenIdx < 0) continue;
-    agg[r.chosenIdx] = (agg[r.chosenIdx] || 0) + r.qty;
+    if (r.op === 'zero' || r.op === 'set') {
+      const target = (r.op === 'zero') ? 0 : r.qty;
+      targets[r.chosenIdx] = { target, op: r.op, raw: r.raw }; // ultima riga sul vino vince
+    } else {
+      deltas[r.chosenIdx] = (deltas[r.chosenIdx] || 0) + r.qty;
+    }
   }
-  return agg;
+  return { deltas, targets };
 }
+
+// compat con eventuali chiamanti vecchi: aggregato "piatto" idx->qty dei soli delta
+function bulkAggregateFlat(){ return bulkAggregate().deltas; }
 
 function renderBulkSummary() {
   const box = document.getElementById('bulkSummary');
   if (!bulkParsed.length) { box.innerHTML = ''; return; }
 
-  const agg = bulkAggregate();
-  const nWines = Object.keys(agg).length;
-  const totBottles = Object.values(agg).reduce((a,b)=>a+b, 0);
-  const verb = bulkMode === 'scarico' ? 'da scaricare' : 'da stornare';
-  const sign = bulkMode === 'scarico' ? '−' : '+';
+  const { deltas, targets } = bulkAggregate();
+  const nDelta = Object.keys(deltas).length;
+  const nTarget = Object.keys(targets).length;
+  const totBottles = Object.values(deltas).reduce((a,b)=>a+b, 0);
 
-  let html = `<div class="bulk-summary-head"><b>${nWines}</b> vini · <b>${totBottles}</b> bottiglie ${verb}</div>`;
+  // intestazione: distingue le bottiglie "a delta" dalle operazioni assolute
+  let headBits = [];
+  if (nDelta) headBits.push(`<b>${totBottles}</b> bott. ${bulkMode==='scarico'?'da scaricare':'da stornare'}`);
+  if (nTarget) headBits.push(`<b>${nTarget}</b> ${nTarget===1?'aggiornamento diretto':'aggiornamenti diretti'}`);
+  if (!headBits.length) headBits.push('niente da applicare');
+  let html = `<div class="bulk-summary-head">${headBits.join(' · ')}</div>`;
 
   bulkParsed.forEach((r, i) => {
-    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' ' + bulkMode;
+    // riga senza vino riconosciuto
     if (r.confidence === 'none' && r.chosenIdx < 0) {
       html += `<div class="bulk-row none ${r.ignored?'ignored':''}">
-        <div class="bulk-row-qty">${sign}${r.qty}</div>
+        <div class="bulk-row-qty">?</div>
         <div class="bulk-row-main">
           <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
           <div class="bulk-row-none-msg">Nessun vino riconosciuto</div>
@@ -2747,9 +2776,27 @@ function renderBulkSummary() {
       </div>`;
       return;
     }
+
     const w = WINES[r.chosenIdx];
     const wineLabel = w ? `<span class="pp">${escHtml(w.p)}</span> — ${escHtml(w.n.slice(0,40))}${w.fmt?` · ${w.fmt}`:''}` : '';
-    // per le righe ambigue, mostra un select con i candidati
+
+    // badge quantità: dipende dall'operazione della riga
+    let qtyHtml, opTag = '', opCls = bulkMode;
+    if (r.op === 'zero') {
+      qtyHtml = '→ 0';
+      opCls = 'absolute zero-op';
+      opTag = `<span class="bulk-op-note">azzera (era ${w?frigoQty(w):0} in frigo)</span>`;
+    } else if (r.op === 'set') {
+      qtyHtml = '→ ' + r.qty;
+      opCls = 'absolute set-op';
+      const cur = w ? frigoQty(w) : 0;
+      opTag = `<span class="bulk-op-note">imposta a ${r.qty} in frigo (era ${cur})</span>`;
+    } else {
+      const sign = bulkMode === 'scarico' ? '−' : '+';
+      qtyHtml = sign + r.qty;
+    }
+
+    // select per gli ambigui
     let selectHtml = '';
     if (r.confidence === 'ambiguous' && r.candidates.length > 1) {
       const opts = r.candidates.map(c => {
@@ -2758,20 +2805,29 @@ function renderBulkSummary() {
       }).join('');
       selectHtml = `<select class="bulk-row-select" onchange="setBulkChoice(${i}, this.value)">${opts}</select>`;
     }
+
+    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' ' + opCls;
     html += `<div class="bulk-row ${cls}">
-      <div class="bulk-row-qty">${sign}${r.qty}</div>
+      <div class="bulk-row-qty">${qtyHtml}</div>
       <div class="bulk-row-main">
         <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
         <div class="bulk-row-wine">${wineLabel}</div>
+        ${opTag}
         ${selectHtml}
       </div>
       <button class="bulk-row-toggle" onclick="toggleBulkRow(${i})" title="${r.ignored?'Riga ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
     </div>`;
   });
 
+  const nothing = (nDelta + nTarget) === 0;
+  const applyLabel = nTarget && !nDelta
+    ? `Applica aggiornamenti (${nTarget})`
+    : (nTarget
+        ? `Applica tutto (${totBottles} bott. + ${nTarget} dir.)`
+        : `${bulkMode==='scarico'?'Applica scarico':'Applica storno'} (${totBottles} bott.)`);
   html += `<div class="bulk-actions-row">
-    <button class="bulk-btn apply" id="bulkApplyBtn" onclick="applyBulk()" ${nWines===0?'disabled':''}>
-      ${bulkMode==='scarico'?'Applica scarico':'Applica storno'} (${totBottles} bott.)
+    <button class="bulk-btn apply" id="bulkApplyBtn" onclick="applyBulk()" ${nothing?'disabled':''}>
+      ${applyLabel}
     </button>
   </div>`;
   box.innerHTML = html;
@@ -2790,24 +2846,37 @@ function toggleBulkRow(i) {
 }
 
 async function applyBulk() {
-  const agg = bulkAggregate();
-  const entries = Object.entries(agg);
-  if (!entries.length) { showToast('Niente da applicare', 'error'); return; }
+  const { deltas, targets } = bulkAggregate();
+  const deltaEntries = Object.entries(deltas);
+  const targetEntries = Object.entries(targets);
+  if (!deltaEntries.length && !targetEntries.length) { showToast('Niente da applicare', 'error'); return; }
 
-  const totBottles = entries.reduce((a,[,q])=>a+q, 0);
-  const azione = bulkMode==='scarico' ? 'scaricare' : 'stornare';
-  if (!confirm(`Confermi di ${azione} ${totBottles} bottiglie su ${entries.length} vini?\nLe scorte (frigo) verranno aggiornate.`)) return;
+  const totBottles = deltaEntries.reduce((a,[,q])=>a+q, 0);
 
-  // Applichaiamo sul FRIGO. Scarico = delta negativo, storno = positivo.
+  // messaggio di conferma che elenca entrambe le cose
+  let parts = [];
+  if (deltaEntries.length) parts.push(`${bulkMode==='scarico'?'scaricare':'stornare'} ${totBottles} bottiglie su ${deltaEntries.length} vini`);
+  if (targetEntries.length) parts.push(`${targetEntries.length} aggiornament${targetEntries.length===1?'o':'i'} diretti (finito / rimaste N)`);
+  if (!confirm(`Confermi?\n• ${parts.join('\n• ')}\nLe scorte (frigo) verranno aggiornate.`)) return;
+
+  // 1) delta classici (seguono il toggle)
   const dir = bulkMode==='scarico' ? -1 : 1;
-  let done = 0;
-  for (const [idxStr, qty] of entries) {
-    const idx = parseInt(idxStr);
-    // setStock applica un delta per volta sul frigo; lo chiamiamo con il totale
-    await applyStockDelta(idx, 'frigo', dir * qty);
-    done++;
+  for (const [idxStr, qty] of deltaEntries) {
+    await applyStockDelta(parseInt(idxStr), 'frigo', dir * qty);
   }
-  showToast(`✓ ${bulkMode==='scarico'?'Scarico':'Storno'} applicato: ${totBottles} bottiglie`, 'success');
+  // 2) operazioni assolute: porto il frigo esattamente al target calcolando il delta
+  for (const [idxStr, info] of targetEntries) {
+    const idx = parseInt(idxStr);
+    const w = WINES[idx];
+    const cur = w ? frigoQty(w) : 0;
+    const delta = info.target - cur;   // applyStockDelta fa il clamp a 0
+    if (delta !== 0) await applyStockDelta(idx, 'frigo', delta);
+  }
+
+  const msgBits = [];
+  if (deltaEntries.length) msgBits.push(`${bulkMode==='scarico'?'Scarico':'Storno'} ${totBottles} bott.`);
+  if (targetEntries.length) msgBits.push(`${targetEntries.length} aggiornamenti diretti`);
+  showToast(`✓ ${msgBits.join(' · ')}`, 'success');
   clearBulk();
   closePanel('bulkPanel');
   render();
@@ -3616,21 +3685,121 @@ function findWineByHint(hint, preferSmall){
   return pool[0];
 }
 
-// Estrae la quantità da una riga: numero davanti, dietro, o "xN". Default 1.
-function extractQty(rawLine){
-  let line = rawLine.trim();
-  let qty = 1;
-  // pattern "x2" / "X2" anche attaccato a una parola ("brutx2")
-  let m = line.match(/x\s*(\d{1,3})\b/i);
-  if (m) { qty = parseInt(m[1]); line = line.replace(m[0], ' '); return { qty, text: line.trim() }; }
-  // numero a inizio riga: "2 ca del bosco"
-  m = line.match(/^\s*(\d{1,3})\s+(.+)$/);
-  if (m) { qty = parseInt(m[1]); return { qty, text: m[2].trim() }; }
-  // numero a fine riga staccato: "ca del bosco 2" (ma non "375" che è formato)
-  m = line.match(/^(.+?)\s+(\d{1,2})\s*$/);
-  if (m) { qty = parseInt(m[2]); return { qty, text: m[1].trim() }; }
-  return { qty, text: line };
+// ---- Vocabolario delle OPERAZIONI di sala (tutto locale, niente AI) ---------
+// Due casi voluti dal cliente:
+//  (1) "è finito"        -> op:'zero' (porta il frigo a 0)
+//  (2) "sono rimaste N"  -> op:'set'  (imposta il frigo esattamente a N)
+// Le liste sono volutamente AMPIE: ogni variante riconosciuta qui si risolve a
+// costo zero. Aggiungetene pure altre, una stringa per riga.
+// NB: il confronto è su testo NORMALIZZATO (minuscolo, senza accenti).
+
+// "è finito" e sinonimi -> azzeramento. Anche scritti male / veloci.
+const ZERO_PHRASES = [
+  'finito','finita','finiti','finite','finit','finito tutto','finita tutta',
+  'esaurito','esaurita','esauriti','esaurite','esaur','esauriti tutti',
+  'terminato','terminata','terminati','terminate','termin',
+  'non ce ne piu','non ce ne più','non ce piu','non ce più','non c e piu','non c e più',
+  'niente piu','niente più','non ne ho piu','non ne ho più','non ne abbiamo piu','non ne abbiamo più',
+  'esaurite tutte','esaurito del tutto','out','sold out','soldout',
+  'vuoto','vuota','vuoti','vuote','a zero','azzera','azzerato','azzerata',
+  'andato','andata','andati','andate','andato tutto','via tutto',
+  'kaputt','fine','finite tutte','finiti tutti','non rimane niente','non rimane nulla',
+  'zero bottiglie','zero bott','0 bottiglie'
+];
+
+// "sono rimaste N" e sinonimi -> imposta il valore reale a N (set assoluto).
+// Sono i prefissi/suffissi che, accompagnati da un numero, significano
+// "adesso in tutto ne restano N". Catturano il numero con \d.
+const REMAIN_PHRASES = [
+  'rimaste','rimasta','rimasti','rimasto','rimast','rimaste solo','rimasti solo',
+  'restano','resta','restate','restano solo','ne restano','ne resta',
+  'rimangono','rimane','rimangono solo','ne rimangono','ne rimane',
+  'ce ne sono','ce ne stanno','ce ne restano','ce ne rimangono','ce ne resta','ce ne rimane',
+  'ne ho','ne ho solo','ne abbiamo','ne abbiamo solo','ne rimasti','ne rimaste',
+  'rimaste in frigo','restano in frigo','in frigo','solo','ancora','sono rimaste','sono rimasti',
+  'rimanenti','rimanenze','rimanenza','disponibili','disponibile','ne avanzano','avanzano','avanzate'
+];
+
+// Riconosce se nel testo normalizzato compare una frase di azzeramento.
+function detectZeroOp(norm){
+  for (const p of ZERO_PHRASES){
+    const np = normalize(p);
+    // confine di parola "morbido": la frase deve comparire come token/sequenza
+    if (new RegExp('(^|[^a-z0-9])' + escRe(np) + '([^a-z0-9]|$)').test(norm)) return true;
+  }
+  // "0" o "zero" isolati a fine/inizio riga = azzeramento
+  if (/(^|[^0-9])0([^0-9]|$)/.test(norm) || /(^|[^a-z])zero([^a-z]|$)/.test(norm)) return true;
+  return false;
 }
+
+// Riconosce "rimaste N": cerca una frase-residuo + un numero vicino. Ritorna N o null.
+function detectRemainOp(norm){
+  for (const p of REMAIN_PHRASES){
+    const np = normalize(p);
+    // numero DOPO la frase: "rimaste 2", "ne restano 3", "solo 1"
+    let m = norm.match(new RegExp('(^|[^a-z0-9])' + escRe(np) + '[^0-9]{0,8}(\\d{1,3})'));
+    if (m) return parseInt(m[2]);
+    // numero PRIMA della frase: "2 rimaste", "3 in frigo"
+    m = norm.match(new RegExp('(\\d{1,3})[^0-9]{0,8}' + escRe(np) + '([^a-z0-9]|$)'));
+    if (m) return parseInt(m[1]);
+  }
+  return null;
+}
+
+function escRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+// Estrae quantità + operazione da una riga grezza.
+// Ritorna { qty, text, op }  dove op ∈ 'delta' | 'zero' | 'set'.
+//  - 'delta': comportamento classico (segue il toggle scarico/storno), qty = bottiglie
+//  - 'zero' : porta il frigo a 0 (qty ignorata)
+//  - 'set'  : imposta il frigo a qty
+function parseLine(rawLine){
+  const line = rawLine.trim();
+  const norm = normalize(line);
+
+  // 1) OPERAZIONE "rimaste N" (set assoluto) — ha priorità perché è specifica
+  const remainN = detectRemainOp(norm);
+  if (remainN != null){
+    // tolgo dalla parte-testo i numeri e le parole-residuo, così resta il nome vino
+    let text = stripOpWords(line, REMAIN_PHRASES);
+    return { qty: remainN, text: text.trim() || line, op: 'set' };
+  }
+
+  // 2) OPERAZIONE "è finito" (azzera)
+  if (detectZeroOp(norm)){
+    let text = stripOpWords(line, ZERO_PHRASES);
+    // tolgo anche eventuale "0"/"zero" isolato
+    text = text.replace(/(^|[^0-9])0([^0-9]|$)/g, ' ').replace(/\bzero\b/gi, ' ');
+    return { qty: 0, text: text.trim() || line, op: 'zero' };
+  }
+
+  // 3) DELTA classico: numero + nome vino (comportamento storico)
+  let text = line, qty = 1;
+  let m = line.match(/x\s*(\d{1,3})\b/i);
+  if (m) { qty = parseInt(m[1]); text = line.replace(m[0], ' '); return { qty, text: text.trim(), op:'delta' }; }
+  m = line.match(/^\s*(\d{1,3})\s+(.+)$/);
+  if (m) { qty = parseInt(m[1]); return { qty, text: m[2].trim(), op:'delta' }; }
+  m = line.match(/^(.+?)\s+(\d{1,2})\s*$/);
+  if (m) { qty = parseInt(m[2]); return { qty, text: m[1].trim(), op:'delta' }; }
+  return { qty, text: line, op:'delta' };
+}
+
+// Rimuove dal testo le parole-operazione e i numeri, lasciando il nome del vino.
+function stripOpWords(line, phrases){
+  let out = ' ' + line + ' ';
+  // ordino per lunghezza decrescente così "ne restano" viene tolto prima di "resta"
+  const sorted = phrases.slice().sort((a,b)=> b.length - a.length);
+  for (const p of sorted){
+    const re = new RegExp('(^|[^\\p{L}])' + escRe(p) + '(?=[^\\p{L}]|$)', 'giu');
+    out = out.replace(re, ' ');
+  }
+  // tolgo numeri e punteggiatura residua
+  out = out.replace(/\d{1,3}/g, ' ').replace(/[.,;:!?\-—_]+/g, ' ').replace(/\s+/g, ' ');
+  return out.trim();
+}
+
+// compat: vecchio nome usato altrove
+function extractQty(rawLine){ const r = parseLine(rawLine); return { qty: r.qty, text: r.text }; }
 
 // "375" / "piccolo" → preferenza formato piccolo (anche se attaccato: "Prestige375")
 function wantsSmallFormat(text){
@@ -3680,9 +3849,9 @@ function parseBulkText(rawText){
     .filter(l => l && !/^[-—=_*·•]+$/.test(l)); // scarta separatori tipo "----"
   const rows = [];
   for (const raw of lines){
-    const { qty, text } = extractQty(raw);
+    const { qty, text, op } = parseLine(raw);
     const res = matchLine(text);
-    rows.push({ raw, text, qty, wine: res.wine, confidence: res.confidence, candidates: res.candidates });
+    rows.push({ raw, text, qty, op, wine: res.wine, confidence: res.confidence, candidates: res.candidates });
   }
   return rows;
 }
