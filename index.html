@@ -39,8 +39,16 @@
     z-index: 100;
     box-shadow: var(--shadow);
   }
-  .header-top { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-bottom: 12px; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .header-top .client-brand { flex: 1 1 auto; text-align: center; min-width: 0; overflow: hidden; }
+  .header-actions-left, .header-actions-right { flex: 0 0 auto; }
+  @media (max-width: 560px) {
+    .header-top { flex-wrap: wrap; }
+    .header-top .client-brand { order: -1; flex-basis: 100%; text-align: left; margin-bottom: 4px; }
+    .header-actions-left { order: 1; }
+    .header-actions-right { order: 2; margin-left: auto; }
+  }
   .search-row { margin-bottom: 12px; }
   .icon-btn {
     width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(--border-strong);
@@ -226,6 +234,47 @@
   .panel-overlay.open { opacity: 1; pointer-events: all; }
   .panel { background: var(--surface); border-radius: 18px 18px 0 0; width: 100%; max-width: 680px; padding: 0 0 32px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); max-height: 92vh; overflow-y: auto; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); }
   .panel-overlay.open .panel { transform: translateY(0); }
+
+  /* Pagina Personalizza carta: full-screen, NON si chiude per click esterno */
+  .cc-page { position: fixed; inset: 0; background: var(--surface); z-index: 250; display: none; flex-direction: column; }
+  .cc-page.open { display: flex; }
+  .cc-page-header {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--surface);
+    position: sticky; top: 0;
+  }
+  .cc-page-header .cc-back {
+    width: 38px; height: 38px; border-radius: 8px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-muted); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cc-page-header .cc-back:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .cc-page-title { font-size: 18px; font-weight: 700; color: var(--text); flex: 1; }
+  .cc-page-body { flex: 1 1 auto; overflow-y: auto; padding: 18px 16px 120px; max-width: 720px; width: 100%; margin: 0 auto; }
+  .cc-page-footer {
+    flex: 0 0 auto; display: flex; gap: 10px; padding: 12px 16px;
+    border-top: 1px solid var(--border); background: var(--surface);
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  }
+  .cc-page-footer .aw-save { margin: 0; flex: 1; }
+
+  /* upload immagine PNG */
+  .cc-img-field { margin-bottom: 16px; }
+  .cc-img-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+  .cc-img-preview {
+    width: 72px; height: 72px; flex: 0 0 auto; border-radius: 10px; border: 1.5px dashed var(--border-strong);
+    background: var(--accent-light) center/contain no-repeat; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--text-muted); overflow: hidden;
+  }
+  .cc-img-preview.has-img { border-style: solid; background-color: #fff; }
+  .cc-img-actions { display: flex; flex-direction: column; gap: 6px; }
+  .cc-img-btn {
+    padding: 7px 14px; border-radius: 8px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text); font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .cc-img-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); }
+  .cc-img-btn.danger { color: #b3261e; border-color: #e9c3c0; }
+  .cc-img-btn.danger:hover { background: #fbeceb; }
   .panel-handle { width: 40px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 12px auto 8px; }
   .panel-header { padding: 12px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .panel-title { font-size: 16px; font-weight: bold; font-family: Arial, sans-serif; color: var(--text); }
@@ -801,17 +850,20 @@
 
 <div class="header">
   <div class="header-top">
+    <div class="header-actions header-actions-left">
+      <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
+      <button class="icon-btn" onclick="openCartaCustomize()" title="Personalizza carta" id="customizeBtn">🎨</button>
+      <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni" id="settingsBtn">⚙️<span class="alert-dot" id="settingsAlert"></span></button>
+    </div>
     <div class="client-brand">
       <span class="client-brand-name">La cantina <span class="accent">Sol y Mar</span></span>
     </div>
-    <div class="header-actions">
+    <div class="header-actions header-actions-right">
       <button class="icon-btn" onclick="openPrintDialog()" title="Stampa carta PDF" id="printBtn">🖨️</button>
       <button class="icon-btn" onclick="openClientPreview()" title="Anteprima cliente (come appare scansionando il QR)" id="previewBtn">👁️</button>
-      <button class="icon-btn viewmode-single" id="viewModeBtn" onclick="toggleViewMode()" title="Cambia modalità di visualizzazione"><span id="viewModeIcon">🖥️</span></button>
       <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
       <button class="icon-btn" onclick="openBulkUpdate()" title="Scarico/Storno da messaggio" id="bulkBtn">📝</button>
       <button class="icon-btn" onclick="openRubrica()" title="Rubrica Fornitori">📇</button>
-      <button class="icon-btn" onclick="openImpostazioni()" title="Impostazioni" id="settingsBtn">⚙️<span class="alert-dot" id="settingsAlert"></span></button>
     </div>
   </div>
   <div class="search-row">
@@ -933,29 +985,52 @@
 </div>
 
 <!-- PANEL MAGAZZINO -->
-<!-- PANEL PERSONALIZZA CARTA -->
-<div class="panel-overlay" id="cartaCustomizePanel" onclick="handlePanelClick(event,'cartaCustomizePanel')">
-  <div class="panel">
-    <div class="panel-handle"></div>
-    <div class="panel-header">
-      <span class="panel-title">🎨 Personalizza carta</span>
-      <button class="panel-close" onclick="closePanel('cartaCustomizePanel')">✕</button>
-    </div>
-    <div class="panel-body">
+<!-- PAGINA PERSONALIZZA CARTA (full-screen, non si chiude per click esterno) -->
+<div class="cc-page" id="cartaCustomizePanel">
+  <div class="cc-page-header">
+    <button class="cc-back" onclick="closeCartaCustomize()" title="Chiudi">←</button>
+    <span class="cc-page-title">🎨 Personalizza carta</span>
+  </div>
+  <div class="cc-page-body">
       <div class="cc-group-title">Copertina</div>
       <div class="aw-field"><label>Sopra-titolo</label><input type="text" id="cc_cover_pre" placeholder="La cantina"></div>
       <div class="aw-field"><label>Nome del locale</label><input type="text" id="cc_cover_name" placeholder="Sol y Mar"></div>
       <div class="aw-field"><label>Sottotitolo</label><input type="text" id="cc_cover_sub" placeholder="Carta dei Vini · dal 1994"></div>
       <div class="aw-field"><label>Didascalia sotto il QR</label><input type="text" id="cc_qr_caption" placeholder="inquadra per la carta sempre aggiornata"></div>
 
+      <div class="cc-img-field">
+        <label style="font-size:13px;font-weight:600;color:var(--text-muted)">Logo / immagine in copertina</label>
+        <div class="setting-desc" style="margin:2px 0 4px">PNG che appare sotto il titolo nella prima pagina. Consigliato sfondo trasparente.</div>
+        <div class="cc-img-row">
+          <div class="cc-img-preview" id="cc_cover_img_prev">🖼️</div>
+          <div class="cc-img-actions">
+            <button class="cc-img-btn" onclick="document.getElementById('cc_cover_img_input').click()">Scegli PNG…</button>
+            <button class="cc-img-btn danger" id="cc_cover_img_del" onclick="clearCartaImg('cover_logo')" style="display:none">Rimuovi</button>
+          </div>
+          <input type="file" id="cc_cover_img_input" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="handleCartaImg(event,'cover_logo')">
+        </div>
+      </div>
+
+      <div class="cc-img-field">
+        <label style="font-size:13px;font-weight:600;color:var(--text-muted)">Filigrana a piè di pagina</label>
+        <div class="setting-desc" style="margin:2px 0 4px">PNG piccolo che appare in basso su tutte le pagine interne (non in copertina), tipo watermark.</div>
+        <div class="cc-img-row">
+          <div class="cc-img-preview" id="cc_footer_img_prev">🖼️</div>
+          <div class="cc-img-actions">
+            <button class="cc-img-btn" onclick="document.getElementById('cc_footer_img_input').click()">Scegli PNG…</button>
+            <button class="cc-img-btn danger" id="cc_footer_img_del" onclick="clearCartaImg('footer_mark')" style="display:none">Rimuovi</button>
+          </div>
+          <input type="file" id="cc_footer_img_input" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="handleCartaImg(event,'footer_mark')">
+        </div>
+      </div>
+
       <div class="cc-group-title">Titoli sezioni e citazioni</div>
       <div class="setting-desc" style="margin-bottom:10px">Per ogni sezione: il titolo che appare sulla carta e una citazione facoltativa (10-30 parole) sotto al titolo.</div>
       <div id="ccSectionsBox"></div>
-
-      <button class="aw-save" id="ccSaveBtn" onclick="saveCartaSettings()">Salva personalizzazione</button>
-      <button class="aw-save" style="background:var(--accent-mid);margin-top:8px" onclick="previewCarta()">👁️ Anteprima carta</button>
-      <div class="aw-hint">L'anteprima si apre nell'app, senza stampare.</div>
-    </div>
+  </div>
+  <div class="cc-page-footer">
+    <button class="aw-save" style="background:var(--accent-mid)" onclick="previewCarta()">👁️ Anteprima</button>
+    <button class="aw-save" id="ccSaveBtn" onclick="saveCartaSettings()">Salva personalizzazione</button>
   </div>
 </div>
 
@@ -1142,12 +1217,6 @@ mosnel brut"></textarea>
           <span class="pdf-status-icon">📭</span>
           <span id="pdfStatusText">Nessun PDF caricato</span>
         </div>
-      </div>
-
-      <div class="setting-section">
-        <div class="setting-label">🎨 Personalizza carta</div>
-        <div class="setting-desc">Modifica i testi che appaiono sulla carta stampata. Le citazioni compaiono sotto il titolo di sezione solo se compilate. Salvato per tutti i dispositivi.</div>
-        <button class="aw-save" style="margin-top:6px;background:var(--accent)" onclick="openCartaCustomize()">Apri personalizzazione</button>
       </div>
 
       <div class="setting-section">
@@ -1804,7 +1873,9 @@ const CARTA_DEFAULTS = {
   title_fermi: 'Vini Fermi da Nord a Sud',
   title_stranieri: "all'Estero",
   quote_emilia: '', quote_piccoli: '', quote_bollicine: '', quote_rose: '',
-  quote_champagne: '', quote_fermi: '', quote_stranieri: ''
+  quote_champagne: '', quote_fermi: '', quote_stranieri: '',
+  cover_logo: '',   // PNG (data URL) sotto il titolo in copertina
+  footer_mark: ''   // PNG (data URL) filigrana a piè di pagina sulle pagine interne
 };
 let cartaSettings = { ...CARTA_DEFAULTS };
 
@@ -1815,7 +1886,8 @@ async function loadCartaSettings() {
       // la tabella ha una sola riga (id=1) con tutte le impostazioni
       const r = rows[0];
       for (const k of Object.keys(CARTA_DEFAULTS)) {
-        if (r[k] != null && r[k] !== '') cartaSettings[k] = r[k];
+        if (k === 'cover_logo' || k === 'footer_mark') { cartaSettings[k] = r[k] || ''; }
+        else if (r[k] != null && r[k] !== '') cartaSettings[k] = r[k];
         else if (k.startsWith('quote_')) cartaSettings[k] = r[k] || '';
       }
     }
@@ -1831,6 +1903,9 @@ const CC_SECTIONS = [
   ['rose','Rosé'], ['champagne','Champagne'], ['fermi','Fermi'], ['stranieri','Stranieri']
 ];
 
+// stato temporaneo immagini mentre la pagina è aperta (non ancora salvate)
+let ccImgDraft = { cover_logo: null, footer_mark: null };
+
 async function openCartaCustomize(){
   const ok = await requireUnlock(); if (!ok) return;
   // popola i campi copertina
@@ -1838,6 +1913,10 @@ async function openCartaCustomize(){
   document.getElementById('cc_cover_name').value = cs('cover_name');
   document.getElementById('cc_cover_sub').value = cs('cover_sub');
   document.getElementById('cc_qr_caption').value = cs('qr_caption');
+  // immagini: parto dai valori salvati
+  ccImgDraft = { cover_logo: cs('cover_logo') || '', footer_mark: cs('footer_mark') || '' };
+  renderCartaImg('cover_logo');
+  renderCartaImg('footer_mark');
   // costruisce i blocchi sezione (titolo + citazione)
   let html = '';
   for (const [key, nome] of CC_SECTIONS){
@@ -1851,8 +1930,70 @@ async function openCartaCustomize(){
   }
   document.getElementById('ccSectionsBox').innerHTML = html;
   closePanel('settingsPanel');
-  document.getElementById('cartaCustomizePanel').classList.add('open');
+  const page = document.getElementById('cartaCustomizePanel');
+  page.classList.add('open');
+  page.querySelector('.cc-page-body').scrollTop = 0;
   document.body.style.overflow = 'hidden';
+}
+
+function closeCartaCustomize(){
+  document.getElementById('cartaCustomizePanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// aggiorna l'anteprima quadrata + visibilità del bottone rimuovi
+function renderCartaImg(which){
+  const prefix = (which === 'cover_logo') ? 'cc_cover_img' : 'cc_footer_img';
+  const prev = document.getElementById(prefix + '_prev');
+  const del  = document.getElementById(prefix + '_del');
+  const val = ccImgDraft[which];
+  if (val) {
+    prev.style.backgroundImage = `url("${val}")`;
+    prev.textContent = '';
+    prev.classList.add('has-img');
+    del.style.display = '';
+  } else {
+    prev.style.backgroundImage = '';
+    prev.textContent = '🖼️';
+    prev.classList.remove('has-img');
+    del.style.display = 'none';
+  }
+}
+
+// legge il file scelto, lo ridimensiona/comprime e lo salva come data URL nel draft
+function handleCartaImg(ev, which){
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = ''; // permette di riselezionare lo stesso file
+  if (!file) return;
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type)) { showToast('Usa un file PNG, JPG o WEBP', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      // ridimensiono mantenendo trasparenza (PNG): lato max 600px per copertina, 300px per filigrana
+      const maxSide = (which === 'cover_logo') ? 600 : 300;
+      let { width, height } = img;
+      const scale = Math.min(1, maxSide / Math.max(width, height));
+      width = Math.round(width * scale); height = Math.round(height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      // PNG per preservare la trasparenza
+      const dataUrl = canvas.toDataURL('image/png');
+      ccImgDraft[which] = dataUrl;
+      renderCartaImg(which);
+    };
+    img.onerror = () => showToast('Immagine non valida', 'error');
+    img.src = reader.result;
+  };
+  reader.onerror = () => showToast('Errore nella lettura del file', 'error');
+  reader.readAsDataURL(file);
+}
+
+function clearCartaImg(which){
+  ccImgDraft[which] = '';
+  renderCartaImg(which);
 }
 
 function escAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -1868,6 +2009,8 @@ function collectCartaSettings(){
     o['title_'+key] = document.getElementById('cc_title_'+key).value.trim();
     o['quote_'+key] = document.getElementById('cc_quote_'+key).value.trim();
   }
+  o.cover_logo = ccImgDraft.cover_logo || '';
+  o.footer_mark = ccImgDraft.footer_mark || '';
   return o;
 }
 
@@ -2105,18 +2248,24 @@ function buildPrintHtml(autoPrint) {
   const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
 <title>Carta dei Vini — Sol y Mar</title>
 <style>
-  @page { size: A4; margin: 16mm 14mm; }
+  /* margine pagina a ZERO: così il browser non ha spazio per stampare
+     data, URL e titolo nelle intestazioni. I margini "veri" del contenuto
+     sono gestiti col padding di .sheet qui sotto. */
+  @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; color: #1a1714; margin: 0; }
+  .sheet { padding: 14mm 13mm; }
 
   /* ---- Copertina (front page) ---- */
-  .cover { height: 247mm; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; page-break-after: always; break-after: page; padding-top: 78mm; }
+  .cover { height: 269mm; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; page-break-after: always; break-after: page; padding-top: 80mm; background: #fff; position: relative; z-index: 2; }
   .cover .pre { font-family: Georgia, serif; font-style: italic; font-size: 22px; color: #6f95c7; margin-bottom: 14px; }
   .cover h1 { font-family: Georgia, serif; font-size: 68px; font-weight: normal; color: #2f5c9e; margin: 0; line-height: 1.1; letter-spacing: 0.01em; }
   .cover .rule { width: 150px; height: 2px; background: #c9d6e8; margin: 30px 0; }
   .cover .since { font-family: Georgia, serif; font-style: italic; font-size: 17px; color: #8aa6cf; }
-  .cover .qr { margin-top: 95mm; }
-  .cover .qr img, .cover .qr canvas { width: 120px; height: 120px; }
+  .cover .cover-logo { margin-top: 26px; }
+  .cover .cover-logo img { max-width: 180px; max-height: 150px; width: auto; height: auto; }
+  .cover .qr { margin-top: 50mm; }
+  .cover .qr img, .cover .qr canvas { width: 100px; height: 100px; }
   .cover .qr-cap { font-family: Arial, sans-serif; font-size: 11px; color: #8aa6cf; margin-top: 10px; letter-spacing: 0.03em; }
 
   /* ogni categoria è una tabella che inizia su pagina nuova */
@@ -2146,7 +2295,18 @@ function buildPrintHtml(autoPrint) {
   .wname { font-size: 12.5px; font-style: italic; color: #777; margin-top: 1px; }
   .wprice { width: 18%; text-align: right; font-size: 15px; font-weight: bold; color: #2f5c9e; white-space: nowrap; vertical-align: top; padding-top: 8px; }
 
+  /* Filigrana a piè di pagina: position fixed → ripetuta su ogni pagina in stampa.
+     La copertina ha sfondo bianco e z-index superiore, così la nasconde in prima pagina. */
+  .footer-mark { position: fixed; left: 0; right: 0; bottom: 6mm; text-align: center; z-index: 1; pointer-events: none; }
+  .footer-mark img { max-height: 14mm; max-width: 40mm; width: auto; height: auto; opacity: 0.55; }
+
   @media screen { body { background: #faf9f6; } .sheet { max-width: 780px; margin: 0 auto; padding: 24px; background: #fff; } }
+  @media print {
+    @page { margin: 0; }
+    html, body { margin: 0 !important; }
+    .sheet { padding: 14mm 13mm !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
 </style></head>
 <body>
   <div class="sheet">
@@ -2155,10 +2315,12 @@ function buildPrintHtml(autoPrint) {
       <h1>${esc(cs('cover_name'))}</h1>
       <div class="rule"></div>
       <div class="since">${esc(cs('cover_sub'))}</div>
+      ${cs('cover_logo') ? `<div class="cover-logo"><img src="${cs('cover_logo')}" alt=""></div>` : ''}
       <div class="qr"><img src="data:image/png;base64,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" alt="QR"><div class="qr-cap">${esc(cs('qr_caption'))}</div></div>
     </div>
     ${body}
   </div>
+  ${cs('footer_mark') ? `<div class="footer-mark"><img src="${cs('footer_mark')}" alt=""></div>` : ''}
   <script>
     window.onload = function(){ ${autoPrint ? 'setTimeout(function(){ window.print(); }, 350);' : ''} };
   <\/script>
@@ -4017,7 +4179,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('cartaPreviewPanel'); closePanel('cartaCustomizePanel'); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('cartaPreviewPanel'); closeCartaCustomize(); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
