@@ -802,6 +802,13 @@
   .bulk-empty-hint { text-align: center; color: var(--text-faint); font-style: italic; font-size: 14px; padding: 20px; font-family: Arial, sans-serif; }
   .bulk-cmd-hint { font-family: Arial, sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); background: var(--accent-light); border-radius: 8px; padding: 9px 11px; margin: 4px 0 10px; }
   .bulk-cmd-hint b { color: var(--accent); font-weight: 700; }
+  .bulk-intro-q { font-family: Georgia, serif; font-size: 17px; color: var(--text); font-weight: 600; margin: 2px 0 10px; }
+  .finito-desc { font-family: Arial, sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); margin-bottom: 10px; }
+  .finito-desc b { color: #a31a12; }
+  .bulk-op-note.warn { color: #a35a00; font-style: normal; font-weight: 600; }
+  .inv-stepper-row.soglia-row { border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 2px; }
+  .inv-stepper-label small { display: block; font-size: 11px; font-weight: 400; color: var(--text-faint); font-style: italic; }
+  .inv-soglia-hint { font-family: Arial, sans-serif; font-size: 11.5px; color: var(--text-faint); font-style: italic; margin-top: 6px; }
   .bulk-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; font-family: Arial, sans-serif; color: var(--text-muted); margin-top: 12px; }
   .bulk-legend span { display: flex; align-items: center; gap: 5px; }
   .bulk-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
@@ -871,7 +878,8 @@
       <button class="icon-btn" onclick="openPrintDialog()" title="Stampa carta PDF" id="printBtn">🖨️</button>
       <button class="icon-btn" onclick="openClientPreview()" title="Anteprima cliente (come appare scansionando il QR)" id="previewBtn">👁️</button>
       <button class="icon-btn" onclick="openMagazzino()" title="Lista Magazzino" id="magBtn">📦<span class="badge" id="magBadge" style="display:none">0</span></button>
-      <button class="icon-btn" onclick="openBulkUpdate()" title="Scarico/Storno da messaggio" id="bulkBtn">📝</button>
+      <button class="icon-btn" onclick="openBulkUpdate()" title="Scarico vendite da messaggio" id="bulkBtn">📝</button>
+      <button class="icon-btn" onclick="openFinito()" title="È finito qualche vino?" id="finitoBtn">🔚</button>
       <button class="icon-btn" onclick="openRubrica()" title="Rubrica Fornitori">📇</button>
     </div>
   </div>
@@ -952,7 +960,16 @@
             <button onclick="adjustInvQty('mag',1)">+</button>
           </div>
         </div>
+        <div class="inv-stepper-row soglia-row">
+          <span class="inv-stepper-label">🎯 Soglia frigo<small>quante tenere in vetrina</small></span>
+          <div class="inv-stepper">
+            <button onclick="adjustInvQty('soglia',-1)">−</button>
+            <span class="inv-stepper-val" id="invSogliaVal">2</span>
+            <button onclick="adjustInvQty('soglia',1)">+</button>
+          </div>
+        </div>
       </div>
+      <div class="inv-soglia-hint">Quando vendi, il frigo viene ricaricato dal magazzino fino a questa soglia.</div>
 
       <div class="inv-money-grid">
         <div>
@@ -1146,33 +1163,24 @@
   </div>
 </div>
 
-<!-- PANEL SCARICO/STORNO DA MESSAGGIO -->
+<!-- PANEL SCARICO (vini venduti) -->
 <div class="panel-overlay" id="bulkPanel" onclick="handlePanelClick(event,'bulkPanel')">
   <div class="panel">
     <div class="panel-handle"></div>
     <div class="panel-header">
-      <span class="panel-title">📝 Scarico / Storno</span>
+      <span class="panel-title">📝 Scarico vendite</span>
       <button class="panel-close" onclick="closePanel('bulkPanel')">✕</button>
     </div>
     <div class="panel-body">
-      <div class="bulk-modes">
-        <button class="bulk-mode-btn scarico active" id="bulkModeScarico" onclick="setBulkMode('scarico')">
-          ➖ Scarico<small>Toglie dalle scorte (venduti)</small>
-        </button>
-        <button class="bulk-mode-btn storno" id="bulkModeStorno" onclick="setBulkMode('storno')">
-          ➕ Storno<small>Rimette in scorta (rientri)</small>
-        </button>
-      </div>
-      <textarea class="bulk-textarea" id="bulkText" placeholder="Incolla qui il messaggio (anche più messaggi insieme).
+      <div class="bulk-intro-q">Quali vini sono stati venduti?</div>
+      <textarea class="bulk-textarea" id="bulkText" placeholder="Incolla qui il messaggio del cameriere (anche più messaggi insieme).
 Esempio:
 2 ca del bosco
-canevel finito
-prestige rimaste 2
+3 canevel
 mosnel brut"></textarea>
       <div class="bulk-cmd-hint">
-        Oltre a scarico/storno puoi scrivere direttamente nella riga:
-        <b>«canevel finito»</b> (porta a 0) o <b>«prestige rimaste 2»</b> (imposta a 2 in frigo).
-        Queste righe aggiornano la scorta a prescindere dal toggle qui sopra.
+        Scrivi il vino con la quantità venduta (es. <b>«2 canevel»</b> oppure <b>«canevel x2»</b>).
+        Le scorte caleranno dal frigo e il frigo verrà ricaricato dal magazzino, fin dove arriva.
       </div>
       <div class="bulk-actions-row">
         <button class="bulk-btn analyze" onclick="analyzeBulk()" id="bulkAnalyzeBtn">Analizza</button>
@@ -1185,6 +1193,36 @@ mosnel brut"></textarea>
         <span><i style="background:#d6342a"></i> Non trovato</span>
       </div>
       <div class="bulk-summary" id="bulkSummary"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE "È FINITO QUALCHE VINO?" (azzeramento) -->
+<div class="inv-overlay" id="finitoOverlay" onclick="if(event.target===this)closeFinito()">
+  <div class="inv-modal cat-rosso" id="finitoModal">
+    <div class="inv-modal-header">
+      <span class="inv-modal-category">🔚 È finito qualche vino?</span>
+      <button class="inv-modal-close" onclick="closeFinito()">✕</button>
+    </div>
+    <div class="inv-modal-body">
+      <div class="bulk-intro-q" style="margin-top:0">Quali vini non sono più disponibili?</div>
+      <div class="finito-desc">Questi vini verranno <b>azzerati</b> (frigo e magazzino a 0) e spariranno dalla carta. Utile per i vini esauriti o segnati ma non più presenti.</div>
+      <textarea class="bulk-textarea" id="finitoText" placeholder="Incolla qui i vini finiti, uno per riga.
+Esempio:
+canevel
+mosnel brut
+arcari coro"></textarea>
+      <div class="bulk-actions-row">
+        <button class="bulk-btn analyze" onclick="analyzeFinito()" id="finitoAnalyzeBtn">Analizza</button>
+        <button class="bulk-btn ghost" onclick="clearFinito()">Pulisci</button>
+      </div>
+      <div class="bulk-legend" id="finitoLegend" style="display:none">
+        <span><i style="background:var(--accent)"></i> Da regola di sala</span>
+        <span><i style="background:var(--green)"></i> Sicuro</span>
+        <span><i style="background:#d39e00"></i> Da verificare</span>
+        <span><i style="background:#d6342a"></i> Non trovato</span>
+      </div>
+      <div class="bulk-summary" id="finitoSummary"></div>
     </div>
   </div>
 </div>
@@ -1644,17 +1682,17 @@ let WINES = [
   { p:"Podere il Saliceto", n:"Ring Adora Lambrusco di Sorbara DOP Spumante Rosé Brut", cat:"rose", region:"Emilia-Romagna", tags:["lambrusco","spumante"], price:40 },
   { p:"Podere Magia", n:"Lambrusco dell'Emilia Rosso Frizzante 2021", cat:"rose", region:"Emilia-Romagna", tags:["lambrusco","frizzante"], price:30 },
   { p:"Perseveranza", n:"Centenario Lambrusco dell'Emilia Rosato IGT", cat:"rose", region:"Emilia-Romagna", tags:["lambrusco"], price:40 },
-  { p:"Canevel", n:"Sètage Prosecco Superiore Valdobbiadene", cat:"piccoli", region:"Veneto", tags:["prosecco","375ml"], price:16, fmt:"375ml" },
-  { p:"Mosnel", n:"Franciacorta DOCG Brut", cat:"piccoli", region:"Lombardia", tags:["franciacorta","375ml"], price:26, fmt:"375ml" },
-  { p:"Ca del Bosco", n:"Cuvée Prestige Extra Brut Franciacorta", cat:"piccoli", region:"Lombardia", tags:["franciacorta","375ml"], price:30, fmt:"375ml" },
-  { p:"Revì", n:"Trento DOC Brut", cat:"piccoli", region:"Trentino", tags:["trento doc","375ml"], price:28, fmt:"375ml" },
-  { p:"Revì", n:"Trento DOC Zero", cat:"piccoli", region:"Trentino", tags:["trento doc","dosaggio zero","375ml"], price:null, fmt:"375ml" },
-  { p:"Donnafugata", n:"Anthìlia Vino Bianco di Sicilia DOC", cat:"piccoli", region:"Sicilia", tags:["bianco","375ml"], price:16, fmt:"375ml" },
-  { p:"Collestefano", n:"Verdicchio di Matelica", cat:"piccoli", region:"Marche", tags:["verdicchio","375ml"], price:15, fmt:"375ml" },
-  { p:"Il Colombaio di Santa Chiara", n:"SelvaBianca Vernaccia di San Gimignano", cat:"piccoli", region:"Toscana", tags:["vernaccia","375ml"], price:22, fmt:"375ml" },
-  { p:"Girlan", n:"Aimé Gewurztraminer Sud Tirol Alto Adige", cat:"piccoli", region:"Alto Adige", tags:["gewurztraminer","375ml"], price:16, fmt:"375ml" },
-  { p:"Ca dei Frati", n:"I Frati Lugana DOC 2025", cat:"piccoli", region:"Lombardia", tags:["lugana","375ml"], price:16, fmt:"375ml" },
-  { p:"Rémi Leroy", n:"Assemblage Extra Brut", cat:"piccoli", region:"Champagne", tags:["champagne","375ml"], price:42, fmt:"375ml" },
+  { p:"Canevel", n:"Sètage Prosecco Superiore Valdobbiadene 375ml", cat:"piccoli", region:"Veneto", tags:["prosecco","375ml"], price:16, fmt:"375ml" },
+  { p:"Mosnel", n:"Franciacorta DOCG Brut 375ml", cat:"piccoli", region:"Lombardia", tags:["franciacorta","375ml"], price:26, fmt:"375ml" },
+  { p:"Ca del Bosco", n:"Cuvée Prestige Extra Brut Franciacorta 375ml", cat:"piccoli", region:"Lombardia", tags:["franciacorta","375ml"], price:30, fmt:"375ml" },
+  { p:"Revì", n:"Trento DOC Brut 375ml", cat:"piccoli", region:"Trentino", tags:["trento doc","375ml"], price:28, fmt:"375ml" },
+  { p:"Revì", n:"Trento DOC Zero 375ml", cat:"piccoli", region:"Trentino", tags:["trento doc","dosaggio zero","375ml"], price:null, fmt:"375ml" },
+  { p:"Donnafugata", n:"Anthìlia Vino Bianco di Sicilia DOC 375ml", cat:"piccoli", region:"Sicilia", tags:["bianco","375ml"], price:16, fmt:"375ml" },
+  { p:"Collestefano", n:"Verdicchio di Matelica 375ml", cat:"piccoli", region:"Marche", tags:["verdicchio","375ml"], price:15, fmt:"375ml" },
+  { p:"Il Colombaio di Santa Chiara", n:"SelvaBianca Vernaccia di San Gimignano 375ml", cat:"piccoli", region:"Toscana", tags:["vernaccia","375ml"], price:22, fmt:"375ml" },
+  { p:"Girlan", n:"Aimé Gewurztraminer Sud Tirol Alto Adige 375ml", cat:"piccoli", region:"Alto Adige", tags:["gewurztraminer","375ml"], price:16, fmt:"375ml" },
+  { p:"Ca dei Frati", n:"I Frati Lugana DOC 2025 375ml", cat:"piccoli", region:"Lombardia", tags:["lugana","375ml"], price:16, fmt:"375ml" },
+  { p:"Rémi Leroy", n:"Assemblage Extra Brut 375ml", cat:"piccoli", region:"Champagne", tags:["champagne","375ml"], price:42, fmt:"375ml" },
   { p:"Pavese Ermes", n:"Pavese XXIV Blanc de Morgex et de la Salle Metodo Classico DOP", cat:"bollicine", region:"Valle d'Aosta", tags:["metodo classico"], price:40 },
   { p:"Ettore Germano", n:"Alta Langa 2020 Extra Brut DOCG", cat:"bollicine", region:"Piemonte", tags:["alta langa"], price:48 },
   { p:"Pojer e Sandri", n:"Zero Infinito Vino Bianco Frizzante Col Fondo", cat:"bollicine", region:"Piemonte", tags:["frizzante","col fondo"], price:35 },
@@ -2238,7 +2276,7 @@ function buildPrintHtml(autoPrint) {
         rows += `<tr class="wine-row">
           <td class="wcell">
             <div class="wprod">${esc(w.p)}</div>
-            <div class="wname">${esc(w.n)}${w.fmt ? ' · '+esc(w.fmt) : ''}</div>
+            <div class="wname">${esc(displayName(w))}${w.fmt ? ' · '+esc(w.fmt) : ''}</div>
           </td>
           <td class="wprice">${price}</td>
         </tr>`;
@@ -2607,8 +2645,7 @@ function openMagazzino() {
 }
 
 // ===================== UI SCARICO/STORNO (📝) =====================
-let bulkMode = 'scarico';      // 'scarico' (sottrae) | 'storno' (riaggiunge)
-let bulkParsed = [];           // righe analizzate correnti
+let bulkParsed = [];           // righe analizzate correnti (scarico vendite)
 
 async function openBulkUpdate() {
   // tocca le scorte → protetto come Manager (password se dispositivo non fidato)
@@ -2616,12 +2653,6 @@ async function openBulkUpdate() {
   if (!ok) return;
   document.getElementById('bulkPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
-}
-function setBulkMode(mode) {
-  bulkMode = mode;
-  document.getElementById('bulkModeScarico').classList.toggle('active', mode==='scarico');
-  document.getElementById('bulkModeStorno').classList.toggle('active', mode==='storno');
-  if (bulkParsed.length) renderBulkSummary(); // ridisegna con i colori della modalità
 }
 function clearBulk() {
   document.getElementById('bulkText').value = '';
@@ -2632,9 +2663,11 @@ function clearBulk() {
 function analyzeBulk() {
   const text = document.getElementById('bulkText').value;
   if (!text.trim()) { showToast('Incolla prima un messaggio', 'error'); return; }
-  // 1) interpretazione locale (mappa di sala + fuzzy), sempre
+  // 1) interpretazione locale (mappa di sala + fuzzy), sempre.
+  //    Nel pannello scarico ogni riga è una VENDITA: forziamo op a 'delta'.
   bulkParsed = parseBulkText(text);
   bulkParsed.forEach(r => {
+    r.op = 'delta';
     r.chosenIdx = r.wine ? WINES.indexOf(r.wine) : -1;
     r.ignored = (r.confidence === 'none');
   });
@@ -2726,45 +2759,27 @@ function topFuzzyCandidates(text, n) {
     .map(x => x.w);
 }
 
-// Aggrega le righe in due gruppi:
-//  - deltas:  idx -> bottiglie da sommare (seguono il toggle scarico/storno)
-//  - targets: idx -> valore frigo assoluto richiesto (op zero/set); l'ultima vince
+// Aggrega le vendite per vino (somma le righe sullo stesso vino).
 function bulkAggregate() {
-  const deltas = {};   // idx -> qty (delta)
-  const targets = {};  // idx -> { target, op, raw }
+  const sold = {}; // idx -> bottiglie vendute
   for (const r of bulkParsed) {
     if (r.ignored || r.chosenIdx < 0) continue;
-    if (r.op === 'zero' || r.op === 'set') {
-      const target = (r.op === 'zero') ? 0 : r.qty;
-      targets[r.chosenIdx] = { target, op: r.op, raw: r.raw }; // ultima riga sul vino vince
-    } else {
-      deltas[r.chosenIdx] = (deltas[r.chosenIdx] || 0) + r.qty;
-    }
+    sold[r.chosenIdx] = (sold[r.chosenIdx] || 0) + r.qty;
   }
-  return { deltas, targets };
+  return sold;
 }
-
-// compat con eventuali chiamanti vecchi: aggregato "piatto" idx->qty dei soli delta
-function bulkAggregateFlat(){ return bulkAggregate().deltas; }
 
 function renderBulkSummary() {
   const box = document.getElementById('bulkSummary');
   if (!bulkParsed.length) { box.innerHTML = ''; return; }
 
-  const { deltas, targets } = bulkAggregate();
-  const nDelta = Object.keys(deltas).length;
-  const nTarget = Object.keys(targets).length;
-  const totBottles = Object.values(deltas).reduce((a,b)=>a+b, 0);
+  const sold = bulkAggregate();
+  const nWines = Object.keys(sold).length;
+  const totBottles = Object.values(sold).reduce((a,b)=>a+b, 0);
 
-  // intestazione: distingue le bottiglie "a delta" dalle operazioni assolute
-  let headBits = [];
-  if (nDelta) headBits.push(`<b>${totBottles}</b> bott. ${bulkMode==='scarico'?'da scaricare':'da stornare'}`);
-  if (nTarget) headBits.push(`<b>${nTarget}</b> ${nTarget===1?'aggiornamento diretto':'aggiornamenti diretti'}`);
-  if (!headBits.length) headBits.push('niente da applicare');
-  let html = `<div class="bulk-summary-head">${headBits.join(' · ')}</div>`;
+  let html = `<div class="bulk-summary-head"><b>${totBottles}</b> bottiglie vendute · <b>${nWines}</b> vini</div>`;
 
   bulkParsed.forEach((r, i) => {
-    // riga senza vino riconosciuto
     if (r.confidence === 'none' && r.chosenIdx < 0) {
       html += `<div class="bulk-row none ${r.ignored?'ignored':''}">
         <div class="bulk-row-qty">?</div>
@@ -2778,56 +2793,40 @@ function renderBulkSummary() {
     }
 
     const w = WINES[r.chosenIdx];
-    const wineLabel = w ? `<span class="pp">${escHtml(w.p)}</span> — ${escHtml(w.n.slice(0,40))}${w.fmt?` · ${w.fmt}`:''}` : '';
+    const wineLabel = w ? `<span class="pp">${escHtml(w.p)}</span> — ${escHtml(displayName(w).slice(0,40))}${w.fmt?` · ${w.fmt}`:''}` : '';
 
-    // badge quantità: dipende dall'operazione della riga
-    let qtyHtml, opTag = '', opCls = bulkMode;
-    if (r.op === 'zero') {
-      qtyHtml = '→ 0';
-      opCls = 'absolute zero-op';
-      opTag = `<span class="bulk-op-note">azzera (era ${w?frigoQty(w):0} in frigo)</span>`;
-    } else if (r.op === 'set') {
-      qtyHtml = '→ ' + r.qty;
-      opCls = 'absolute set-op';
-      const cur = w ? frigoQty(w) : 0;
-      opTag = `<span class="bulk-op-note">imposta a ${r.qty} in frigo (era ${cur})</span>`;
-    } else {
-      const sign = bulkMode === 'scarico' ? '−' : '+';
-      qtyHtml = sign + r.qty;
+    // avviso se si vende più del frigo disponibile (verrà limitato)
+    let warn = '';
+    if (w) {
+      const fr = frigoQty(w);
+      if (r.qty > fr) warn = `<span class="bulk-op-note warn">in frigo ce ne sono ${fr}: verranno scaricate ${fr}</span>`;
     }
 
-    // select per gli ambigui
     let selectHtml = '';
     if (r.confidence === 'ambiguous' && r.candidates.length > 1) {
       const opts = r.candidates.map(c => {
         const idx = WINES.indexOf(c);
-        return `<option value="${idx}" ${idx===r.chosenIdx?'selected':''}>${escHtml(c.p)} — ${escHtml(c.n.slice(0,38))}${c.fmt?' ('+c.fmt+')':''}</option>`;
+        return `<option value="${idx}" ${idx===r.chosenIdx?'selected':''}>${escHtml(c.p)} — ${escHtml(displayName(c).slice(0,38))}${c.fmt?' ('+c.fmt+')':''}</option>`;
       }).join('');
       selectHtml = `<select class="bulk-row-select" onchange="setBulkChoice(${i}, this.value)">${opts}</select>`;
     }
 
-    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' ' + opCls;
+    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' scarico';
     html += `<div class="bulk-row ${cls}">
-      <div class="bulk-row-qty">${qtyHtml}</div>
+      <div class="bulk-row-qty">−${r.qty}</div>
       <div class="bulk-row-main">
         <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
         <div class="bulk-row-wine">${wineLabel}</div>
-        ${opTag}
+        ${warn}
         ${selectHtml}
       </div>
       <button class="bulk-row-toggle" onclick="toggleBulkRow(${i})" title="${r.ignored?'Riga ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
     </div>`;
   });
 
-  const nothing = (nDelta + nTarget) === 0;
-  const applyLabel = nTarget && !nDelta
-    ? `Applica aggiornamenti (${nTarget})`
-    : (nTarget
-        ? `Applica tutto (${totBottles} bott. + ${nTarget} dir.)`
-        : `${bulkMode==='scarico'?'Applica scarico':'Applica storno'} (${totBottles} bott.)`);
   html += `<div class="bulk-actions-row">
-    <button class="bulk-btn apply" id="bulkApplyBtn" onclick="applyBulk()" ${nothing?'disabled':''}>
-      ${applyLabel}
+    <button class="bulk-btn apply" id="bulkApplyBtn" onclick="applyBulk()" ${nWines===0?'disabled':''}>
+      Applica scarico (${totBottles} bott.)
     </button>
   </div>`;
   box.innerHTML = html;
@@ -2846,40 +2845,167 @@ function toggleBulkRow(i) {
 }
 
 async function applyBulk() {
-  const { deltas, targets } = bulkAggregate();
-  const deltaEntries = Object.entries(deltas);
-  const targetEntries = Object.entries(targets);
-  if (!deltaEntries.length && !targetEntries.length) { showToast('Niente da applicare', 'error'); return; }
+  const sold = bulkAggregate();
+  const entries = Object.entries(sold);
+  if (!entries.length) { showToast('Niente da applicare', 'error'); return; }
 
-  const totBottles = deltaEntries.reduce((a,[,q])=>a+q, 0);
+  const totBottles = entries.reduce((a,[,q])=>a+q, 0);
+  if (!confirm(`Confermi lo scarico di ${totBottles} bottiglie su ${entries.length} vini?\nLe scorte caleranno dal frigo e il frigo verrà ricaricato dal magazzino.`)) return;
 
-  // messaggio di conferma che elenca entrambe le cose
-  let parts = [];
-  if (deltaEntries.length) parts.push(`${bulkMode==='scarico'?'scaricare':'stornare'} ${totBottles} bottiglie su ${deltaEntries.length} vini`);
-  if (targetEntries.length) parts.push(`${targetEntries.length} aggiornament${targetEntries.length===1?'o':'i'} diretti (finito / rimaste N)`);
-  if (!confirm(`Confermi?\n• ${parts.join('\n• ')}\nLe scorte (frigo) verranno aggiornate.`)) return;
-
-  // 1) delta classici (seguono il toggle)
-  const dir = bulkMode==='scarico' ? -1 : 1;
-  for (const [idxStr, qty] of deltaEntries) {
-    await applyStockDelta(parseInt(idxStr), 'frigo', dir * qty);
+  let totVendute = 0;
+  for (const [idxStr, qty] of entries) {
+    const res = await applyVendita(parseInt(idxStr), qty);
+    if (res) totVendute += res.venduteEffettive;
   }
-  // 2) operazioni assolute: porto il frigo esattamente al target calcolando il delta
-  for (const [idxStr, info] of targetEntries) {
-    const idx = parseInt(idxStr);
-    const w = WINES[idx];
-    const cur = w ? frigoQty(w) : 0;
-    const delta = info.target - cur;   // applyStockDelta fa il clamp a 0
-    if (delta !== 0) await applyStockDelta(idx, 'frigo', delta);
-  }
-
-  const msgBits = [];
-  if (deltaEntries.length) msgBits.push(`${bulkMode==='scarico'?'Scarico':'Storno'} ${totBottles} bott.`);
-  if (targetEntries.length) msgBits.push(`${targetEntries.length} aggiornamenti diretti`);
-  showToast(`✓ ${msgBits.join(' · ')}`, 'success');
+  const limitate = totBottles - totVendute;
+  let msg = `✓ Scarico applicato: ${totVendute} bottiglie`;
+  if (limitate > 0) msg += ` (${limitate} non scaricate: frigo insufficiente)`;
+  showToast(msg, limitate > 0 ? '' : 'success');
   clearBulk();
   closePanel('bulkPanel');
   render();
+}
+
+// ============== MODALE "È FINITO QUALCHE VINO?" (azzeramento) ==============
+let finitoParsed = [];
+
+async function openFinito() {
+  const ok = await requireUnlock();
+  if (!ok) return;
+  document.getElementById('finitoOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeFinito() {
+  document.getElementById('finitoOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function clearFinito() {
+  document.getElementById('finitoText').value = '';
+  finitoParsed = [];
+  document.getElementById('finitoSummary').innerHTML = '';
+  document.getElementById('finitoLegend').style.display = 'none';
+}
+function analyzeFinito() {
+  const text = document.getElementById('finitoText').value;
+  if (!text.trim()) { showToast('Incolla prima un messaggio', 'error'); return; }
+  // qui ogni riga è solo un NOME di vino → azzeramento. Niente quantità/operazioni.
+  finitoParsed = parseBulkText(text);
+  finitoParsed.forEach(r => {
+    r.op = 'zero';
+    r.chosenIdx = r.wine ? WINES.indexOf(r.wine) : -1;
+    r.ignored = (r.confidence === 'none');
+  });
+  document.getElementById('finitoLegend').style.display = 'flex';
+  renderFinitoSummary();
+  refineFinitoWithAI();
+}
+function setFinitoChoice(i, idxStr) {
+  const idx = parseInt(idxStr);
+  finitoParsed[i].chosenIdx = idx;
+  finitoParsed[i].wine = WINES[idx];
+  finitoParsed[i].confidence = 'sure';
+  renderFinitoSummary();
+}
+function toggleFinitoRow(i) {
+  finitoParsed[i].ignored = !finitoParsed[i].ignored;
+  renderFinitoSummary();
+}
+function renderFinitoSummary() {
+  const box = document.getElementById('finitoSummary');
+  if (!finitoParsed.length) { box.innerHTML = ''; return; }
+  const validi = finitoParsed.filter(r => !r.ignored && r.chosenIdx >= 0);
+  const n = validi.length;
+  let html = `<div class="bulk-summary-head"><b>${n}</b> vin${n===1?'o':'i'} da azzerare</div>`;
+  finitoParsed.forEach((r, i) => {
+    if (r.confidence === 'none' && r.chosenIdx < 0) {
+      html += `<div class="bulk-row none ${r.ignored?'ignored':''}">
+        <div class="bulk-row-qty">?</div>
+        <div class="bulk-row-main">
+          <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
+          <div class="bulk-row-none-msg">Nessun vino riconosciuto</div>
+        </div>
+        <button class="bulk-row-toggle" onclick="toggleFinitoRow(${i})" title="${r.ignored?'Ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
+      </div>`;
+      return;
+    }
+    const w = WINES[r.chosenIdx];
+    const wineLabel = w ? `<span class="pp">${escHtml(w.p)}</span> — ${escHtml(displayName(w).slice(0,40))}${w.fmt?` · ${w.fmt}`:''}` : '';
+    let selectHtml = '';
+    if (r.confidence === 'ambiguous' && r.candidates.length > 1) {
+      const opts = r.candidates.map(c => {
+        const idx = WINES.indexOf(c);
+        return `<option value="${idx}" ${idx===r.chosenIdx?'selected':''}>${escHtml(c.p)} — ${escHtml(displayName(c).slice(0,38))}${c.fmt?' ('+c.fmt+')':''}</option>`;
+      }).join('');
+      selectHtml = `<select class="bulk-row-select" onchange="setFinitoChoice(${i}, this.value)">${opts}</select>`;
+    }
+    const cur = w ? frigoQty(w) : 0;
+    const cls = r.confidence + (r.ignored ? ' ignored' : '') + ' absolute zero-op';
+    html += `<div class="bulk-row ${cls}">
+      <div class="bulk-row-qty">→ 0</div>
+      <div class="bulk-row-main">
+        <div class="bulk-row-raw">"${escHtml(r.raw)}"</div>
+        <div class="bulk-row-wine">${wineLabel}</div>
+        <span class="bulk-op-note">azzera (era ${cur} in frigo)</span>
+        ${selectHtml}
+      </div>
+      <button class="bulk-row-toggle" onclick="toggleFinitoRow(${i})" title="${r.ignored?'Riga ignorata':'Ignora questa riga'}">${r.ignored?'☑️':'⬜'}</button>
+    </div>`;
+  });
+  html += `<div class="bulk-actions-row">
+    <button class="bulk-btn apply" id="finitoApplyBtn" onclick="applyFinito()" ${n===0?'disabled':''}>
+      Azzera ${n} vin${n===1?'o':'i'}
+    </button>
+  </div>`;
+  box.innerHTML = html;
+}
+async function applyFinito() {
+  const validi = finitoParsed.filter(r => !r.ignored && r.chosenIdx >= 0);
+  // dedup per idx
+  const idxs = [...new Set(validi.map(r => r.chosenIdx))];
+  if (!idxs.length) { showToast('Niente da azzerare', 'error'); return; }
+  if (!confirm(`Confermi? ${idxs.length} vin${idxs.length===1?'o sarà azzerato':'i saranno azzerati'} (frigo e magazzino a 0) e spariranno dalla carta.`)) return;
+  for (const idx of idxs) await azzeraVino(idx);
+  showToast(`✓ ${idxs.length} vin${idxs.length===1?'o azzerato':'i azzerati'}`, 'success');
+  clearFinito();
+  closeFinito();
+  render();
+}
+// L'AI rifinisce gli ambigui anche nel modale "è finito" (riusa la stessa logica)
+async function refineFinitoWithAI() {
+  const toAsk = [];
+  finitoParsed.forEach((r, i) => {
+    if (r.confidence === 'ambiguous' || r.confidence === 'none') {
+      let cands = r.candidates && r.candidates.length ? r.candidates : topFuzzyCandidates(r.text, 8);
+      toAsk.push({ line: i, raw: r.raw, candidates: cands.map(w => ({ id: WINES.indexOf(w), label: `${w.p} — ${w.n}${w.fmt ? ' ('+w.fmt+')' : ''}` })) });
+    }
+  });
+  if (toAsk.length === 0) return;
+  const btn = document.getElementById('finitoAnalyzeBtn');
+  const prevTxt = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Analizzo…'; }
+  try {
+    const res = await fetch(AI_MATCH_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ items: toAsk }) });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error || ('HTTP '+res.status)); }
+    const data = await res.json();
+    let improved = 0;
+    for (const r of (data.results || [])) {
+      let row = null;
+      if (r.raw != null) row = finitoParsed.find(b => b.raw === r.raw && (b.confidence === 'ambiguous' || b.confidence === 'none'));
+      if (!row && typeof r.line === 'number' && finitoParsed[r.line]) {
+        const cand = finitoParsed[r.line];
+        if (cand.confidence === 'ambiguous' || cand.confidence === 'none') row = cand;
+      }
+      if (!row) continue;
+      if (r.chosenId === null || r.chosenId < 0) { row.chosenIdx = -1; row.ignored = true; row.confidence = 'none'; }
+      else { row.chosenIdx = r.chosenId; row.wine = WINES[r.chosenId]; row.ignored = false; row.confidence = (r.confidence === 'high') ? 'sure' : 'ambiguous'; improved++; }
+    }
+    renderFinitoSummary();
+    if (improved) showToast(`✨ AI: ${improved} righe rifinite`, 'success');
+  } catch (err) {
+    console.warn('AI non disponibile (finito):', err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = prevTxt; }
+  }
 }
 
 // Applica un delta arbitrario (non solo ±1) a frigo/magazzino e persiste.
@@ -2891,6 +3017,74 @@ async function applyStockDelta(idx, field, delta) {
   if (!inv) { inv = { producer: w.p, name: w.n, qty_frigo: 0, qty_magazzino: 0, scaffale: '', piano: '' }; inventory[key] = inv; }
   const col = field === 'frigo' ? 'qty_frigo' : 'qty_magazzino';
   inv[col] = Math.max(0, (inv[col] || 0) + delta);
+  await persistStock(w);
+}
+
+// Soglia frigo "pieno" di un vino: quante bottiglie l'app cerca di tenere in
+// vetrina. Salvata su wine_inventory.frigo_soglia. Se manca (vino senza riga o
+// colonna assente), la deduciamo dalle stesse regole dei dati iniziali, così il
+// sistema funziona comunque: piccolo→3, costoso(≥80€)→1, resto→2.
+function frigoSoglia(w){
+  const inv = getInv(w);
+  if (inv && inv.frigo_soglia != null && inv.frigo_soglia !== '') return Math.max(0, parseInt(inv.frigo_soglia));
+  return defaultSogliaFor(w);
+}
+function defaultSogliaFor(w){
+  const isPiccolo = (w.cat === 'piccoli') || (w.fmt === '375ml');
+  if (isPiccolo) return 3;
+  const price = (w.price != null) ? w.price : null;
+  if (price != null && price >= 80) return 1;
+  return 2;
+}
+
+// VENDITA (solo Tracker): vende n bottiglie di un vino seguendo il flusso reale.
+//  1) non si può vendere più di quante ce ne sono in FRIGO (la carta dipende dal
+//     frigo: se in frigo non c'è, non è vendibile);
+//  2) le n escono dal frigo;
+//  3) si RIPRISTINA il frigo verso la sua soglia prelevando dal magazzino, fin
+//     dove il magazzino arriva (si preferisce svuotare il magazzino pur di tenere
+//     il frigo pieno).
+// Ritorna { venduteEffettive, frigo, mag } dopo l'operazione.
+async function applyVendita(idx, n){
+  const w = WINES[idx];
+  if (!w) return null;
+  const key = w.p + '|||' + w.n;
+  let inv = inventory[key];
+  if (!inv) { inv = { producer: w.p, name: w.n, qty_frigo: 0, qty_magazzino: 0, scaffale: '', piano: '' }; inventory[key] = inv; }
+
+  let frigo = inv.qty_frigo || 0;
+  let mag   = inv.qty_magazzino || 0;
+  const soglia = frigoSoglia(w);
+
+  // 1) non vendere più del frigo disponibile
+  const vendute = Math.min(n, frigo);
+  if (vendute <= 0) return { venduteEffettive: 0, frigo, mag };
+
+  // 2) escono dal frigo
+  frigo -= vendute;
+
+  // 3) ripristino dal magazzino verso la soglia
+  const mancano = Math.max(0, soglia - frigo);
+  const ricarica = Math.min(mancano, mag);
+  frigo += ricarica;
+  mag   -= ricarica;
+
+  inv.qty_frigo = frigo;
+  inv.qty_magazzino = mag;
+  await persistStock(w);
+  return { venduteEffettive: vendute, frigo, mag };
+}
+
+// AZZERAMENTO (bottone "è finito qualche vino?"): il vino non c'è più, né in
+// frigo né in magazzino → esce dalla carta. Non rimette nulla da nessuna parte.
+async function azzeraVino(idx){
+  const w = WINES[idx];
+  if (!w) return;
+  const key = w.p + '|||' + w.n;
+  let inv = inventory[key];
+  if (!inv) { inv = { producer: w.p, name: w.n, qty_frigo: 0, qty_magazzino: 0, scaffale: '', piano: '' }; inventory[key] = inv; }
+  inv.qty_frigo = 0;
+  inv.qty_magazzino = 0;
   await persistStock(w);
 }
 function openImpostazioni() {
@@ -3183,6 +3377,7 @@ async function persistStock(w) {
     qty_magazzino: inv.qty_magazzino || 0,
     updated_at: new Date().toISOString()
   };
+  if (inv.frigo_soglia != null && inv.frigo_soglia !== '') row.frigo_soglia = parseInt(inv.frigo_soglia);
   try {
     if (inv.id) {
       await sbFetch(`wine_inventory?id=eq.${inv.id}`, { method: 'PATCH', body: JSON.stringify(row) });
@@ -3194,6 +3389,20 @@ async function persistStock(w) {
       if (res && res[0]) inventory[key] = { ...inv, ...res[0] };
     }
   } catch(e) {
+    // se fallisce per colonna frigo_soglia mancante, riprovo senza quel campo
+    const msg = String(e && e.message || e).toLowerCase();
+    if ('frigo_soglia' in row && (msg.includes('frigo_soglia') || msg.includes('column') || msg.includes('schema') || msg.includes('400'))) {
+      const { frigo_soglia, ...rowNoSoglia } = row;
+      try {
+        if (inv.id) {
+          await sbFetch(`wine_inventory?id=eq.${inv.id}`, { method: 'PATCH', body: JSON.stringify(rowNoSoglia) });
+        } else {
+          const res = await sbFetch('wine_inventory', { method: 'POST', body: JSON.stringify(rowNoSoglia) });
+          if (res && res[0]) inventory[key] = { ...inv, ...res[0] };
+        }
+        return; // salvato senza soglia, ok
+      } catch(e2) { console.error('persistStock retry:', e2); }
+    }
     showToast('Errore salvataggio scorte', 'error');
     console.error('persistStock:', e);
   }
@@ -3426,6 +3635,8 @@ function openInvModal(producer, name) {
   // scorte effettive (assolute): è la modalità manager, mostriamo i valori reali del DB
   document.getElementById('invFrigoVal').textContent = inv ? (inv.qty_frigo || 0) : 0;
   document.getElementById('invMagVal').textContent = inv ? (inv.qty_magazzino || 0) : 0;
+  document.getElementById('invSogliaVal').textContent = (inv && inv.frigo_soglia != null && inv.frigo_soglia !== '')
+    ? inv.frigo_soglia : defaultSogliaFor(wine);
   document.getElementById('invPrezzo').value = inv && inv.prezzo_vendita != null ? inv.prezzo_vendita : '';
   document.getElementById('invCosto').value = inv && inv.costo != null ? inv.costo : '';
   document.getElementById('invBottCassa').value = inv && inv.bott_cassa != null ? inv.bott_cassa : '';
@@ -3453,7 +3664,7 @@ function openWineDetail(idx) {
 
   document.getElementById('detailCategory').textContent = tabLabel(w.cat);
   document.getElementById('detailProducer').textContent = w.p;
-  document.getElementById('detailName').textContent = w.n;
+  document.getElementById('detailName').textContent = displayName(w);
 
   // prezzo (con eventuale override da inventario in tracker)
   const inv = trackerMode ? getInv(w) : null;
@@ -3556,7 +3767,7 @@ function closeWineDetail() {
 }
 
 function adjustInvQty(field, delta) {
-  const id = field === 'frigo' ? 'invFrigoVal' : 'invMagVal';
+  const id = field === 'frigo' ? 'invFrigoVal' : (field === 'mag' ? 'invMagVal' : 'invSogliaVal');
   const el = document.getElementById(id);
   el.textContent = Math.max(0, parseInt(el.textContent || 0) + delta);
 }
@@ -3575,6 +3786,7 @@ async function saveInvModal() {
   // scorte effettive assolute (manager mode): salviamo i valori così come mostrati
   const qtyFrigo = parseInt(document.getElementById('invFrigoVal').textContent) || 0;
   const qtyMag = parseInt(document.getElementById('invMagVal').textContent) || 0;
+  const soglia = parseInt(document.getElementById('invSogliaVal').textContent) || 0;
   const selScaffale = document.querySelector('#invScaffaleChips .inv-chip.sel');
   const selPiano = document.querySelector('#invPianoChips .inv-chip.sel-blue');
   const row = {
@@ -3584,6 +3796,7 @@ async function saveInvModal() {
     piano: selPiano ? selPiano.dataset.val : '',
     qty_frigo: qtyFrigo,
     qty_magazzino: qtyMag,
+    frigo_soglia: soglia,
     prezzo_vendita: document.getElementById('invPrezzo').value !== '' ? parseFloat(document.getElementById('invPrezzo').value) : null,
     costo: document.getElementById('invCosto').value !== '' ? parseFloat(document.getElementById('invCosto').value) : null,
     bott_cassa: document.getElementById('invBottCassa').value !== '' ? parseInt(document.getElementById('invBottCassa').value) : null,
@@ -3594,18 +3807,30 @@ async function saveInvModal() {
   try {
     const existing = getInv(wine);
     let result;
-    if (existing) {
-      result = await sbFetch(`wine_inventory?id=eq.${existing.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(row)
-      });
-      inventory[wine.p + '|||' + wine.n] = { ...existing, ...row };
-    } else {
-      result = await sbFetch('wine_inventory', {
-        method: 'POST',
-        body: JSON.stringify(row)
-      });
-      inventory[wine.p + '|||' + wine.n] = result[0];
+    try {
+      if (existing) {
+        result = await sbFetch(`wine_inventory?id=eq.${existing.id}`, { method: 'PATCH', body: JSON.stringify(row) });
+        inventory[wine.p + '|||' + wine.n] = { ...existing, ...row };
+      } else {
+        result = await sbFetch('wine_inventory', { method: 'POST', body: JSON.stringify(row) });
+        inventory[wine.p + '|||' + wine.n] = result[0];
+      }
+    } catch(inner) {
+      // colonna frigo_soglia non ancora creata su Supabase: riprovo senza
+      const msg = String(inner && inner.message || inner).toLowerCase();
+      if ('frigo_soglia' in row && (msg.includes('frigo_soglia') || msg.includes('column') || msg.includes('schema') || msg.includes('400'))) {
+        const { frigo_soglia, ...row2 } = row;
+        if (existing) {
+          await sbFetch(`wine_inventory?id=eq.${existing.id}`, { method: 'PATCH', body: JSON.stringify(row2) });
+          inventory[wine.p + '|||' + wine.n] = { ...existing, ...row2 };
+        } else {
+          const res2 = await sbFetch('wine_inventory', { method: 'POST', body: JSON.stringify(row2) });
+          inventory[wine.p + '|||' + wine.n] = res2[0];
+        }
+        showToast('✓ Salvato (colonna soglia non presente su Supabase)', '');
+        closeInvModal(); render(); renderMagazzinoList(); endLoad(); return;
+      }
+      throw inner;
     }
     closeInvModal();
     render();
@@ -3883,6 +4108,15 @@ function clearSearch(){ searchEl.value=''; currentQ=''; clearBtn.style.display='
 function tabLabel(cat){ const m={all:'Tutti',emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermi',rose:'Rosé',stranieri:'Stranieri',piccoli:'Piccoli Formati'}; return m[cat]||cat; }
 function catLabel(cat){ const m={emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermo',rose:'Rosé',stranieri:'Straniero',piccoli:'375ml'}; return m[cat]||cat; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Nome "da mostrare": i piccoli formati hanno "375ml" nel nome (per rendere la
+// chiave produttore|||nome univoca rispetto al formato intero), ma quando in UI
+// c'è già il badge del formato lo togliamo dal nome per non ripeterlo.
+function displayName(w){
+  let n = w.n || '';
+  if (w.fmt) n = n.replace(/\s*\b375\s*ml\b\s*$/i, '').trim();
+  return n;
+}
 function escJs(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 // ===================== FILTRI CLIENTE =====================
@@ -4169,7 +4403,7 @@ function managerStepper(idx, field){
 
 function wineRow(w, q, isMaybe=false){
   const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
-  const name=q?highlight(escHtml(w.n),q):escHtml(w.n);
+  const name=q?highlight(escHtml(displayName(w)),q):escHtml(displayName(w));
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
@@ -4237,7 +4471,7 @@ function wineRow(w, q, isMaybe=false){
 //  - manager: cella minimale + pulsante ✏️ che apre la scheda coordinate/scorte
 function wineCard(w, q, isMaybe=false){
   const producer=q?highlight(escHtml(w.p),q):escHtml(w.p);
-  const name=q?highlight(escHtml(w.n),q):escHtml(w.n);
+  const name=q?highlight(escHtml(displayName(w)),q):escHtml(displayName(w));
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
@@ -4348,7 +4582,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('cartaPreviewPanel'); closeCartaCustomize(); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closeFinito(); closePanel('cartaPreviewPanel'); closeCartaCustomize(); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
