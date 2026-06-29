@@ -787,6 +787,12 @@
   .print-opt small { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .print-warn { display: none; font-family: Arial, sans-serif; font-size: 12px; color: #8a5a00; background: #fff8e6; border: 1px solid #f0d98a; border-radius: 10px; padding: 10px 12px; margin: 4px 0 14px; line-height: 1.4; }
   .print-warn.show { display: block; }
+  .cc-group-title { font-family: Georgia, serif; font-size: 18px; color: var(--accent); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--accent-light); }
+  .cc-section { border: 1.5px solid var(--border-strong); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  .cc-section-name { font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .cc-section textarea { width: 100%; padding: 9px 11px; border: 1.5px solid var(--border-strong); border-radius: 9px; font-family: Georgia, serif; font-style: italic; font-size: 13px; color: var(--text); resize: vertical; min-height: 46px; box-sizing: border-box; }
+  .cc-section textarea:focus { border-color: var(--accent-mid); outline: none; }
+  .preview-panel { max-width: 900px; }
 </style>
 </head>
 <body>
@@ -927,6 +933,46 @@
 </div>
 
 <!-- PANEL MAGAZZINO -->
+<!-- PANEL PERSONALIZZA CARTA -->
+<div class="panel-overlay" id="cartaCustomizePanel" onclick="handlePanelClick(event,'cartaCustomizePanel')">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">🎨 Personalizza carta</span>
+      <button class="panel-close" onclick="closePanel('cartaCustomizePanel')">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="cc-group-title">Copertina</div>
+      <div class="aw-field"><label>Sopra-titolo</label><input type="text" id="cc_cover_pre" placeholder="La cantina"></div>
+      <div class="aw-field"><label>Nome del locale</label><input type="text" id="cc_cover_name" placeholder="Sol y Mar"></div>
+      <div class="aw-field"><label>Sottotitolo</label><input type="text" id="cc_cover_sub" placeholder="Carta dei Vini · dal 1994"></div>
+      <div class="aw-field"><label>Didascalia sotto il QR</label><input type="text" id="cc_qr_caption" placeholder="inquadra per la carta sempre aggiornata"></div>
+
+      <div class="cc-group-title">Titoli sezioni e citazioni</div>
+      <div class="setting-desc" style="margin-bottom:10px">Per ogni sezione: il titolo che appare sulla carta e una citazione facoltativa (10-30 parole) sotto al titolo.</div>
+      <div id="ccSectionsBox"></div>
+
+      <button class="aw-save" id="ccSaveBtn" onclick="saveCartaSettings()">Salva personalizzazione</button>
+      <button class="aw-save" style="background:var(--accent-mid);margin-top:8px" onclick="previewCarta()">👁️ Anteprima carta</button>
+      <div class="aw-hint">L'anteprima si apre nell'app, senza stampare.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL ANTEPRIMA CARTA -->
+<div class="panel-overlay" id="cartaPreviewPanel" onclick="handlePanelClick(event,'cartaPreviewPanel')">
+  <div class="panel preview-panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <span class="panel-title">👁️ Anteprima carta</span>
+      <button class="panel-close" onclick="closePanel('cartaPreviewPanel')">✕</button>
+    </div>
+    <div class="panel-body" style="padding:0">
+      <iframe id="cartaPreviewFrame" style="width:100%;height:70vh;border:none;background:#fff"></iframe>
+    </div>
+  </div>
+</div>
+
 <!-- PANEL STAMPA CARTA -->
 <div class="panel-overlay" id="printPanel" onclick="handlePanelClick(event,'printPanel')">
   <div class="panel">
@@ -1096,6 +1142,12 @@ mosnel brut"></textarea>
           <span class="pdf-status-icon">📭</span>
           <span id="pdfStatusText">Nessun PDF caricato</span>
         </div>
+      </div>
+
+      <div class="setting-section">
+        <div class="setting-label">🎨 Personalizza carta</div>
+        <div class="setting-desc">Modifica i testi che appaiono sulla carta stampata. Le citazioni compaiono sotto il titolo di sezione solo se compilate. Salvato per tutti i dispositivi.</div>
+        <button class="aw-save" style="margin-top:6px;background:var(--accent)" onclick="openCartaCustomize()">Apri personalizzazione</button>
       </div>
 
       <div class="setting-section">
@@ -1697,6 +1749,7 @@ async function init() {
   startLoad();
   await loadCartaVini();    // se esiste carta_vini.json, sostituisce i vini di fabbrica
   await loadViniExtra();    // aggiunge i vini creati da Manager (Supabase), se presenti
+  await loadCartaSettings(); // testi personalizzati della carta (nome, titoli, citazioni)
   initViewMode();
   initTrackerMode();
   initManagerMode();
@@ -1736,6 +1789,134 @@ async function loadCartaVini() {
 
 // Carica i vini aggiunti da Manager (tabella Supabase vini_extra) e li unisce
 // a WINES. Degrada con grazia: se la tabella non esiste, non blocca nulla.
+// ===== PERSONALIZZAZIONE CARTA (testi modificabili, salvati su Supabase) =====
+// Valori di default; vengono sovrascritti da cartaSettings se presenti su Supabase.
+const CARTA_DEFAULTS = {
+  cover_pre: 'La cantina',
+  cover_name: 'Sol y Mar',
+  cover_sub: 'Carta dei Vini · dal 1994',
+  qr_caption: 'inquadra per la carta sempre aggiornata',
+  title_emilia: "l'Emilia-Romagna",
+  title_piccoli: 'i Piccoli Formati · 375ml',
+  title_bollicine: 'Le Bollicine',
+  title_rose: 'Vini Rosé',
+  title_champagne: 'Champagne',
+  title_fermi: 'Vini Fermi da Nord a Sud',
+  title_stranieri: "all'Estero",
+  quote_emilia: '', quote_piccoli: '', quote_bollicine: '', quote_rose: '',
+  quote_champagne: '', quote_fermi: '', quote_stranieri: ''
+};
+let cartaSettings = { ...CARTA_DEFAULTS };
+
+async function loadCartaSettings() {
+  try {
+    const rows = await sbFetch('carta_settings?select=*');
+    if (Array.isArray(rows) && rows.length) {
+      // la tabella ha una sola riga (id=1) con tutte le impostazioni
+      const r = rows[0];
+      for (const k of Object.keys(CARTA_DEFAULTS)) {
+        if (r[k] != null && r[k] !== '') cartaSettings[k] = r[k];
+        else if (k.startsWith('quote_')) cartaSettings[k] = r[k] || '';
+      }
+    }
+  } catch (e) {
+    console.warn('carta_settings non caricate (tabella assente?):', e.message);
+  }
+}
+function cs(key){ return cartaSettings[key] != null ? cartaSettings[key] : (CARTA_DEFAULTS[key]||''); }
+
+// elenco sezioni per il pannello (chiave + nome leggibile)
+const CC_SECTIONS = [
+  ['emilia','Emilia-Romagna'], ['piccoli','Piccoli Formati'], ['bollicine','Bollicine'],
+  ['rose','Rosé'], ['champagne','Champagne'], ['fermi','Fermi'], ['stranieri','Stranieri']
+];
+
+async function openCartaCustomize(){
+  const ok = await requireUnlock(); if (!ok) return;
+  // popola i campi copertina
+  document.getElementById('cc_cover_pre').value = cs('cover_pre');
+  document.getElementById('cc_cover_name').value = cs('cover_name');
+  document.getElementById('cc_cover_sub').value = cs('cover_sub');
+  document.getElementById('cc_qr_caption').value = cs('qr_caption');
+  // costruisce i blocchi sezione (titolo + citazione)
+  let html = '';
+  for (const [key, nome] of CC_SECTIONS){
+    html += `<div class="cc-section">
+      <div class="cc-section-name">${nome}</div>
+      <div class="aw-field" style="margin-bottom:8px"><label>Titolo sulla carta</label>
+        <input type="text" id="cc_title_${key}" value="${escAttr(cs('title_'+key))}"></div>
+      <div class="aw-field" style="margin-bottom:0"><label>Citazione (facoltativa)</label>
+        <textarea id="cc_quote_${key}" placeholder="es. una frase a piacere...">${escHtml(cs('quote_'+key))}</textarea></div>
+    </div>`;
+  }
+  document.getElementById('ccSectionsBox').innerHTML = html;
+  closePanel('settingsPanel');
+  document.getElementById('cartaCustomizePanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function escAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// raccoglie i valori dal pannello in un oggetto
+function collectCartaSettings(){
+  const o = {};
+  o.cover_pre = document.getElementById('cc_cover_pre').value.trim();
+  o.cover_name = document.getElementById('cc_cover_name').value.trim();
+  o.cover_sub = document.getElementById('cc_cover_sub').value.trim();
+  o.qr_caption = document.getElementById('cc_qr_caption').value.trim();
+  for (const [key] of CC_SECTIONS){
+    o['title_'+key] = document.getElementById('cc_title_'+key).value.trim();
+    o['quote_'+key] = document.getElementById('cc_quote_'+key).value.trim();
+  }
+  return o;
+}
+
+async function saveCartaSettings(){
+  const o = collectCartaSettings();
+  // applica subito in memoria (così anteprima/stampa li usano)
+  for (const k of Object.keys(o)) cartaSettings[k] = o[k];
+
+  const btn = document.getElementById('ccSaveBtn');
+  btn.disabled = true; const prev = btn.textContent; btn.textContent = 'Salvo…';
+  try {
+    // upsert sulla riga unica id=1
+    await sbFetch('carta_settings?id=eq.1', {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify(o)
+    });
+    showToast('✓ Personalizzazione salvata', 'success');
+  } catch (e) {
+    // se la riga non esiste ancora, prova a inserirla
+    try {
+      await sbFetch('carta_settings', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({ id:1, ...o }) });
+      showToast('✓ Personalizzazione salvata', 'success');
+    } catch (e2) {
+      console.error('saveCartaSettings:', e2);
+      if (String(e2).includes('404') || String(e2).toLowerCase().includes('relation')) {
+        showToast('Manca la tabella "carta_settings" su Supabase — vedi guida', 'error');
+      } else {
+        showToast('Errore nel salvataggio', 'error');
+      }
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = prev;
+  }
+}
+
+// Anteprima nell'app: genera l'HTML di stampa e lo mostra in un iframe
+function previewCarta(){
+  // applica i valori correnti del form (anche se non salvati) per l'anteprima
+  const o = collectCartaSettings();
+  for (const k of Object.keys(o)) cartaSettings[k] = o[k];
+  const html = buildPrintHtml(false);  // senza auto-print
+  const frame = document.getElementById('cartaPreviewFrame');
+  document.getElementById('cartaPreviewPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+}
+
 async function loadViniExtra() {
   try {
     const rows = await sbFetch('vini_extra?select=*');
@@ -1832,10 +2013,9 @@ async function saveNewWine() {
 
 // ===================== STAMPA CARTA PDF =====================
 const PRINT_CAT_ORDER = ['emilia','piccoli','bollicine','rose','champagne','fermi','stranieri'];
-const PRINT_CAT_LABEL = {
-  emilia:'l\'Emilia-Romagna', piccoli:'i Piccoli Formati · 375ml', bollicine:'Le Bollicine',
-  rose:'Vini Rosé', champagne:'Champagne', fermi:'Vini Fermi da Nord a Sud', stranieri:'all\'Estero'
-};
+// titoli e citazioni ora vengono dai testi personalizzati (cs)
+function printCatLabel(cat){ return cs('title_'+cat) || cat; }
+function printCatQuote(cat){ return cs('quote_'+cat) || ''; }
 
 function openPrintDialog() {
   // se le scorte non risultano gestite, avvisa che "solo disponibili" è rischioso
@@ -1853,7 +2033,7 @@ function frigoQty(w) {
   return inv ? (inv.qty_frigo || 0) : 0;
 }
 
-function doPrint() {
+function buildPrintHtml(autoPrint) {
   const scope = (document.querySelector('input[name="printScope"]:checked') || {}).value || 'all';
   const onlyAvail = scope === 'available';
 
@@ -1909,15 +2089,17 @@ function doPrint() {
       rows += `</tbody>`;
     }
 
+    const q = printCatQuote(cat);
+    const quoteHtml = q ? `<div class="cat-quote">${esc(q)}</div>` : '';
     body += `<table class="cat-table">
-      <thead><tr><th colspan="2"><div class="cat-title">${esc(PRINT_CAT_LABEL[cat]||cat)}</div></th></tr></thead>
+      <thead><tr><th colspan="2"><div class="cat-title">${esc(printCatLabel(cat))}</div>${quoteHtml}</th></tr></thead>
       ${rows}
     </table>`;
   }
 
   if (!anyContent) {
     showToast(onlyAvail ? 'Nessun vino disponibile da stampare' : 'Nessun vino da stampare', 'error');
-    return;
+    return null;
   }
 
   const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
@@ -1948,6 +2130,10 @@ function doPrint() {
   }
   /* sottointestazione (regione / tipo / nazione): centrata, blu più chiaro */
   .region-block { page-break-inside: avoid; break-inside: avoid; }
+  .cat-quote {
+    font-family: Georgia, serif; font-style: italic; font-size: 14px; color: #6f8fb5;
+    text-align: center; padding: 10px 8% 2px; line-height: 1.4;
+  }
   .region-name {
     font-family: Georgia, serif; font-size: 20px; color: #6f95c7; font-weight: normal; text-align: center;
     padding: 22px 0 8px; margin-top: 4px;
@@ -1965,19 +2151,25 @@ function doPrint() {
 <body>
   <div class="sheet">
     <div class="cover">
-      <div class="pre">La cantina</div>
-      <h1>Sol y Mar</h1>
+      <div class="pre">${esc(cs('cover_pre'))}</div>
+      <h1>${esc(cs('cover_name'))}</h1>
       <div class="rule"></div>
-      <div class="since">Carta dei Vini · dal 1994</div>
-      <div class="qr"><img src="data:image/png;base64,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" alt="QR"><div class="qr-cap">inquadra per la carta sempre aggiornata</div></div>
+      <div class="since">${esc(cs('cover_sub'))}</div>
+      <div class="qr"><img src="data:image/png;base64,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" alt="QR"><div class="qr-cap">${esc(cs('qr_caption'))}</div></div>
     </div>
     ${body}
   </div>
   <script>
-    window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };
+    window.onload = function(){ ${autoPrint ? 'setTimeout(function(){ window.print(); }, 350);' : ''} };
   <\/script>
 </body></html>`;
 
+  return html;
+}
+
+function doPrint() {
+  const html = buildPrintHtml(true);
+  if (!html) return;
   const win = window.open('', '_blank');
   if (!win) { showToast('Consenti i popup per stampare', 'error'); return; }
   win.document.open();
@@ -3825,7 +4017,7 @@ function showToast(msg, type='') {
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeClientPreview(); closeWineDetail(); closeInvModal(); closePanel('cartaPreviewPanel'); closePanel('cartaCustomizePanel'); closePanel('printPanel'); closePanel('addWinePanel'); closePanel('bulkPanel'); closePanel('magPanel'); closePanel('settingsPanel'); closePanel('rubricaPanel'); } });
 // chiudi l'anteprima cliccando sullo sfondo scuro (fuori dalla cornice)
 document.getElementById('previewOverlay').addEventListener('click', e=>{ if(e.target.id==='previewOverlay') closeClientPreview(); });
 
