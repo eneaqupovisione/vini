@@ -13,9 +13,9 @@
     --text: #1a1714;
     --text-muted: #7a6f64;
     --text-faint: #b0a496;
-    --accent: #8b3a2a;
-    --accent-light: #f5ede9;
-    --accent-mid: #c4705a;
+    --accent: #2f5c9e;
+    --accent-light: #eaf0f8;
+    --accent-mid: #6f95c7;
     --tag-bg: #f0ebe3;
     --shadow: 0 2px 12px rgba(0,0,0,0.07);
     --radius: 10px;
@@ -93,6 +93,7 @@
   .wine-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
   .wine-tag { font-size: 10px; background: var(--tag-bg); color: var(--text-muted); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; letter-spacing: 0.04em; }
   .wine-format { font-size: 10px; background: var(--accent-light); color: var(--accent); padding: 1px 6px; border-radius: 3px; font-family: Arial, sans-serif; }
+  .wine-tipo { background: var(--cat-tag-bg, var(--accent-light)); color: var(--cat-strong, var(--accent)); font-weight: 700; }
   .wine-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .wine-price { font-size: 18px; font-weight: bold; color: var(--accent); white-space: nowrap; font-family: Arial, sans-serif; min-width: 48px; text-align: right; }
   .wine-price::after { content: '€'; font-size: 12px; margin-left: 1px; color: var(--accent-mid); }
@@ -597,6 +598,23 @@
   .client-filters { display: none; }
   body.client-mode .client-filters { display: block; padding: 2px 18px 10px; max-width: 820px; margin: 0 auto; }
   .filter-group { margin-top: 8px; }
+  /* pulsante per espandere/ridurre i filtri */
+  .filter-toggle {
+    display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 2px;
+    padding: 7px 14px; border: 1.5px solid var(--border-strong); border-radius: 20px;
+    background: var(--bg); color: var(--text-muted); font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+  }
+  .filter-toggle:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .filter-toggle.open { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+  .filter-arrow { font-size: 9px; }
+  .filter-count {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px;
+    background: var(--accent); color: #fff; border-radius: 9px; font-size: 11px; margin-left: 4px; padding: 0 5px;
+  }
+  .filter-body { display: none; }
+  .filter-body.open { display: block; animation: filterIn 0.18s ease; }
+  @keyframes filterIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
   .filter-group-label {
     font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--text-faint); font-family: Arial, sans-serif; font-weight: 700; margin: 0 0 5px 2px;
@@ -803,7 +821,7 @@
     <button class="tab" data-cat="emilia">Emilia-Romagna</button>
     <button class="tab" data-cat="bollicine">Bollicine</button>
     <button class="tab" data-cat="champagne">Champagne</button>
-    <button class="tab" data-cat="fermi">Fermi Nord-Sud</button>
+    <button class="tab" data-cat="fermi">Fermi</button>
     <button class="tab" data-cat="rose">Rosé</button>
     <button class="tab" data-cat="stranieri">Stranieri</button>
     <button class="tab" data-cat="piccoli">Piccoli (375ml)</button>
@@ -960,7 +978,7 @@
             <option value="emilia">Emilia-Romagna</option>
             <option value="bollicine">Bollicine</option>
             <option value="champagne">Champagne</option>
-            <option value="fermi">Fermi Nord-Sud</option>
+            <option value="fermi">Fermi</option>
             <option value="rose">Rosé</option>
             <option value="stranieri">Stranieri</option>
             <option value="piccoli">Piccoli formati (375ml)</option>
@@ -1816,7 +1834,7 @@ async function saveNewWine() {
 const PRINT_CAT_ORDER = ['emilia','piccoli','bollicine','rose','champagne','fermi','stranieri'];
 const PRINT_CAT_LABEL = {
   emilia:'l\'Emilia-Romagna', piccoli:'i Piccoli Formati · 375ml', bollicine:'Le Bollicine',
-  rose:'Vini Rosé', champagne:'Champagne', fermi:'Vini Fermi da Nord a Sud', stranieri:'Vini Stranieri'
+  rose:'Vini Rosé', champagne:'Champagne', fermi:'Vini Fermi da Nord a Sud', stranieri:'all\'Estero'
 };
 
 function openPrintDialog() {
@@ -1909,33 +1927,50 @@ function doPrint() {
   * { box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; color: #1a1714; margin: 0; }
 
-  /* ogni categoria è una tabella che inizia su pagina nuova (tranne la prima) */
+  /* ---- Copertina (front page) ---- */
+  .cover { height: 247mm; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; page-break-after: always; break-after: page; padding-top: 78mm; }
+  .cover .pre { font-family: Georgia, serif; font-style: italic; font-size: 22px; color: #6f95c7; margin-bottom: 14px; }
+  .cover h1 { font-family: Georgia, serif; font-size: 68px; font-weight: normal; color: #2f5c9e; margin: 0; line-height: 1.1; letter-spacing: 0.01em; }
+  .cover .rule { width: 150px; height: 2px; background: #c9d6e8; margin: 30px 0; }
+  .cover .since { font-family: Georgia, serif; font-style: italic; font-size: 17px; color: #8aa6cf; }
+  .cover .qr { margin-top: 95mm; }
+  .cover .qr img, .cover .qr canvas { width: 120px; height: 120px; }
+  .cover .qr-cap { font-family: Arial, sans-serif; font-size: 11px; color: #8aa6cf; margin-top: 10px; letter-spacing: 0.03em; }
+
+  /* ogni categoria è una tabella che inizia su pagina nuova */
   .cat-table { width: 100%; border-collapse: collapse; }
-  .cat-table + .cat-table { page-break-before: always; break-before: page; }
-  /* il titolo categoria si ripete in cima a ogni pagina della stessa tabella */
+  .cat-table { page-break-before: always; break-before: page; }
   thead { display: table-header-group; }
+  /* titolo categoria: centrato, blu cobalto */
   .cat-title {
-    font-family: Georgia, serif; font-size: 30px; color: #8b3a2a; font-weight: normal;
-    padding: 6px 0 8px; border-bottom: 2px solid #d9cab5; margin-bottom: 4px; letter-spacing: 0.01em;
+    font-family: Georgia, serif; font-size: 32px; color: #2f5c9e; font-weight: normal; text-align: center;
+    padding: 4px 0 10px; border-bottom: 2px solid #cdd9ea; margin-bottom: 6px; letter-spacing: 0.01em;
   }
-  /* sottointestazione (regione / tipo / nazione): ben visibile, vicina al titolo */
+  /* sottointestazione (regione / tipo / nazione): centrata, blu più chiaro */
   .region-block { page-break-inside: avoid; break-inside: avoid; }
   .region-name {
-    font-family: Georgia, serif; font-size: 19px; color: #2c2620; font-weight: normal;
-    padding: 20px 0 6px; margin-top: 4px;
+    font-family: Georgia, serif; font-size: 20px; color: #6f95c7; font-weight: normal; text-align: center;
+    padding: 22px 0 8px; margin-top: 4px;
   }
-  .region-block:first-of-type .region-name { padding-top: 10px; }
+  .region-block:first-of-type .region-name { padding-top: 12px; }
   .wine-row { page-break-inside: avoid; break-inside: avoid; }
-  .wine-row td { padding: 8px 0; border-bottom: 1px solid #ece5da; vertical-align: baseline; }
+  .wine-row td { padding: 8px 0; border-bottom: 1px solid #ececec; vertical-align: baseline; }
   .wcell { width: 82%; }
   .wprod { font-size: 14px; font-weight: bold; color: #1a1714; }
-  .wname { font-size: 12.5px; font-style: italic; color: #7a6f64; margin-top: 1px; }
-  .wprice { width: 18%; text-align: right; font-size: 15px; font-weight: bold; color: #8b3a2a; white-space: nowrap; vertical-align: top; padding-top: 8px; }
+  .wname { font-size: 12.5px; font-style: italic; color: #777; margin-top: 1px; }
+  .wprice { width: 18%; text-align: right; font-size: 15px; font-weight: bold; color: #2f5c9e; white-space: nowrap; vertical-align: top; padding-top: 8px; }
 
-  @media screen { body { background: #faf8f4; } .sheet { max-width: 780px; margin: 0 auto; padding: 24px; background: #fff; } }
+  @media screen { body { background: #faf9f6; } .sheet { max-width: 780px; margin: 0 auto; padding: 24px; background: #fff; } }
 </style></head>
 <body>
   <div class="sheet">
+    <div class="cover">
+      <div class="pre">La cantina</div>
+      <h1>Sol y Mar</h1>
+      <div class="rule"></div>
+      <div class="since">Carta dei Vini · dal 1994</div>
+      <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHsUlEQVR4nO3cza1dNQBGUS5KQTTEgMoY0BAdHaaRkKwQb2P7vLWm0f3P2/Lgkz/P8/wC0Pl19xsA3kZWgJisADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsW8zD/7t9z+r93GIv//6Y/Cv6z7vzOuOHztj3eu+75v8an8LY04rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsamU7tm79OePGNeS69ef4mdctVs/cs67b4H61vwWnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgtnBlO7brNtN1zzzziWb2nbte172/lRv/FsacVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2LaV7Y1m1pDrNqlnLkdnrPtEN25wb+S0AsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLErGz/g5ml7K7bameWo2fesbpr62yD++OcVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2LaV7VfbLM583jOXsmO7ft8b/1/d+J7HnFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgNjCle2ufec66+6j3XXH6pnv+czvasb7/hbGnFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgNjneZ7d7+Ea69afYzfeZTtj3Rb2zA3u+zitADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxqZXtmavTdbvSM29C3fVtzFi3G77xN1r3zLu23U4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0Ds0Ltsb1xSzrhxdbrr21i3Ot11Z/CZe3QrW+AgsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYt9mHrxu//e+bejYmTfOju1acN54d+/YmQvdGU4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsamU7s/DbdSPpmffg3ngD69iuTzR2462xZ+7Cx5xWgJisADFZAWKyAsRkBYjJChCTFSAmK0BMVoDY1Mp2lzN3pWNnrntn7LpveNc3OePMG2fXfc9OK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitA7PM8z6KnvnHfuc6u5eiNi9Uzv6sxd9l+z2kFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgtvMt23XZw1+7wxsXqmZvUddb9Rmf+fz7zf53TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQe+Fdtut2ljd+ovctOM9c98543y/otALEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxKbust11t+uZ94be+G3sWvfu2pXuWuie+a7WcVoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJTK9sb7+DctXd83xZ27H2/4JnO/Bt0WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYp/neRY99Zkr2zM3qWNnLkd3fVfve+axM3e0Y04rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0Bs4cp27My7Xdc5cw05Y932d9dS9sbHzlj3uk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0Ds2+438H/btWhcdyPpV9srzzhzC7vrtlp32QLXkBUgJitATFaAmKwAMVkBYrICxGQFiMkKEJta2d54P+uN96SOrftEM4/d9T3vWqzeuEh2ly1wDVkBYrICxGQFiMkKEJMVICYrQExWgJisALGple2ufeeZC851brx/d+b3nXHmbnjmdc985jGnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUg9nmeZ9FT33jT7Yz3bTTftyre9cxju27JdZctcA1ZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxqbtsz9ws7nLm3nHXuvfG5eiN9+/ueuYxpxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVIDa1sl234DzzLtszt7833sA6Y+aZz7xfedf/q3WfyGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgtvMv2RmcuKddtQ8+8b/h9299dtxHvWqs7rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsamV7Zj7aL+3bs965lJ27Mz/GzPO3GePucsWuIasADFZAWKyAsRkBYjJChCTFSAmK0BMVoDY53men37wzPpz13Zw3WJ17MzXPdONu+F1zvw7GnNaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiC++yfZ+ZReOZd9muW3Du2obOeN/GehenFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgZmWb2bWj3XWj8K53tWtVvGs3vGvbPcNpBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIbVvZ3nh/57od7cxj161Ox268j3bXrzB+7PvuSHZaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFin+d5fvrBZ+4sZ+y6r/Srve7YrptuZ5x5G7G7bIGXkBUgJitATFaAmKwAMVkBYrICxGQFiMkKEJta2QL8m9MKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitA7B8vrgN89xc8EQAAAABJRU5ErkJggg==" alt="QR"><div class="qr-cap">inquadra per la carta sempre aggiornata</div></div>
+    </div>
     ${body}
   </div>
   <script>
@@ -3322,7 +3357,7 @@ const clearBtn = document.getElementById('clearBtn');
 searchEl.addEventListener('input', ()=>{ currentQ=searchEl.value; clearBtn.style.display=currentQ?'block':'none'; render(); });
 function clearSearch(){ searchEl.value=''; currentQ=''; clearBtn.style.display='none'; searchEl.focus(); render(); }
 
-function tabLabel(cat){ const m={all:'Tutti',emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermi Nord-Sud',rose:'Rosé',stranieri:'Stranieri',piccoli:'Piccoli Formati'}; return m[cat]||cat; }
+function tabLabel(cat){ const m={all:'Tutti',emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermi',rose:'Rosé',stranieri:'Stranieri',piccoli:'Piccoli Formati'}; return m[cat]||cat; }
 function catLabel(cat){ const m={emilia:'Emilia-Romagna',bollicine:'Bollicine',champagne:'Champagne',fermi:'Fermo',rose:'Rosé',stranieri:'Straniero',piccoli:'375ml'}; return m[cat]||cat; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function escJs(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -3336,7 +3371,7 @@ function collectFilterOptions(wines){
   const styles  = new Map();
   const bump = (map, key) => map.set(key, (map.get(key)||0)+1);
   for (const w of wines){
-    if (w.region) bump(regions, w.region);
+    if (w.sub || w.region) bump(regions, w.sub || w.region);
     for (const t of w.tags){
       const c = classifyTag(t);
       if (c === 'grape') bump(grapes, t.trim().toLowerCase());
@@ -3350,7 +3385,7 @@ function collectFilterOptions(wines){
 
 // Un vino passa i filtri attivi?
 function matchesClientFilters(w){
-  if (clientFilters.region && w.region !== clientFilters.region) return false;
+  if (clientFilters.region && (w.sub || w.region) !== clientFilters.region) return false;
   if (clientFilters.grape){
     const has = w.tags.some(t => t.trim().toLowerCase() === clientFilters.grape);
     if (!has) return false;
@@ -3376,35 +3411,69 @@ function renderClientFilters(){
     return `<button class="filter-chip${active?' active':''}" data-fgroup="${group}" data-fvalue="${safeVal}">${escHtml(label)}</button>`;
   };
 
-  let html = '';
-  // Regione (sempre, se più di una)
+  let inner = '';
+  // etichetta del primo filtro: cambia in base a come è divisa la sezione
+  const groupLabel = (cat==='champagne') ? 'Tipo'
+    : (cat==='stranieri') ? 'Nazione'
+    : (cat==='emilia'||cat==='rose'||cat==='piccoli') ? 'Tipologia'
+    : 'Regione';
+  // Regione/zona (sempre, se più di una)
   if (opt.regions.length > 1){
-    html += `<div class="filter-group"><div class="filter-group-label">Regione</div><div class="filter-chips">`;
-    html += chip('Tutte', 'region', null);
-    for (const r of opt.regions) html += chip(r, 'region', r);
-    html += `</div></div>`;
+    inner += `<div class="filter-group"><div class="filter-group-label">${groupLabel}</div><div class="filter-chips">`;
+    inner += chip('Tutte', 'region', null);
+    for (const r of opt.regions) inner += chip(r, 'region', r);
+    inner += `</div></div>`;
   }
   // Uvaggio
   if (opt.grapes.length){
-    html += `<div class="filter-group"><div class="filter-group-label">Uvaggio</div><div class="filter-chips">`;
-    html += chip('Tutti', 'grape', null);
-    for (const g of opt.grapes) html += chip(g, 'grape', g);
-    html += `</div></div>`;
+    inner += `<div class="filter-group"><div class="filter-group-label">Uvaggio</div><div class="filter-chips">`;
+    inner += chip('Tutti', 'grape', null);
+    for (const g of opt.grapes) inner += chip(g, 'grape', g);
+    inner += `</div></div>`;
   }
   // Stile
   if (opt.styles.length){
-    html += `<div class="filter-group"><div class="filter-group-label">Stile</div><div class="filter-chips">`;
-    html += chip('Tutti', 'style', null);
-    for (const s of opt.styles) html += chip(s, 'style', s);
-    html += `</div></div>`;
+    inner += `<div class="filter-group"><div class="filter-group-label">Stile</div><div class="filter-chips">`;
+    inner += chip('Tutti', 'style', null);
+    for (const s of opt.styles) inner += chip(s, 'style', s);
+    inner += `</div></div>`;
   }
-  box.innerHTML = html;
+
+  if (!inner.trim()) { box.innerHTML = ''; return; }
+
+  // quanti filtri attivi (per il badge sul pulsante)
+  const activeCount = ['region','grape','style'].filter(k => clientFilters[k]).length;
+  const badge = activeCount ? `<span class="filter-count">${activeCount}</span>` : '';
+  box.innerHTML = `
+    <button class="filter-toggle${filtersOpen?' open':''}" onclick="toggleFilters()">
+      <span>🧰 Filtri${badge}</span>
+      <span class="filter-arrow">${filtersOpen?'▲':'▼'}</span>
+    </button>
+    <div class="filter-body${filtersOpen?' open':''}">${inner}</div>`;
+}
+
+let filtersOpen = false;
+function toggleFilters(){
+  filtersOpen = !filtersOpen;
+  renderClientFilters();
 }
 
 // Verifica se un vino appartiene alla sezione (tab) indicata.
 // Caso speciale Emilia-Romagna: raccoglie sia i vini con cat="emilia"
 // sia quelli la cui REGIONE è Emilia-Romagna, così la sezione si popola
 // a prescindere da come è strutturato il file dei vini.
+// Classe-colore di un vino. I vini emiliani non hanno un colore proprio:
+// seguono le regole normali in base alla tipologia (ricavata dal sub).
+function colorCat(w){
+  if (w.cat === 'emilia' || isEmilia(w)) {
+    const s = (w.sub || '').toLowerCase();
+    if (s.includes('bollicine')) return 'bollicine';
+    if (s.includes('rosé') || s.includes('rose')) return 'rose';
+    return 'fermi'; // "Vini Bianchi Fermi" e simili → verde dei fermi
+  }
+  return w.cat;
+}
+
 function isEmilia(w){
   if (w.cat === 'emilia') return true;
   const r = (w.region || '').toLowerCase();
@@ -3581,12 +3650,13 @@ function wineRow(w, q, isMaybe=false){
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
+  const tipo=(w.cat==='piccoli'&&w.sub)?`<span class="wine-format wine-tipo">${escHtml(w.sub)}</span>`:'';
   const idx=WINES.indexOf(w);
-  const fmtRow = (w.fmt||isMaybe) ? `<div class="wine-tags">${fmt}${maybeCat}</div>` : '';
+  const fmtRow = (w.fmt||tipo||isMaybe) ? `<div class="wine-tags">${fmt}${tipo}${maybeCat}</div>` : '';
 
   // --- MANAGER MODE: magazzino | matita | frigo ---
   if (managerMode) {
-    return `<div class="wine-row cat-${w.cat}${maybeClass}">
+    return `<div class="wine-row cat-${colorCat(w)}${maybeClass}">
       <div class="wine-left">
         <div class="wine-producer">${producer}</div>
         <div class="wine-name">${name}</div>
@@ -3605,7 +3675,7 @@ function wineRow(w, q, isMaybe=false){
   // --- TRACKER: frigo esaurito → riga disabilitata con ❌ ---
   const emptyFrigo = trackerMode && isFrigoEmpty(w);
   if (emptyFrigo) {
-    return `<div class="wine-row cat-${w.cat}${maybeClass} sold-out">
+    return `<div class="wine-row cat-${colorCat(w)}${maybeClass} sold-out">
       <div class="wine-left">
         <div class="wine-producer">${producer}</div>
         <div class="wine-name">${name}</div>
@@ -3622,7 +3692,7 @@ function wineRow(w, q, isMaybe=false){
   // --- NEUTRAL / TRACKER con scorte: identiche (i + +) ---
   const magFlagRow = trackerMode ? magStockFlag(w) : '';
   const dotRow = magFlagRow ? `<span class="stock-dot ${magFlagRow}" title="Scorte magazzino ${magFlagRow==='crit'?'critiche':'basse'}"></span>` : '';
-  return `<div class="wine-row cat-${w.cat}${maybeClass}" data-add-idx="${idx}">
+  return `<div class="wine-row cat-${colorCat(w)}${maybeClass}" data-add-idx="${idx}">
     <div class="wine-left">
       <div class="wine-producer">${producer}</div>
       <div class="wine-name">${name}</div>
@@ -3648,8 +3718,9 @@ function wineCard(w, q, isMaybe=false){
   const fmt=w.fmt?`<span class="wine-format">${w.fmt}</span>`:'';
   const maybeClass=isMaybe?' maybe':'';
   const maybeCat=isMaybe?`<span class="wine-tag" style="background:#f0e9d6;color:#9a7a50;">${catLabel(w.cat)}</span>`:'';
+  const tipo=(w.cat==='piccoli'&&w.sub)?`<span class="wine-format wine-tipo">${escHtml(w.sub)}</span>`:'';
   const idx=WINES.indexOf(w);
-  const fmtRow = (w.fmt||isMaybe) ? `<div class="wine-card-tags">${fmt}${maybeCat}</div>` : '';
+  const fmtRow = (w.fmt||tipo||isMaybe) ? `<div class="wine-card-tags">${fmt}${tipo}${maybeCat}</div>` : '';
 
   // --- CLIENTE (QR): sola lettura. Cella che apre solo la scheda informativa.
   //     Se il frigo è esaurito → cella trasparente, non cliccabile. ---
@@ -3659,7 +3730,7 @@ function wineCard(w, q, isMaybe=false){
       : `<span class="wine-card-price noprice">su richiesta</span>`;
     const out = isFrigoEmpty(w);
     if (out) {
-      return `<div class="wine-card cat-${w.cat}${maybeClass} client-out">
+      return `<div class="wine-card cat-${colorCat(w)}${maybeClass} client-out">
         <div class="wine-card-titles">
           <div class="wine-card-producer">${producer}</div>
           <div class="wine-card-name">${name}</div>
@@ -3670,7 +3741,7 @@ function wineCard(w, q, isMaybe=false){
         <div class="wine-card-bottom client-bottom">${priceHtml}</div>
       </div>`;
     }
-    return `<div class="wine-card cat-${w.cat}${maybeClass}" data-detail-idx="${idx}">
+    return `<div class="wine-card cat-${colorCat(w)}${maybeClass}" data-detail-idx="${idx}">
       <div class="wine-card-titles">
         <div class="wine-card-producer">${producer}</div>
         <div class="wine-card-name">${name}</div>
@@ -3686,7 +3757,7 @@ function wineCard(w, q, isMaybe=false){
 
   // --- MANAGER MODE: magazzino | matita | frigo ---
   if (managerMode) {
-    return `<div class="wine-card cat-${w.cat}${maybeClass} manager">
+    return `<div class="wine-card cat-${colorCat(w)}${maybeClass} manager">
       <div class="wine-card-titles">
         <div class="wine-card-producer">${producer}</div>
         <div class="wine-card-name">${name}</div>
@@ -3706,7 +3777,7 @@ function wineCard(w, q, isMaybe=false){
   // --- TRACKER MODE: se frigo esaurito → cella disabilitata con ❌ ---
   const emptyFrigo = trackerMode && isFrigoEmpty(w);
   if (emptyFrigo) {
-    return `<div class="wine-card cat-${w.cat}${maybeClass} sold-out" data-card-idx="${idx}">
+    return `<div class="wine-card cat-${colorCat(w)}${maybeClass} sold-out" data-card-idx="${idx}">
       <div class="wine-card-titles">
         <div class="wine-card-producer">${producer}</div>
         <div class="wine-card-name">${name}</div>
@@ -3725,7 +3796,7 @@ function wineCard(w, q, isMaybe=false){
   // data-card-idx (NON data-add-idx): il clic sulla card non vende nulla
   const magFlag = trackerMode ? magStockFlag(w) : '';
   const flagHtml = magFlag ? `<span class="stock-flag ${magFlag}" title="Scorte magazzino ${magFlag==='crit'?'critiche':'basse'}">📦 ${magFlag==='crit'?'!':'•'}</span>` : '';
-  return `<div class="wine-card cat-${w.cat}${maybeClass}${magFlag?' low-stock':''}" data-card-idx="${idx}">
+  return `<div class="wine-card cat-${colorCat(w)}${maybeClass}${magFlag?' low-stock':''}" data-card-idx="${idx}">
     ${flagHtml}
     <div class="wine-card-titles">
       <div class="wine-card-producer">${producer}</div>
